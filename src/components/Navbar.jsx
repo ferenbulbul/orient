@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 const NAV_LINKS = [
@@ -38,6 +38,7 @@ function Navbar({ activePage = 'home', onNavigate }) {
   const [mobileDropdown, setMobileDropdown] = useState(null)
   const location = useLocation()
   const navigate = useNavigate()
+  const hoverTimers = useRef({ open: null, close: null })
 
   useEffect(() => {
     const handleScroll = () => {
@@ -45,8 +46,26 @@ function Navbar({ activePage = 'home', onNavigate }) {
     }
     handleScroll()
     window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+      clearTimeout(hoverTimers.current.open)
+      clearTimeout(hoverTimers.current.close)
+    }
   }, [])
+
+  const handleHoverEnter = (id) => {
+    clearTimeout(hoverTimers.current.close)
+    hoverTimers.current.open = setTimeout(() => {
+      setHoverMenu(id)
+    }, 160)
+  }
+
+  const handleHoverLeave = () => {
+    clearTimeout(hoverTimers.current.open)
+    hoverTimers.current.close = setTimeout(() => {
+      setHoverMenu(null)
+    }, 160)
+  }
 
   const handleNavigate = (link) => {
     if (link?.slug) {
@@ -96,8 +115,8 @@ function Navbar({ activePage = 'home', onNavigate }) {
     hasScrolled ? 'text-base' : 'text-lg'
   }`
   const dropdownPanelBase = shouldUseLightTheme
-    ? 'border border-slate-100 bg-white text-slate-700 shadow-2xl'
-    : 'border border-white/10 bg-slate-900/80 text-white shadow-[0_25px_60px_rgba(0,0,0,0.55)] backdrop-blur'
+    ? 'border border-slate-100 bg-white text-slate-700 shadow-xl'
+    : 'border border-white/10 bg-slate-900/85 text-white shadow-[0_20px_45px_rgba(0,0,0,0.45)] backdrop-blur'
   const dropdownItemBase = shouldUseLightTheme
     ? 'text-slate-700 hover:bg-slate-100'
     : 'text-white hover:bg-white/10'
@@ -145,8 +164,8 @@ function Navbar({ activePage = 'home', onNavigate }) {
                 <div
                   key={link.id}
                   className="relative"
-                  onMouseEnter={() => setHoverMenu(link.id)}
-                  onMouseLeave={() => setHoverMenu(null)}
+                  onMouseEnter={() => handleHoverEnter(link.id)}
+                  onMouseLeave={handleHoverLeave}
                 >
                   <button
                     type="button"
@@ -156,13 +175,13 @@ function Navbar({ activePage = 'home', onNavigate }) {
                     {link.label}
                   </button>
                   <div
-                    className={`absolute left-1/2 top-full mt-3 w-56 min-w-[220px] -translate-x-1/2 rounded-2xl p-3 transition-all duration-200 ${dropdownPanelBase} ${
+                    className={`absolute left-1/2 top-full mt-1 w-56 min-w-[200px] -translate-x-1/2 rounded-lg p-2 transition-all duration-200 ${dropdownPanelBase} ${
                       hoverMenu === link.id
                         ? 'pointer-events-auto opacity-100 translate-y-0'
-                        : 'pointer-events-none opacity-0 -translate-y-2'
+                        : 'pointer-events-none opacity-0 -translate-y-1'
                     }`}
                   >
-                    <div className="flex flex-col gap-1">
+                    <div className="flex flex-col">
                       {items.map((item) => (
                         <button
                           key={item.id}
@@ -172,7 +191,7 @@ function Navbar({ activePage = 'home', onNavigate }) {
                               ? handleNavigate({ page: 'products', slug: item.slug })
                               : undefined
                           }
-                          className={`w-full rounded-xl px-3 py-2 text-left text-sm font-semibold transition ${dropdownItemBase}`}
+                          className={`w-full rounded-md px-3 py-1.5 text-left text-sm font-semibold transition ${dropdownItemBase}`}
                         >
                           {item.label}
                         </button>
