@@ -12,6 +12,7 @@ const NAV_LINKS = [
     type: 'dropdown',
   },
   { id: 'products', label: 'Neler Üretiyoruz', type: 'mega' },
+  { id: 'machine', label: 'Makine Parkuru', page: 'machine', href: '/makine-parkuru' },
   { id: 'portfolio', label: 'Çalışmalar', page: 'portfolio' },
   { id: 'contact', label: 'İletişim', page: 'contact' },
 ]

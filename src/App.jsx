@@ -8,6 +8,7 @@ import About from './pages/About'
 import Portfolio from './pages/Portfolio'
 import Contact from './pages/Contact'
 import Product from './pages/Product'
+import MachinePark from './pages/MachinePark'
 import './App.css'
 
 const WHY_US = [
@@ -57,6 +58,10 @@ function App() {
     }
     if (location.pathname === '/contact' && activePage !== 'contact') {
       setActivePage('contact')
+      return
+    }
+    if (location.pathname === '/makine-parkuru' && activePage !== 'machine') {
+      setActivePage('machine')
       return
     }
     if (location.pathname.startsWith('/uretim') && activePage !== 'products') {
@@ -134,6 +139,7 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/portfolio" element={<Portfolio />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/makine-parkuru" element={<MachinePark />} />
           <Route path="/uretim/:slug" element={<Product />} />
           <Route path="*" element={<HomePage />} />
         </Routes>
