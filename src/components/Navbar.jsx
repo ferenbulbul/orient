@@ -141,9 +141,7 @@ function Navbar({ activeSection = 'home', onNavigate }) {
 
   return (
     <header className={headerClasses}>
-      <div
-        className={`mx-auto flex max-w-6xl items-center justify-between px-6 transition-all duration-300 ${innerPadding}`}
-      >
+      <div className={`flex w-full items-center justify-between px-4 sm:px-6 transition-all duration-300 ${innerPadding}`}>
         <a href="#top" className="flex items-center gap-3">
           <div className={logoCircleClass}>OR</div>
           <div className={brandTextClass}>
@@ -170,7 +168,7 @@ function Navbar({ activeSection = 'home', onNavigate }) {
             const defaultState = shouldUseLightTheme
               ? 'text-slate-600 hover:bg-white/70 hover:text-slate-900'
               : 'text-white/80 hover:bg-white/10 hover:text-white'
-            const buttonClasses = `rounded-full px-5 py-2.5 text-sm font-medium transition-all duration-300 ${
+            const buttonClasses = `rounded-full px-5 py-2.5 text-sm font-medium whitespace-nowrap transition-all duration-300 ${
               isActive
                 ? 'bg-slate-900 text-white shadow-lg shadow-slate-900/20'
                 : defaultState

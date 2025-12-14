@@ -3,7 +3,7 @@ import { Routes, Route, useLocation, useNavigate, Link } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import Hero from './components/Hero'
-import ServicesGrid from './components/ServicesGrid'
+import ProductShowcase from './components/ProductShowcase'
 import About from './pages/About'
 import Portfolio from './pages/Portfolio'
 import Contact from './pages/Contact'
@@ -120,8 +120,8 @@ function HomePage() {
   return (
     <>
       <Hero />
+      <ProductShowcase />
       <div className="page home-page">
-        <ServicesGrid />
 
         <section className="section">
           <div className="section__heading">
