@@ -164,7 +164,7 @@ function Navbar({ activeSection = 'home', onNavigate }) {
           </div>
         </a>
 
-        <nav className="hidden items-center gap-2 lg:flex">
+        <nav className="hidden items-center gap-1.5 whitespace-nowrap lg:flex lg:flex-nowrap">
           {NAV_LINKS.map((link) => {
             const isActive = isLinkActive(link)
             const defaultState = shouldUseLightTheme
