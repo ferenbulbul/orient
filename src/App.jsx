@@ -7,6 +7,7 @@ import ServicesGrid from './components/ServicesGrid'
 import About from './pages/About'
 import Portfolio from './pages/Portfolio'
 import Contact from './pages/Contact'
+import Product from './pages/Product'
 import './App.css'
 
 const WHY_US = [
@@ -56,6 +57,10 @@ function App() {
     }
     if (location.pathname === '/contact' && activePage !== 'contact') {
       setActivePage('contact')
+      return
+    }
+    if (location.pathname.startsWith('/uretim') && activePage !== 'products') {
+      setActivePage('products')
       return
     }
     if (location.pathname === '/' && pendingSection) {
@@ -129,6 +134,7 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/portfolio" element={<Portfolio />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/uretim/:slug" element={<Product />} />
           <Route path="*" element={<HomePage />} />
         </Routes>
       </main>

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 const NAV_LINKS = [
   { id: 'home', label: 'Ana Sayfa', href: '#top', page: 'home' },
@@ -23,12 +23,12 @@ const SERVICE_DROPDOWN = [
 ]
 
 const PRODUCT_MEGA_MENU = [
-  { id: 'book', icon: '📘', label: 'Kitap' },
-  { id: 'catalog', icon: '📕', label: 'Katalog' },
-  { id: 'calendar', icon: '🗓️', label: 'Takvim' },
-  { id: 'notebook', icon: '📓', label: 'Ajanda' },
-  { id: 'bag', icon: '🛍️', label: 'Karton Çanta' },
-  { id: 'magazine', icon: '📰', label: 'Dergi' },
+  { id: 'book', slug: 'kitap', icon: '📘', label: 'Kitap' },
+  { id: 'catalog', slug: 'katalog', icon: '📕', label: 'Katalog' },
+  { id: 'calendar', slug: 'takvim', icon: '🗓️', label: 'Takvim' },
+  { id: 'notebook', slug: 'ajanda', icon: '📓', label: 'Ajanda' },
+  { id: 'bag', slug: 'karton-canta', icon: '🛍️', label: 'Karton Çanta' },
+  { id: 'magazine', slug: 'dergi', icon: '📰', label: 'Dergi' },
 ]
 
 function Navbar({ activePage = 'home', onNavigate }) {
@@ -37,6 +37,7 @@ function Navbar({ activePage = 'home', onNavigate }) {
   const [hoverMenu, setHoverMenu] = useState(null)
   const [mobileDropdown, setMobileDropdown] = useState(null)
   const location = useLocation()
+  const navigate = useNavigate()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -48,6 +49,17 @@ function Navbar({ activePage = 'home', onNavigate }) {
   }, [])
 
   const handleNavigate = (link) => {
+    if (link?.slug) {
+      navigate(`/uretim/${link.slug}`)
+      if (onNavigate && typeof onNavigate === 'function') {
+        onNavigate('products')
+      }
+      setIsMenuOpen(false)
+      setHoverMenu(null)
+      setMobileDropdown(null)
+      return
+    }
+
     if (onNavigate && typeof onNavigate === 'function') {
       onNavigate(link.page ?? link.id)
     }
@@ -63,6 +75,8 @@ function Navbar({ activePage = 'home', onNavigate }) {
       window.scrollTo({ top: 0, behavior: 'smooth' })
     }
     setIsMenuOpen(false)
+    setHoverMenu(null)
+    setMobileDropdown(null)
   }
 
   const isHomeRoute = location.pathname === '/'
@@ -81,6 +95,15 @@ function Navbar({ activePage = 'home', onNavigate }) {
   const brandTextClass = `text-left transition-all duration-300 ${
     hasScrolled ? 'text-base' : 'text-lg'
   }`
+  const dropdownPanelBase = shouldUseLightTheme
+    ? 'border border-slate-100 bg-white text-slate-700 shadow-2xl'
+    : 'border border-white/10 bg-slate-900/80 text-white shadow-[0_25px_60px_rgba(0,0,0,0.55)] backdrop-blur'
+  const dropdownItemBase = shouldUseLightTheme
+    ? 'text-slate-700 hover:bg-slate-100'
+    : 'text-white hover:bg-white/10'
+  const megaCardBase = shouldUseLightTheme
+    ? 'border border-slate-100 bg-slate-50/70 text-slate-700 hover:bg-white hover:shadow-lg'
+    : 'border border-white/10 bg-white/10 text-white hover:bg-white/20 hover:shadow-[0_25px_40px_rgba(0,0,0,0.45)]'
 
   return (
     <header className={headerClasses}>
@@ -135,7 +158,7 @@ function Navbar({ activePage = 'home', onNavigate }) {
                     {link.label}
                   </button>
                   <div
-                    className={`absolute left-1/2 top-full mt-3 w-56 -translate-x-1/2 rounded-2xl border border-slate-100 bg-white p-3 shadow-2xl transition-all duration-200 ${
+                    className={`absolute left-1/2 top-full mt-3 w-56 -translate-x-1/2 rounded-2xl p-3 transition-all duration-200 ${dropdownPanelBase} ${
                       hoverMenu === link.id
                         ? 'pointer-events-auto opacity-100 translate-y-0'
                         : 'pointer-events-none opacity-0 -translate-y-2'
@@ -145,7 +168,7 @@ function Navbar({ activePage = 'home', onNavigate }) {
                       <button
                         key={item.id}
                         type="button"
-                        className="flex w-full items-center rounded-xl px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
+                        className={`flex w-full items-center rounded-xl px-3 py-2 text-sm font-semibold transition ${dropdownItemBase}`}
                       >
                         {item.label}
                       </button>
@@ -171,7 +194,7 @@ function Navbar({ activePage = 'home', onNavigate }) {
                     {link.label}
                   </button>
                   <div
-                    className={`absolute left-1/2 top-full mt-3 w-[480px] -translate-x-1/2 rounded-3xl border border-slate-100 bg-white p-6 shadow-2xl transition-all duration-200 ${
+                    className={`absolute left-1/2 top-full mt-3 w-[480px] -translate-x-1/2 rounded-3xl p-6 transition-all duration-200 ${dropdownPanelBase} ${
                       hoverMenu === link.id
                         ? 'pointer-events-auto opacity-100 translate-y-0'
                         : 'pointer-events-none opacity-0 -translate-y-2'
@@ -182,7 +205,8 @@ function Navbar({ activePage = 'home', onNavigate }) {
                         <button
                           key={item.id}
                           type="button"
-                          className="flex flex-col rounded-2xl border border-slate-100 bg-slate-50/70 p-4 text-left text-sm font-semibold text-slate-700 transition hover:-translate-y-0.5 hover:bg-white hover:shadow-lg"
+                          onClick={() => handleNavigate({ page: 'products', slug: item.slug })}
+                          className={`flex flex-col rounded-2xl p-4 text-left text-sm font-semibold transition hover:-translate-y-0.5 ${megaCardBase}`}
                         >
                           <span className="text-2xl">{item.icon}</span>
                           <span className="mt-2">{item.label}</span>
@@ -269,6 +293,11 @@ function Navbar({ activePage = 'home', onNavigate }) {
                             <button
                               key={item.id}
                               type="button"
+                              onClick={() =>
+                                link.type === 'mega'
+                                  ? handleNavigate({ page: 'products', slug: item.slug })
+                                  : undefined
+                              }
                               className="rounded-xl bg-white px-3 py-2 text-left text-sm font-semibold text-slate-700"
                             >
                               {item.icon ? (
