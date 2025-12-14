@@ -193,13 +193,13 @@ function Navbar({ activeSection = 'home', onNavigate }) {
                     {link.label}
                   </button>
                   <div
-                    className={`absolute left-1/2 top-full mt-1 w-56 min-w-[200px] -translate-x-1/2 rounded-lg p-2 transition-all duration-200 ${dropdownPanelBase} ${
+                    className={`absolute left-1/2 top-full mt-1 w-64 min-w-[280px] -translate-x-1/2 rounded-xl px-4 py-3 transition-all duration-200 ${dropdownPanelBase} ${
                       hoverMenu === link.id
                         ? 'pointer-events-auto opacity-100 translate-y-0'
                         : 'pointer-events-none opacity-0 -translate-y-1'
                     }`}
                   >
-                    <div className="flex flex-col">
+                    <div className="flex flex-col gap-1">
                       {items.map((item) => (
                         <button
                           key={item.id}
@@ -209,7 +209,7 @@ function Navbar({ activeSection = 'home', onNavigate }) {
                               ? handleNavigate({ page: 'products', slug: item.slug })
                               : undefined
                           }
-                          className={`w-full rounded-md px-3 py-1.5 text-left text-sm font-semibold transition ${dropdownItemBase}`}
+                          className={`w-full rounded-md px-4 py-2 text-left text-sm font-semibold transition ${dropdownItemBase}`}
                         >
                           {item.label}
                         </button>
