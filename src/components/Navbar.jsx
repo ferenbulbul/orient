@@ -23,12 +23,12 @@ const SERVICE_DROPDOWN = [
 ]
 
 const PRODUCT_MEGA_MENU = [
-  { id: 'book', slug: 'kitap', icon: '📘', label: 'Kitap' },
-  { id: 'catalog', slug: 'katalog', icon: '📕', label: 'Katalog' },
-  { id: 'calendar', slug: 'takvim', icon: '🗓️', label: 'Takvim' },
-  { id: 'notebook', slug: 'ajanda', icon: '📓', label: 'Ajanda' },
-  { id: 'bag', slug: 'karton-canta', icon: '🛍️', label: 'Karton Çanta' },
-  { id: 'magazine', slug: 'dergi', icon: '📰', label: 'Dergi' },
+  { id: 'book', slug: 'kitap', label: 'Kitap' },
+  { id: 'catalog', slug: 'katalog', label: 'Katalog' },
+  { id: 'calendar', slug: 'takvim', label: 'Takvim' },
+  { id: 'notebook', slug: 'ajanda', label: 'Ajanda' },
+  { id: 'bag', slug: 'karton-canta', label: 'Karton Çanta' },
+  { id: 'magazine', slug: 'dergi', label: 'Dergi' },
 ]
 
 function Navbar({ activePage = 'home', onNavigate }) {
@@ -101,9 +101,6 @@ function Navbar({ activePage = 'home', onNavigate }) {
   const dropdownItemBase = shouldUseLightTheme
     ? 'text-slate-700 hover:bg-slate-100'
     : 'text-white hover:bg-white/10'
-  const megaCardBase = shouldUseLightTheme
-    ? 'border border-slate-100 bg-slate-50/70 text-slate-700 hover:bg-white hover:shadow-lg'
-    : 'border border-white/10 bg-white/10 text-white hover:bg-white/20 hover:shadow-[0_25px_40px_rgba(0,0,0,0.45)]'
 
   return (
     <header className={headerClasses}>
@@ -142,7 +139,8 @@ function Navbar({ activePage = 'home', onNavigate }) {
                 : defaultState
             }`
 
-            if (link.type === 'dropdown') {
+            if (link.type === 'dropdown' || link.type === 'mega') {
+              const items = link.type === 'dropdown' ? SERVICE_DROPDOWN : PRODUCT_MEGA_MENU
               return (
                 <div
                   key={link.id}
@@ -158,58 +156,25 @@ function Navbar({ activePage = 'home', onNavigate }) {
                     {link.label}
                   </button>
                   <div
-                    className={`absolute left-1/2 top-full mt-3 w-56 -translate-x-1/2 rounded-2xl p-3 transition-all duration-200 ${dropdownPanelBase} ${
+                    className={`absolute left-1/2 top-full mt-3 w-56 min-w-[220px] -translate-x-1/2 rounded-2xl p-3 transition-all duration-200 ${dropdownPanelBase} ${
                       hoverMenu === link.id
                         ? 'pointer-events-auto opacity-100 translate-y-0'
                         : 'pointer-events-none opacity-0 -translate-y-2'
                     }`}
                   >
-                    {SERVICE_DROPDOWN.map((item) => (
-                      <button
-                        key={item.id}
-                        type="button"
-                        className={`flex w-full items-center rounded-xl px-3 py-2 text-sm font-semibold transition ${dropdownItemBase}`}
-                      >
-                        {item.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )
-            }
-
-            if (link.type === 'mega') {
-              return (
-                <div
-                  key={link.id}
-                  className="relative"
-                  onMouseEnter={() => setHoverMenu(link.id)}
-                  onMouseLeave={() => setHoverMenu(null)}
-                >
-                  <button
-                    type="button"
-                    onClick={() => handleNavigate(link)}
-                    className={buttonClasses}
-                  >
-                    {link.label}
-                  </button>
-                  <div
-                    className={`absolute left-1/2 top-full mt-3 w-[480px] -translate-x-1/2 rounded-3xl p-6 transition-all duration-200 ${dropdownPanelBase} ${
-                      hoverMenu === link.id
-                        ? 'pointer-events-auto opacity-100 translate-y-0'
-                        : 'pointer-events-none opacity-0 -translate-y-2'
-                    }`}
-                  >
-                    <div className="grid gap-3 sm:grid-cols-3">
-                      {PRODUCT_MEGA_MENU.map((item) => (
+                    <div className="flex flex-col gap-1">
+                      {items.map((item) => (
                         <button
                           key={item.id}
                           type="button"
-                          onClick={() => handleNavigate({ page: 'products', slug: item.slug })}
-                          className={`flex flex-col rounded-2xl p-4 text-left text-sm font-semibold transition hover:-translate-y-0.5 ${megaCardBase}`}
+                          onClick={() =>
+                            link.type === 'mega'
+                              ? handleNavigate({ page: 'products', slug: item.slug })
+                              : undefined
+                          }
+                          className={`w-full rounded-xl px-3 py-2 text-left text-sm font-semibold transition ${dropdownItemBase}`}
                         >
-                          <span className="text-2xl">{item.icon}</span>
-                          <span className="mt-2">{item.label}</span>
+                          {item.label}
                         </button>
                       ))}
                     </div>
@@ -300,14 +265,7 @@ function Navbar({ activePage = 'home', onNavigate }) {
                               }
                               className="rounded-xl bg-white px-3 py-2 text-left text-sm font-semibold text-slate-700"
                             >
-                              {item.icon ? (
-                                <span className="flex items-center gap-2">
-                                  <span>{item.icon}</span>
-                                  <span>{item.label}</span>
-                                </span>
-                              ) : (
-                                item.label
-                              )}
+                              {item.label}
                             </button>
                           ))}
                         </div>
