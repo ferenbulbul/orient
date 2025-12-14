@@ -14,7 +14,7 @@ function Navbar({ activePage = 'home', onNavigate }) {
 
   useEffect(() => {
     const handleScroll = () => {
-      setHasScrolled(window.scrollY > 8)
+      setHasScrolled(window.scrollY > 32)
     }
     handleScroll()
     window.addEventListener('scroll', handleScroll)
@@ -39,22 +39,39 @@ function Navbar({ activePage = 'home', onNavigate }) {
     setIsMenuOpen(false)
   }
 
-  const baseClass =
-    'sticky top-0 z-50 w-full border-b border-white/10 backdrop-blur transition shadow-sm'
-  const scrolledClass = hasScrolled
-    ? 'bg-white/95 shadow-[0_10px_35px_rgba(15,23,42,0.12)]'
-    : 'bg-white/80'
+  const headerClasses = `sticky top-0 z-50 w-full border-b transition-all duration-300 ${
+    hasScrolled
+      ? 'border-white/40 bg-white/90 shadow-[0_15px_40px_rgba(15,23,42,0.15)] backdrop-blur-md'
+      : 'border-transparent bg-white/10 backdrop-blur-xl'
+  }`
+  const innerPadding = hasScrolled ? 'py-3' : 'py-6'
+  const logoCircleClass = `flex items-center justify-center rounded-full bg-slate-900 text-white transition-all duration-300 ${
+    hasScrolled ? 'h-12 w-12 text-lg' : 'h-16 w-16 text-2xl'
+  }`
+  const brandTextClass = `text-left transition-all duration-300 ${
+    hasScrolled ? 'text-base' : 'text-lg'
+  }`
 
   return (
-    <header className={`${baseClass} ${scrolledClass}`}>
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+    <header className={headerClasses}>
+      <div
+        className={`mx-auto flex max-w-6xl items-center justify-between px-6 transition-all duration-300 ${innerPadding}`}
+      >
         <a href="#top" className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-900 text-lg font-semibold text-white">
-            OR
-          </div>
-          <div className="text-left">
-            <p className="text-base font-semibold text-slate-900">Orient Matbaa</p>
-            <p className="text-xs uppercase tracking-[0.32em] text-slate-400">
+          <div className={logoCircleClass}>OR</div>
+          <div className={brandTextClass}>
+            <p
+              className={`font-semibold ${
+                hasScrolled ? 'text-slate-900' : 'text-white'
+              }`}
+            >
+              Orient Matbaa
+            </p>
+            <p
+              className={`text-xs uppercase tracking-[0.32em] ${
+                hasScrolled ? 'text-slate-400' : 'text-white/70'
+              }`}
+            >
               Kurumsal Baskı
             </p>
           </div>
@@ -63,15 +80,18 @@ function Navbar({ activePage = 'home', onNavigate }) {
         <nav className="hidden items-center gap-2 lg:flex">
           {NAV_LINKS.map((link) => {
             const isActive = (link.page ?? link.id) === activePage
+            const defaultState = hasScrolled
+              ? 'text-slate-600 hover:bg-white/70 hover:text-slate-900'
+              : 'text-white/80 hover:bg-white/10 hover:text-white'
             return (
               <button
                 key={link.id}
                 type="button"
                 onClick={() => handleNavigate(link)}
-                className={`rounded-full px-5 py-2 text-sm font-medium transition ${
+                className={`rounded-full px-5 py-2.5 text-sm font-medium transition-all duration-300 ${
                   isActive
-                    ? 'bg-slate-900 text-white shadow-lg'
-                    : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                    ? 'bg-slate-900 text-white shadow-lg shadow-slate-900/20'
+                    : defaultState
                 }`}
               >
                 {link.label}
@@ -82,7 +102,9 @@ function Navbar({ activePage = 'home', onNavigate }) {
 
         <button
           type="button"
-          className="inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-900 lg:hidden"
+          className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition-all duration-300 lg:hidden ${
+            hasScrolled ? 'border-slate-300 text-slate-900' : 'border-white/60 text-white'
+          }`}
           onClick={() => setIsMenuOpen((prev) => !prev)}
           aria-label="Menüyü Aç/Kapat"
         >
