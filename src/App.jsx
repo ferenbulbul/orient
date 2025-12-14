@@ -1,24 +1,22 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import Home from './pages/Home'
-import Services from './pages/Services'
-import Contact from './pages/Contact'
 import About from './pages/About'
+import Portfolio from './pages/Portfolio'
+import Contact from './pages/Contact'
 import './App.css'
-
-const PAGE_COMPONENTS = {
-  home: <Home />,
-  services: <Services />,
-  contact: <Contact />,
-}
 
 const SECTION_TARGETS = {
   home: '#top',
   services: '#services',
-  works: '#portfolio',
-  contact: '#contact-cta',
+}
+
+const ROUTE_TARGETS = {
+  about: '/about',
+  portfolio: '/portfolio',
+  contact: '/contact',
 }
 
 function App() {
@@ -29,18 +27,28 @@ function App() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    if (location.pathname === '/about') {
+    if (location.pathname === '/about' && activePage !== 'about') {
       setActivePage('about')
       return
     }
-
+    if (location.pathname === '/portfolio' && activePage !== 'portfolio') {
+      setActivePage('portfolio')
+      return
+    }
+    if (location.pathname === '/contact' && activePage !== 'contact') {
+      setActivePage('contact')
+      return
+    }
     if (location.pathname === '/' && pendingSection) {
       setActivePage(pendingSection)
       setPendingSection(null)
       return
     }
-
-    if (location.pathname === '/' && activePage === 'about') {
+    if (
+      location.pathname === '/' &&
+      !pendingSection &&
+      !['home', 'services'].includes(activePage)
+    ) {
       setActivePage('home')
     }
   }, [location.pathname, pendingSection, activePage])
@@ -48,29 +56,35 @@ function App() {
   useEffect(() => {
     if (location.pathname === '/' && pendingScrollTarget) {
       requestAnimationFrame(() => {
-        const selector = pendingScrollTarget
-        if (!selector || selector === '#top') {
-          window.scrollTo({ top: 0, behavior: 'smooth' })
-          return
-        }
-
-        const target = document.querySelector(selector)
-        if (target) {
-          target.scrollIntoView({ behavior: 'smooth', block: 'start' })
-        } else {
-          window.scrollTo({ top: 0, behavior: 'smooth' })
-        }
+        scrollToAnchor(pendingScrollTarget)
       })
       setPendingScrollTarget(null)
     }
   }, [location.pathname, pendingScrollTarget])
 
+  const scrollToAnchor = (selector) => {
+    if (typeof window === 'undefined') {
+      return
+    }
+    if (!selector || selector === '#top') {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+      return
+    }
+    const target = document.querySelector(selector)
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+  }
+
   const handleNavigate = (target) => {
-    if (target === 'about') {
-      if (location.pathname !== '/about') {
-        navigate('/about')
+    const routeTarget = ROUTE_TARGETS[target]
+    if (routeTarget) {
+      if (location.pathname !== routeTarget) {
+        navigate(routeTarget)
       }
-      setActivePage('about')
+      setActivePage(target)
       return
     }
 
@@ -84,20 +98,18 @@ function App() {
     }
 
     setActivePage(target)
+    scrollToAnchor(anchor)
   }
-
-  const currentPage = useMemo(
-    () => PAGE_COMPONENTS[activePage] ?? <Home />,
-    [activePage],
-  )
 
   return (
     <div className="app-shell">
       <Navbar activePage={activePage} onNavigate={handleNavigate} />
       <main className="content-area">
         <Routes>
-          <Route path="/" element={currentPage} />
+          <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
+          <Route path="/portfolio" element={<Portfolio />} />
+          <Route path="/contact" element={<Contact />} />
           <Route path="*" element={<Home />} />
         </Routes>
       </main>

@@ -1,6 +1,6 @@
+import { Link } from 'react-router-dom'
 import Hero from '../components/Hero'
 import ServicesGrid from '../components/ServicesGrid'
-import PortfolioGrid from '../components/PortfolioGrid'
 
 const whyUs = [
   {
@@ -45,24 +45,38 @@ function Home() {
         </div>
       </section>
 
-      <PortfolioGrid />
+      <section className="section">
+        <div className="section__heading">
+          <p className="eyebrow">Çalışmalarımız</p>
+          <h2>Referanslarımızı inceleyin.</h2>
+          <p>
+            Tamamladığımız baskı projelerinin geniş seçkisine göz atmak için
+            çalışmalara özel sayfamızı ziyaret edebilirsiniz.
+          </p>
+        </div>
+        <div className="contact-cta__actions" style={{ marginTop: 24 }}>
+          <Link className="btn primary" to="/portfolio">
+            Çalışmaları Gör
+          </Link>
+          <Link className="btn ghost" to="/contact">
+            İletişime Geç
+          </Link>
+        </div>
+      </section>
 
       <section className="section contact-cta" id="contact-cta">
         <div>
           <p className="eyebrow">İletişim</p>
           <h2>Projenizi konuşalım.</h2>
           <p>
-            İhtiyaçlarınızı paylaştığınızda, aynı gün içinde teknik detaylar ve
-            fiyatlandırmayı içeren teklifimizi gönderiyoruz.
+            İhtiyaçlarınızı paylaştığınızda, ilgili ekip sizi yeni iletişim
+            sayfamız üzerinden yönlendirir ve teklif sürecini başlatır.
           </p>
         </div>
         <div className="contact-cta__actions">
-          <a className="btn primary" href="mailto:info@orientmatbaa.com">
-            info@orientmatbaa.com
-          </a>
-          <a className="btn ghost" href="tel:+902160000000">
-            +90 (216) 000 00 00
-          </a>
+          <Link className="btn primary" to="/contact">
+            İletişim Sayfasına Git
+          </Link>
         </div>
       </section>
     </div>

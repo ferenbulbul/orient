@@ -14,8 +14,13 @@ function Contact() {
         <div>
           <h2>Genel Merkez</h2>
           <p>İkitelli OSB Mah. Matbaa Cad. No:12 Başakşehir / İstanbul</p>
-          <p>Tel: <a href="tel:+902160000000">+90 (216) 000 00 00</a></p>
-          <p>E-posta: <a href="mailto:info@orientmatbaa.com">info@orientmatbaa.com</a></p>
+          <p>
+            Tel: <a href="tel:+902160000000">+90 (216) 000 00 00</a>
+          </p>
+          <p>
+            E-posta:{' '}
+            <a href="mailto:info@orientmatbaa.com">info@orientmatbaa.com</a>
+          </p>
         </div>
         <div>
           <h2>Teklif Formu</h2>
@@ -30,12 +35,44 @@ function Contact() {
             </label>
             <label>
               Notlar
-              <textarea name="notes" rows="4" placeholder="Özel kağıt tercihleri, teslim tarihi vb." />
+              <textarea
+                name="notes"
+                rows="4"
+                placeholder="Özel kağıt tercihleri, teslim tarihi vb."
+              />
             </label>
             <button className="btn primary" type="button">
               Formu Gönder
             </button>
           </form>
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="card">
+          <p className="eyebrow">Konum</p>
+          <h2>Üretim tesisimizi ziyaret edin.</h2>
+          <p>
+            Aşağıdaki alan Google Maps iframe bileşeni için ayrılmıştır. Yakında
+            canlı harita entegrasyonu eklenecektir.
+          </p>
+          <div
+            className="map-placeholder"
+            style={{
+              marginTop: '24px',
+              width: '100%',
+              borderRadius: '16px',
+              border: '1px dashed rgba(148, 163, 184, 0.6)',
+              height: '360px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#64748b',
+              background: '#f8fafc',
+            }}
+          >
+            Google Maps alanı (placeholder)
+          </div>
         </div>
       </section>
     </div>
