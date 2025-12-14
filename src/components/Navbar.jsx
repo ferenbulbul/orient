@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 
 const NAV_LINKS = [
   { id: 'home', label: 'Ana Sayfa', href: '#top', page: 'home' },
@@ -11,6 +12,7 @@ const NAV_LINKS = [
 function Navbar({ activePage = 'home', onNavigate }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [hasScrolled, setHasScrolled] = useState(false)
+  const location = useLocation()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -39,11 +41,15 @@ function Navbar({ activePage = 'home', onNavigate }) {
     setIsMenuOpen(false)
   }
 
-  const headerClasses = `sticky top-0 z-50 w-full border-b transition-all duration-300 ${
-    hasScrolled
-      ? 'border-white/40 bg-white/90 shadow-[0_15px_40px_rgba(15,23,42,0.15)] backdrop-blur-md'
-      : 'border-transparent bg-white/10 backdrop-blur-xl'
-  }`
+  const isHomeRoute = location.pathname === '/'
+  const shouldUseLightTheme = hasScrolled || !isHomeRoute
+
+  const headerClasses = useMemo(() => {
+    if (shouldUseLightTheme) {
+      return 'sticky top-0 z-50 w-full border-b border-slate-100 bg-white/95 shadow-[0_15px_40px_rgba(15,23,42,0.12)] backdrop-blur-md transition-all duration-300'
+    }
+    return 'sticky top-0 z-50 w-full border-b border-transparent bg-white/10 backdrop-blur-xl transition-all duration-300'
+  }, [shouldUseLightTheme])
   const innerPadding = hasScrolled ? 'py-3' : 'py-6'
   const logoCircleClass = `flex items-center justify-center rounded-full bg-slate-900 text-white transition-all duration-300 ${
     hasScrolled ? 'h-12 w-12 text-lg' : 'h-16 w-16 text-2xl'
@@ -62,14 +68,14 @@ function Navbar({ activePage = 'home', onNavigate }) {
           <div className={brandTextClass}>
             <p
               className={`font-semibold ${
-                hasScrolled ? 'text-slate-900' : 'text-white'
+                shouldUseLightTheme ? 'text-slate-900' : 'text-white'
               }`}
             >
               Orient Matbaa
             </p>
             <p
               className={`text-xs uppercase tracking-[0.32em] ${
-                hasScrolled ? 'text-slate-400' : 'text-white/70'
+                shouldUseLightTheme ? 'text-slate-400' : 'text-white/70'
               }`}
             >
               Kurumsal Baskı
@@ -80,7 +86,7 @@ function Navbar({ activePage = 'home', onNavigate }) {
         <nav className="hidden items-center gap-2 lg:flex">
           {NAV_LINKS.map((link) => {
             const isActive = (link.page ?? link.id) === activePage
-            const defaultState = hasScrolled
+            const defaultState = shouldUseLightTheme
               ? 'text-slate-600 hover:bg-white/70 hover:text-slate-900'
               : 'text-white/80 hover:bg-white/10 hover:text-white'
             return (
@@ -103,7 +109,7 @@ function Navbar({ activePage = 'home', onNavigate }) {
         <button
           type="button"
           className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition-all duration-300 lg:hidden ${
-            hasScrolled ? 'border-slate-300 text-slate-900' : 'border-white/60 text-white'
+            shouldUseLightTheme ? 'border-slate-300 text-slate-900' : 'border-white/60 text-white'
           }`}
           onClick={() => setIsMenuOpen((prev) => !prev)}
           aria-label="Menüyü Aç/Kapat"
