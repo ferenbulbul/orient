@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 
 const NAV_LINKS = [
   { id: 'home', label: 'Ana Sayfa', href: '#top', page: 'home' },
+  { id: 'about', label: 'Hakkımızda', page: 'about' },
   { id: 'services', label: 'Hizmetler', href: '#services', page: 'services' },
   { id: 'works', label: 'Çalışmalar', href: '#portfolio', page: 'home' },
   { id: 'contact', label: 'İletişim', href: '#contact-cta', page: 'contact' },
