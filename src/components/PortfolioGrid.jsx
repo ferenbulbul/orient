@@ -18,27 +18,33 @@ const works = [
 
 function PortfolioGrid() {
   return (
-    <section className="section">
-      <div className="section__heading">
-        <p className="eyebrow">Örnek Çalışmalar</p>
-        <h2>İş ortaklarımız için ürettiğimiz seçkiler.</h2>
-        <p>
+    <section className="w-full bg-white px-6 py-16 sm:px-10">
+      <div className="mx-auto flex max-w-5xl flex-col gap-4 text-center">
+        <p className="text-xs uppercase tracking-[0.35em] text-amber-500">
+          Örnek Çalışmalar
+        </p>
+        <h2 className="text-3xl font-semibold leading-tight text-slate-900 sm:text-4xl">
+          İş ortaklarımız için ürettiğimiz seçkiler.
+        </h2>
+        <p className="text-base text-slate-500 sm:text-lg">
+          {/* Placeholder görseller kullanılıyor. */}
           Görseller placeholder olarak kullanılmaktadır. Talebinize göre detaylı
           referans listesi sunabiliriz.
         </p>
       </div>
-      <div className="portfolio-grid">
+
+      <div className="mx-auto mt-12 grid max-w-5xl gap-8 sm:grid-cols-2 lg:grid-cols-3">
         {works.map((work) => (
-          <article className="card portfolio-card" key={work.id}>
-            <div className="portfolio-card__image">
-              <img
-                src={`https://via.placeholder.com/520x320/111827/ffffff?text=${encodeURIComponent(work.title)}`}
-                alt={work.title}
-              />
-            </div>
-            <div>
-              <h3>{work.title}</h3>
-              <p>{work.subtitle}</p>
+          <article key={work.id} className="group relative overflow-hidden rounded-[32px]">
+            <img
+              src={`https://source.unsplash.com/520x320/?printing,press&sig=${work.id}`}
+              alt={work.title}
+              className="h-72 w-full object-cover transition duration-500 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-slate-950/70 opacity-0 transition duration-300 group-hover:opacity-100" />
+            <div className="absolute inset-0 flex flex-col justify-end p-6 text-white opacity-0 transition duration-300 group-hover:opacity-100">
+              <h3 className="text-2xl font-semibold">{work.title}</h3>
+              <p className="text-sm text-slate-200">{work.subtitle}</p>
             </div>
           </article>
         ))}
