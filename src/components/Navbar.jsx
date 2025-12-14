@@ -2,19 +2,23 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 const NAV_LINKS = [
-  { id: 'home', label: 'Ana Sayfa', href: '#top', page: 'home' },
-  { id: 'about', label: 'Hakkımızda', page: 'about' },
+  { id: 'home', label: 'Ana Sayfa', target: 'home' },
+  { id: 'about', label: 'Hakkımızda', path: '/about' },
   {
     id: 'services',
     label: 'Hizmetlerimiz',
-    href: '#services',
-    page: 'services',
+    target: 'services',
     type: 'dropdown',
   },
-  { id: 'products', label: 'Neler Üretiyoruz', type: 'mega' },
-  { id: 'machine', label: 'Makine Parkuru', page: 'machine', href: '/makine-parkuru' },
-  { id: 'portfolio', label: 'Çalışmalar', page: 'portfolio' },
-  { id: 'contact', label: 'İletişim', page: 'contact' },
+  {
+    id: 'products',
+    label: 'Neler Üretiyoruz',
+    target: 'products',
+    type: 'mega',
+  },
+  { id: 'machine', label: 'Makine Parkuru', path: '/makine-parkuru' },
+  { id: 'portfolio', label: 'Çalışmalar', path: '/portfolio' },
+  { id: 'contact', label: 'İletişim', path: '/contact' },
 ]
 
 const SERVICE_DROPDOWN = [
@@ -32,7 +36,7 @@ const PRODUCT_MEGA_MENU = [
   { id: 'magazine', slug: 'dergi', label: 'Dergi' },
 ]
 
-function Navbar({ activePage = 'home', onNavigate }) {
+function Navbar({ activeSection = 'home', onNavigate }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [hasScrolled, setHasScrolled] = useState(false)
   const [hoverMenu, setHoverMenu] = useState(null)
@@ -40,6 +44,7 @@ function Navbar({ activePage = 'home', onNavigate }) {
   const location = useLocation()
   const navigate = useNavigate()
   const hoverTimers = useRef({ open: null, close: null })
+  const currentPath = location.pathname
 
   useEffect(() => {
     const handleScroll = () => {
@@ -80,20 +85,20 @@ function Navbar({ activePage = 'home', onNavigate }) {
       return
     }
 
-    if (onNavigate && typeof onNavigate === 'function') {
-      onNavigate(link.page ?? link.id)
+    if (link?.path) {
+      if (currentPath !== link.path) {
+        navigate(link.path)
+      }
+      setIsMenuOpen(false)
+      setHoverMenu(null)
+      setMobileDropdown(null)
+      return
     }
 
-    if (link.href && typeof window !== 'undefined') {
-      const target = document.querySelector(link.href)
-      if (target) {
-        target.scrollIntoView({ behavior: 'smooth', block: 'start' })
-      } else if ((link.page ?? link.id) === 'home') {
-        window.scrollTo({ top: 0, behavior: 'smooth' })
-      }
-    } else if (typeof window !== 'undefined' && (link.page ?? link.id) === 'home') {
-      window.scrollTo({ top: 0, behavior: 'smooth' })
+    if (onNavigate && typeof onNavigate === 'function' && link?.target) {
+      onNavigate(link.target)
     }
+
     setIsMenuOpen(false)
     setHoverMenu(null)
     setMobileDropdown(null)
@@ -121,6 +126,18 @@ function Navbar({ activePage = 'home', onNavigate }) {
   const dropdownItemBase = shouldUseLightTheme
     ? 'text-slate-700 hover:bg-slate-100'
     : 'text-white hover:bg-white/10'
+  const isLinkActive = (link) => {
+    if (link.path) {
+      return currentPath === link.path
+    }
+    if (link.id === 'products' && currentPath.startsWith('/uretim')) {
+      return true
+    }
+    if (!link.path && currentPath === '/' && activeSection) {
+      return activeSection === (link.target ?? link.id)
+    }
+    return false
+  }
 
   return (
     <header className={headerClasses}>
@@ -149,7 +166,7 @@ function Navbar({ activePage = 'home', onNavigate }) {
 
         <nav className="hidden items-center gap-2 lg:flex">
           {NAV_LINKS.map((link) => {
-            const isActive = (link.page ?? link.id) === activePage
+            const isActive = isLinkActive(link)
             const defaultState = shouldUseLightTheme
               ? 'text-slate-600 hover:bg-white/70 hover:text-slate-900'
               : 'text-white/80 hover:bg-white/10 hover:text-white'
@@ -243,7 +260,7 @@ function Navbar({ activePage = 'home', onNavigate }) {
         <div className="border-t border-slate-100 bg-white/98 px-6 py-4 lg:hidden">
           <nav className="flex flex-col gap-2">
             {NAV_LINKS.map((link) => {
-              const isActive = (link.page ?? link.id) === activePage
+              const isActive = isLinkActive(link)
 
               if (link.type === 'dropdown' || link.type === 'mega') {
                 const isOpen = mobileDropdown === link.id

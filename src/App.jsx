@@ -32,55 +32,26 @@ const WHY_US = [
 const SECTION_TARGETS = {
   home: '#top',
   services: '#services',
-}
-
-const ROUTE_TARGETS = {
-  about: '/about',
-  portfolio: '/portfolio',
-  contact: '/contact',
+  products: '#services',
 }
 
 function App() {
-  const [activePage, setActivePage] = useState('home')
+  const [activeSection, setActiveSection] = useState('home')
   const [pendingSection, setPendingSection] = useState(null)
   const [pendingScrollTarget, setPendingScrollTarget] = useState(null)
   const location = useLocation()
   const navigate = useNavigate()
 
   useEffect(() => {
-    if (location.pathname === '/about' && activePage !== 'about') {
-      setActivePage('about')
-      return
-    }
-    if (location.pathname === '/portfolio' && activePage !== 'portfolio') {
-      setActivePage('portfolio')
-      return
-    }
-    if (location.pathname === '/contact' && activePage !== 'contact') {
-      setActivePage('contact')
-      return
-    }
-    if (location.pathname === '/makine-parkuru' && activePage !== 'machine') {
-      setActivePage('machine')
-      return
-    }
-    if (location.pathname.startsWith('/uretim') && activePage !== 'products') {
-      setActivePage('products')
-      return
-    }
     if (location.pathname === '/' && pendingSection) {
-      setActivePage(pendingSection)
+      setActiveSection(pendingSection)
       setPendingSection(null)
       return
     }
-    if (
-      location.pathname === '/' &&
-      !pendingSection &&
-      !['home', 'services'].includes(activePage)
-    ) {
-      setActivePage('home')
+    if (location.pathname !== '/') {
+      setActiveSection('home')
     }
-  }, [location.pathname, pendingSection, activePage])
+  }, [location.pathname, pendingSection])
 
   useEffect(() => {
     if (location.pathname === '/' && pendingScrollTarget) {
@@ -108,15 +79,6 @@ function App() {
   }
 
   const handleNavigate = (target) => {
-    const routeTarget = ROUTE_TARGETS[target]
-    if (routeTarget) {
-      if (location.pathname !== routeTarget) {
-        navigate(routeTarget)
-      }
-      setActivePage(target)
-      return
-    }
-
     const anchor = SECTION_TARGETS[target] ?? '#top'
 
     if (location.pathname !== '/') {
@@ -126,13 +88,16 @@ function App() {
       return
     }
 
-    setActivePage(target)
+    setActiveSection(target)
     scrollToAnchor(anchor)
   }
 
   return (
     <div className="app-shell">
-      <Navbar activePage={activePage} onNavigate={handleNavigate} />
+      <Navbar
+        activeSection={location.pathname === '/' ? activeSection : null}
+        onNavigate={handleNavigate}
+      />
       <main className="content-area">
         <Routes>
           <Route path="/" element={<HomePage />} />
