@@ -75,7 +75,7 @@ function Navbar({ activeSection = 'home', onNavigate }) {
 
   const handleNavigate = (link) => {
     if (link?.slug) {
-      navigate(`/uretim/${link.slug}`)
+      navigate(`/urunler/${link.slug}`)
       if (onNavigate && typeof onNavigate === 'function') {
         onNavigate('products')
       }
@@ -130,7 +130,7 @@ function Navbar({ activeSection = 'home', onNavigate }) {
     if (link.path) {
       return currentPath === link.path
     }
-    if (link.id === 'products' && currentPath.startsWith('/uretim')) {
+    if (link.id === 'products' && currentPath.startsWith('/urunler')) {
       return true
     }
     if (!link.path && currentPath === '/' && activeSection) {

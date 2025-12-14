@@ -7,8 +7,8 @@ import ProductShowcase from './components/ProductShowcase'
 import About from './pages/About'
 import Portfolio from './pages/Portfolio'
 import Contact from './pages/Contact'
-import Product from './pages/Product'
 import MachinePark from './pages/MachinePark'
+import ProductCategory from './pages/ProductCategory'
 import './App.css'
 
 const WHY_US = [
@@ -31,8 +31,8 @@ const WHY_US = [
 
 const SECTION_TARGETS = {
   home: '#top',
-  services: '#services',
-  products: '#services',
+  services: '#product-band',
+  products: '#product-band',
 }
 
 function App() {
@@ -105,7 +105,7 @@ function App() {
           <Route path="/portfolio" element={<Portfolio />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/makine-parkuru" element={<MachinePark />} />
-          <Route path="/uretim/:slug" element={<Product />} />
+          <Route path="/urunler/:slug" element={<ProductCategory />} />
           <Route path="*" element={<HomePage />} />
         </Routes>
       </main>
@@ -120,9 +120,7 @@ function HomePage() {
   return (
     <>
       <Hero />
-      <ProductShowcase />
       <div className="page home-page">
-
         <section className="section">
           <div className="section__heading">
             <p className="eyebrow">Neden Biz?</p>
@@ -142,7 +140,9 @@ function HomePage() {
             ))}
           </div>
         </section>
-
+      </div>
+      <ProductShowcase />
+      <div className="page home-page">
         <section className="section">
           <div className="section__heading">
             <p className="eyebrow">Çalışmalarımız</p>
