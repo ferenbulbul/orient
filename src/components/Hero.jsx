@@ -22,10 +22,10 @@ function Hero() {
   return (
     <section
       id="home-hero"
-      className="relative h-screen w-screen overflow-hidden text-white -mt-20 sm:-mt-24 md:-mt-28"
+      className="relative min-h-screen w-full overflow-hidden text-white -mt-20 sm:-mt-24 md:-mt-28"
     >
       <div
-        className="absolute inset-0 transition duration-300 ease-out"
+        className="absolute inset-0 w-full overflow-hidden transition duration-300 ease-out"
         style={{
           transform: `scale(${1 + scrollProgress * 0.12})`,
           opacity: `${1 - scrollProgress * 0.3}`,
@@ -39,7 +39,7 @@ function Hero() {
         <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/70 to-slate-950/90" />
       </div>
 
-      <div className="relative z-10 mx-auto flex h-full max-w-6xl flex-col justify-center gap-12 px-6 pt-28 pb-16 lg:flex-row lg:items-center lg:gap-20">
+      <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-6xl flex-col justify-center gap-12 px-6 pt-28 pb-16 lg:flex-row lg:items-center lg:gap-20">
         <div className="flex-1">
           <p className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.4em] text-amber-300">
             Kurumsal Baskı Çözümleri
