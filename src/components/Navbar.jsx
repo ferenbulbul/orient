@@ -76,9 +76,6 @@ function Navbar({ activeSection = 'home', onNavigate }) {
   const handleNavigate = (link) => {
     if (link?.slug) {
       navigate(`/urunler/${link.slug}`)
-      if (onNavigate && typeof onNavigate === 'function') {
-        onNavigate('products')
-      }
       setIsMenuOpen(false)
       setHoverMenu(null)
       setMobileDropdown(null)

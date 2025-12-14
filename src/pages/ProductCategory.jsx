@@ -46,23 +46,20 @@ function ProductCategory() {
               (item, index) => (
                 <article
                   key={item?.title ?? index}
-                  className="group overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-[0_25px_60px_rgba(15,23,42,0.08)] transition hover:-translate-y-1"
+                  className="group relative aspect-[4/3] cursor-pointer overflow-hidden rounded-3xl shadow-[0_25px_60px_rgba(15,23,42,0.12)] transition hover:-translate-y-1 hover:shadow-[0_30px_80px_rgba(15,23,42,0.2)] active:scale-[0.99]"
                 >
-                  <div className="h-48 w-full overflow-hidden">
-                    <img
-                      src={item?.image ?? 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1200&q=80'}
-                      alt={item?.title ?? 'Üretim'}
-                      className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-                    />
-                  </div>
-                  <div className="px-5 py-4">
-                    <p className="text-lg font-semibold text-slate-900">
+                  <img
+                    src={
+                      item?.image ??
+                      'https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1200&q=80'
+                    }
+                    alt={item?.title ?? 'Üretim'}
+                    className="h-full w-full object-cover transition duration-[1200ms] group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                  <div className="absolute inset-x-0 bottom-0 px-5 py-4">
+                    <p className="text-lg font-semibold text-white">
                       {item?.title ?? 'Yeni ürün grubu hazırlanıyor'}
-                    </p>
-                    <p className="mt-1 text-sm text-slate-500">
-                      {item?.title
-                        ? 'Teknik şartnamelerinize göre kişiselleştirilir.'
-                        : 'Bu kategori kısa süre içinde güncellenecektir.'}
                     </p>
                   </div>
                 </article>
