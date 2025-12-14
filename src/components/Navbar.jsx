@@ -17,24 +17,82 @@ const NAV_LINKS = [
     type: 'mega',
   },
   { id: 'machine', label: 'Makine Parkuru', path: '/makine-parkuru' },
-  { id: 'portfolio', label: 'Çalışmalar', path: '/portfolio' },
+  { id: 'portfolyo', label: 'Portfolyo', path: '/portfolyo' },
   { id: 'contact', label: 'İletişim', path: '/contact' },
 ]
 
 const SERVICE_DROPDOWN = [
-  { id: 'design', label: 'Grafik Tasarım' },
-  { id: 'print', label: 'Baskı' },
-  { id: 'binding', label: 'Mücellit' },
+  { id: 'design', label: 'Grafik Tasarım', target: 'services' },
+  { id: 'print', label: 'Baskı', target: 'services' },
+  { id: 'binding', label: 'Mücellit', target: 'services' },
 ]
 
 const PRODUCT_MEGA_MENU = [
-  { id: 'book', slug: 'kitap', label: 'Kitap' },
-  { id: 'catalog', slug: 'katalog', label: 'Katalog' },
-  { id: 'calendar', slug: 'takvim', label: 'Takvim' },
-  { id: 'notebook', slug: 'ajanda', label: 'Ajanda' },
-  { id: 'bag', slug: 'karton-canta', label: 'Karton Çanta' },
-  { id: 'magazine', slug: 'dergi', label: 'Dergi' },
+  { id: 'book', slug: 'kitap', label: 'Kitap', icon: 'book' },
+  { id: 'catalog', slug: 'katalog', label: 'Katalog', icon: 'catalog' },
+  { id: 'calendar', slug: 'takvim', label: 'Takvim', icon: 'calendar' },
+  { id: 'notebook', slug: 'ajanda', label: 'Ajanda', icon: 'notebook' },
+  { id: 'bag', slug: 'karton-canta', label: 'Karton Çanta', icon: 'bag' },
+  { id: 'magazine', slug: 'dergi', label: 'Dergi', icon: 'magazine' },
 ]
+
+const PRODUCT_ICONS = {
+  book: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
+      <path d="M4 19a2 2 0 0 1 2-2h13" />
+      <path d="M6 5h13v14" />
+      <path d="M6 5a2 2 0 0 0-2 2v12" />
+      <path d="M10 8h6" />
+      <path d="M10 12h4" />
+    </svg>
+  ),
+  catalog: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
+      <rect x="3.5" y="4.5" width="17" height="15" rx="2" />
+      <path d="M8 8h8" />
+      <path d="M8 12h5" />
+      <path d="M8 16h7" />
+    </svg>
+  ),
+  calendar: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
+      <rect x="3" y="4" width="18" height="17" rx="2" />
+      <path d="M16 2v4" />
+      <path d="M8 2v4" />
+      <path d="M3 10h18" />
+      <path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01" />
+    </svg>
+  ),
+  notebook: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
+      <rect x="6" y="3" width="12" height="18" rx="1.8" />
+      <path d="M9.5 7h5" />
+      <path d="M9.5 11h5" />
+      <path d="M9.5 15h3" />
+      <path d="M6 7h-1" />
+      <path d="M6 11h-1" />
+      <path d="M6 15h-1" />
+    </svg>
+  ),
+  bag: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
+      <path d="M7 7V6a5 5 0 0 1 10 0v1" />
+      <rect x="4" y="7" width="16" height="13" rx="2" />
+      <path d="M10 11v2" />
+      <path d="M14 11v2" />
+    </svg>
+  ),
+  magazine: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
+      <path d="M6 4h11a3 3 0 0 1 3 3v11" />
+      <path d="M6 20h12a2 2 0 0 0 2-2V7" />
+      <path d="M6 4v16a2 2 0 0 0 2 2" />
+      <path d="M8 8h5" />
+      <path d="M8 12h3" />
+      <path d="M8 16h4" />
+    </svg>
+  ),
+}
 
 function Navbar({ activeSection = 'home', onNavigate }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -59,8 +117,13 @@ function Navbar({ activeSection = 'home', onNavigate }) {
     }
   }, [])
 
-  const handleHoverEnter = (id) => {
+  const handleHoverEnter = (id, instant = false) => {
     clearTimeout(hoverTimers.current.close)
+    if (instant) {
+      clearTimeout(hoverTimers.current.open)
+      setHoverMenu(id)
+      return
+    }
     hoverTimers.current.open = setTimeout(() => {
       setHoverMenu(id)
     }, 160)
@@ -73,12 +136,16 @@ function Navbar({ activeSection = 'home', onNavigate }) {
     }, 160)
   }
 
+  const closeMenus = () => {
+    setIsMenuOpen(false)
+    setHoverMenu(null)
+    setMobileDropdown(null)
+  }
+
   const handleNavigate = (link) => {
     if (link?.slug) {
       navigate(`/urunler/${link.slug}`)
-      setIsMenuOpen(false)
-      setHoverMenu(null)
-      setMobileDropdown(null)
+      closeMenus()
       return
     }
 
@@ -86,9 +153,20 @@ function Navbar({ activeSection = 'home', onNavigate }) {
       if (currentPath !== link.path) {
         navigate(link.path)
       }
-      setIsMenuOpen(false)
-      setHoverMenu(null)
-      setMobileDropdown(null)
+      closeMenus()
+      return
+    }
+
+    if (link?.sectionTarget && onNavigate) {
+      if (currentPath !== '/') {
+        navigate('/')
+        setTimeout(() => {
+          onNavigate(link.sectionTarget)
+        }, 220)
+      } else {
+        onNavigate(link.sectionTarget)
+      }
+      closeMenus()
       return
     }
 
@@ -96,9 +174,7 @@ function Navbar({ activeSection = 'home', onNavigate }) {
       onNavigate(link.target)
     }
 
-    setIsMenuOpen(false)
-    setHoverMenu(null)
-    setMobileDropdown(null)
+    closeMenus()
   }
 
   const isHomeRoute = location.pathname === '/'
@@ -106,9 +182,9 @@ function Navbar({ activeSection = 'home', onNavigate }) {
 
   const headerClasses = useMemo(() => {
     if (shouldUseLightTheme) {
-      return 'sticky top-0 z-50 w-full border-b border-slate-100 bg-white/95 shadow-[0_15px_40px_rgba(15,23,42,0.12)] backdrop-blur-md transition-all duration-300'
+      return 'sticky top-10 z-50 w-full border-b border-slate-100 bg-white/95 shadow-[0_15px_40px_rgba(15,23,42,0.12)] backdrop-blur-md transition-all duration-300'
     }
-    return 'sticky top-0 z-50 w-full border-b border-transparent bg-white/10 backdrop-blur-xl transition-all duration-300'
+    return 'sticky top-10 z-50 w-full border-b border-transparent bg-white/10 backdrop-blur-xl transition-all duration-300'
   }, [shouldUseLightTheme])
   const innerPadding = hasScrolled ? 'py-3' : 'py-6'
   const logoCircleClass = `flex items-center justify-center rounded-full bg-slate-900 text-white transition-all duration-300 ${
@@ -118,11 +194,14 @@ function Navbar({ activeSection = 'home', onNavigate }) {
     hasScrolled ? 'text-base' : 'text-lg'
   }`
   const dropdownPanelBase = shouldUseLightTheme
-    ? 'border border-slate-100 bg-white text-slate-700 shadow-xl'
-    : 'border border-white/10 bg-slate-900/85 text-white shadow-[0_20px_45px_rgba(0,0,0,0.45)] backdrop-blur'
+    ? 'border-slate-100 bg-white text-slate-700 shadow-xl'
+    : 'border-white/10 bg-slate-900/85 text-white shadow-[0_20px_45px_rgba(0,0,0,0.45)] backdrop-blur'
   const dropdownItemBase = shouldUseLightTheme
     ? 'text-slate-700 hover:bg-slate-100'
     : 'text-white hover:bg-white/10'
+  const dividerClass = shouldUseLightTheme
+    ? 'divide-y divide-slate-100'
+    : 'divide-y divide-white/10'
   const isLinkActive = (link) => {
     if (link.path) {
       return currentPath === link.path
@@ -172,7 +251,8 @@ function Navbar({ activeSection = 'home', onNavigate }) {
             }`
 
             if (link.type === 'dropdown' || link.type === 'mega') {
-              const items = link.type === 'dropdown' ? SERVICE_DROPDOWN : PRODUCT_MEGA_MENU
+              const items =
+                link.type === 'dropdown' ? SERVICE_DROPDOWN : PRODUCT_MEGA_MENU
               return (
                 <div
                   key={link.id}
@@ -182,31 +262,58 @@ function Navbar({ activeSection = 'home', onNavigate }) {
                 >
                   <button
                     type="button"
-                    onClick={() => handleNavigate(link)}
+                    onClick={() =>
+                      setHoverMenu((prev) => (prev === link.id ? null : link.id))
+                    }
                     className={buttonClasses}
                   >
                     {link.label}
                   </button>
                   <div
-                    className={`absolute left-1/2 top-full mt-1 w-64 min-w-[280px] -translate-x-1/2 rounded-xl px-4 py-3 transition-all duration-200 ${dropdownPanelBase} ${
+                    className={`absolute left-0 top-full mt-3 min-w-[280px] rounded-2xl border ${dropdownPanelBase} ${
                       hoverMenu === link.id
                         ? 'pointer-events-auto opacity-100 translate-y-0'
-                        : 'pointer-events-none opacity-0 -translate-y-1'
+                        : 'pointer-events-none opacity-0 -translate-y-1.5'
                     }`}
                   >
-                    <div className="flex flex-col gap-1">
+                    <div
+                      className={`flex flex-col px-3 py-2 ${
+                        link.type === 'mega'
+                          ? `divide-y ${
+                              shouldUseLightTheme ? 'divide-slate-100' : 'divide-white/10'
+                            }`
+                          : dividerClass
+                      }`}
+                    >
                       {items.map((item) => (
                         <button
                           key={item.id}
                           type="button"
-                          onClick={() =>
-                            link.type === 'mega'
-                              ? handleNavigate({ page: 'products', slug: item.slug })
-                              : undefined
-                          }
-                          className={`w-full rounded-md px-4 py-2 text-left text-sm font-semibold transition ${dropdownItemBase}`}
+                          onClick={() => {
+                            if (link.type === 'mega') {
+                              handleNavigate({ page: 'products', slug: item.slug })
+                              return
+                            }
+                            if (link.type === 'dropdown' && item.target) {
+                              handleNavigate({ sectionTarget: item.target })
+                            }
+                          }}
+                          className={`flex w-full items-center gap-3 px-3 py-2 text-left text-sm font-semibold transition-colors duration-200 ${dropdownItemBase}`}
                         >
-                          {item.label}
+                          <span
+                            className={`flex h-9 w-9 items-center justify-center rounded-full border ${
+                              shouldUseLightTheme
+                                ? 'border-slate-200 bg-slate-50 text-slate-500'
+                                : 'border-white/20 bg-white/5 text-white/80'
+                            }`}
+                          >
+                            {link.type === 'mega' ? (
+                              PRODUCT_ICONS[item.icon] ?? PRODUCT_ICONS.book
+                            ) : (
+                              <span className="h-2 w-2 rounded-full bg-current" />
+                            )}
+                          </span>
+                          <span className="flex-1 text-left">{item.label}</span>
                         </button>
                       ))}
                     </div>
@@ -278,26 +385,31 @@ function Navbar({ activeSection = 'home', onNavigate }) {
                       <span className="text-sm">{isOpen ? '−' : '+'}</span>
                     </button>
                     {isOpen && (
-                      <div className="rounded-2xl border border-slate-100 bg-slate-50/80 p-3">
-                        <div
-                          className={
-                            link.type === 'mega'
-                              ? 'grid gap-3 sm:grid-cols-2'
-                              : 'flex flex-col gap-2'
-                          }
-                        >
+                      <div className="rounded-2xl border border-slate-100 bg-white p-3 shadow-[0_15px_35px_rgba(15,23,42,0.08)]">
+                        <div className="flex flex-col divide-y divide-slate-100">
                           {items.map((item) => (
                             <button
                               key={item.id}
                               type="button"
-                              onClick={() =>
-                                link.type === 'mega'
-                                  ? handleNavigate({ page: 'products', slug: item.slug })
-                                  : undefined
-                              }
-                              className="rounded-xl bg-white px-3 py-2 text-left text-sm font-semibold text-slate-700"
+                              onClick={() => {
+                                if (link.type === 'mega') {
+                                  handleNavigate({ page: 'products', slug: item.slug })
+                                  return
+                                }
+                                if (link.type === 'dropdown' && item.target) {
+                                  handleNavigate({ sectionTarget: item.target })
+                                }
+                              }}
+                              className="flex items-center gap-3 px-3 py-2.5 text-left text-sm font-semibold text-slate-700"
                             >
-                              {item.label}
+                              <span className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-slate-500">
+                                {link.type === 'mega' ? (
+                                  PRODUCT_ICONS[item.icon] ?? PRODUCT_ICONS.book
+                                ) : (
+                                  <span className="h-2 w-2 rounded-full bg-current" />
+                                )}
+                              </span>
+                              <span>{item.label}</span>
                             </button>
                           ))}
                         </div>

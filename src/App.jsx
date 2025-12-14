@@ -4,8 +4,13 @@ import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import Hero from './components/Hero'
 import ProductShowcase from './components/ProductShowcase'
+import ScrollToTop from './components/ScrollToTop'
+import TopBar from './components/TopBar'
+import QuoteModal from './components/QuoteModal'
+import { BRAND_LOGOS } from './data/brands'
 import About from './pages/About'
 import Portfolio from './pages/Portfolio'
+import Portfolyo from './pages/Portfolyo'
 import Contact from './pages/Contact'
 import MachinePark from './pages/MachinePark'
 import ProductCategory from './pages/ProductCategory'
@@ -35,10 +40,13 @@ const SECTION_TARGETS = {
   products: '#product-band',
 }
 
+const FEATURED_BRANDS = BRAND_LOGOS.slice(0, 5)
+
 function App() {
   const [activeSection, setActiveSection] = useState('home')
   const [pendingSection, setPendingSection] = useState(null)
   const [pendingScrollTarget, setPendingScrollTarget] = useState(null)
+  const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false)
   const location = useLocation()
   const navigate = useNavigate()
 
@@ -92,34 +100,40 @@ function App() {
     scrollToAnchor(anchor)
   }
 
+  const openQuoteModal = () => setIsQuoteModalOpen(true)
+
   return (
     <div className="app-shell">
+      <ScrollToTop />
+      <TopBar onRequestQuote={openQuoteModal} />
       <Navbar
         activeSection={location.pathname === '/' ? activeSection : null}
         onNavigate={handleNavigate}
       />
       <main className="content-area">
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          <Route path="/" element={<HomePage onOpenQuoteModal={openQuoteModal} />} />
           <Route path="/about" element={<About />} />
           <Route path="/portfolio" element={<Portfolio />} />
+          <Route path="/portfolyo" element={<Portfolyo />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/makine-parkuru" element={<MachinePark />} />
           <Route path="/urunler/:slug" element={<ProductCategory />} />
-          <Route path="*" element={<HomePage />} />
+          <Route path="*" element={<HomePage onOpenQuoteModal={openQuoteModal} />} />
         </Routes>
       </main>
       <Footer />
+      <QuoteModal isOpen={isQuoteModalOpen} onClose={() => setIsQuoteModalOpen(false)} />
     </div>
   )
 }
 
 export default App
 
-function HomePage() {
+function HomePage({ onOpenQuoteModal }) {
   return (
     <>
-      <Hero />
+      <Hero onOpenQuoteModal={onOpenQuoteModal} />
       <div className="page home-page">
         <section className="section">
           <div className="section__heading">
@@ -145,23 +159,40 @@ function HomePage() {
       <div className="page home-page">
         <section className="section">
           <div className="section__heading">
-            <p className="eyebrow">Çalışmalarımız</p>
-            <h2>Referanslarımızı inceleyin.</h2>
+            <p className="eyebrow">Birlikte Çalıştığımız Markalar</p>
+            <h2>Tüm portfolyomuzdan seçkiler.</h2>
             <p>
-              Tamamladığımız baskı projelerinin geniş seçkisine göz atmak için
-              çalışmalara özel sayfamızı ziyaret edebilirsiniz.
+              Yıllar içinde büyüttüğümüz kurumsal müşteri ağımızın bir bölümünü aşağıda görebilirsiniz.
+              Tam liste için portfolyo sayfamızı ziyaret edebilirsiniz.
             </p>
           </div>
-          <div className="contact-cta__actions" style={{ marginTop: 24 }}>
-            <Link className="btn primary" to="/portfolio">
-              Çalışmaları Gör
-            </Link>
-            <Link className="btn ghost" to="/contact">
-              İletişime Geç
+          <div className="mt-8 grid gap-4 sm:grid-cols-3 lg:grid-cols-5">
+            {FEATURED_BRANDS.map((brand) => (
+              <Link
+                key={brand.id}
+                to="/portfolyo"
+                className="group block overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-[0_10px_25px_rgba(15,23,42,0.08)] transition hover:-translate-y-0.5 hover:shadow-[0_18px_38px_rgba(15,23,42,0.12)]"
+                aria-label={`${brand.name} portfolyo kartı`}
+              >
+                <div className="aspect-square p-4">
+                  <img
+                    src={brand.logo}
+                    alt={`${brand.name} logosu`}
+                    className="h-full w-full object-contain transition duration-400 group-hover:scale-105"
+                    loading="lazy"
+                  />
+                </div>
+              </Link>
+            ))}
+          </div>
+          <div className="mt-8">
+            <Link className="btn primary" to="/portfolyo">
+              Tüm Portfolyoyu Gör
             </Link>
           </div>
         </section>
-
+      </div>
+      <div className="page home-page">
         <section className="section contact-cta" id="contact-cta">
           <div>
             <p className="eyebrow">İletişim</p>

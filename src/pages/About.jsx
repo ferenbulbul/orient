@@ -10,7 +10,7 @@ function About() {
     <div className="bg-white text-slate-900">
       <section className="relative w-full overflow-hidden">
         <img
-          src="https://source.unsplash.com/1600x900/?printing,factory"
+          src="https://unsplash.com/photos/white-green-and-blue-textile-PtabTe6iJ_8"
           alt="Orient Matbaa tesisleri"
           className="h-[340px] w-full object-cover sm:h-[420px]"
         />

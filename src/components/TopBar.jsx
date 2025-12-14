@@ -1,0 +1,98 @@
+const socials = [
+  {
+    id: 'facebook',
+    href: '#',
+    label: 'Facebook',
+    icon: (
+      <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current">
+        <path d="M13 22v-8h2.5l.5-3H13V8.5c0-.9.3-1.5 1.6-1.5H16V4.3C15.4 4.2 14.2 4 13 4c-2.4 0-4 1.3-4 3.9V11H6v3h3v8h4z" />
+      </svg>
+    ),
+  },
+  {
+    id: 'instagram',
+    href: '#',
+    label: 'Instagram',
+    icon: (
+      <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current">
+        <path d="M7 2C4.2 2 2 4.2 2 7v10c0 2.8 2.2 5 5 5h10c2.8 0 5-2.2 5-5V7c0-2.8-2.2-5-5-5H7zm0 2h10c1.7 0 3 1.3 3 3v10c0 1.7-1.3 3-3 3H7c-1.7 0-3-1.3-3-3V7c0-1.7 1.3-3 3-3zm9.5 1.8a1 1 0 100 2 1 1 0 000-2zM12 7a5 5 0 100 10 5 5 0 000-10zm0 2a3 3 0 110 6 3 3 0 010-6z" />
+      </svg>
+    ),
+  },
+  {
+    id: 'linkedin',
+    href: '#',
+    label: 'LinkedIn',
+    icon: (
+      <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current">
+        <path d="M6.5 6.5A1.75 1.75 0 104.75 4.75 1.75 1.75 0 006.5 6.5zM4 9h5v11H4zm7 0h4.7v1.6h.1c.6-1.1 2-2.3 4-2.3 4.3 0 5.1 2.8 5.1 6.4V20H20v-5c0-1.2 0-2.7-1.7-2.7-1.7 0-2 1.3-2 2.6V20h-5z" />
+      </svg>
+    ),
+  },
+]
+
+const LANGUAGES = ['TR', 'EN', 'DE', 'RU']
+
+function TopBar({ onRequestQuote }) {
+  return (
+    <div className="fixed top-0 left-0 z-[70] h-10 w-full border-b border-slate-900/20 bg-slate-900/95 text-white">
+      <div className="mx-auto flex h-full max-w-6xl flex-wrap items-center gap-3 px-4 text-sm sm:flex-nowrap sm:gap-4 sm:px-6">
+        <div className="flex flex-1 flex-wrap items-center gap-4 text-white/80">
+          <a
+            href="tel:+902123334455"
+            className="font-semibold text-white transition hover:text-amber-300"
+          >
+            +90 212 333 44 55
+          </a>
+          <span className="hidden h-4 w-px bg-white/20 sm:block" />
+          <a
+            href="mailto:info@orientmatbaa.com"
+            className="text-white/80 transition hover:text-amber-300"
+          >
+            info@orientmatbaa.com
+          </a>
+        </div>
+        <div className="flex flex-1 justify-center">
+          <button
+            type="button"
+            onClick={onRequestQuote}
+            className="inline-flex items-center justify-center rounded-full bg-rose-600 px-5 py-1.5 text-sm font-semibold text-white shadow-lg shadow-rose-600/30 transition hover:bg-rose-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-300"
+          >
+            Teklif İste
+          </button>
+        </div>
+        <div className="flex flex-1 items-center justify-end gap-4">
+          <div className="flex items-center gap-3 text-white/70">
+            {socials.map((item) => (
+              <a
+                key={item.id}
+                href={item.href}
+                target="_blank"
+                rel="noreferrer"
+                aria-label={item.label}
+                className="rounded-full border border-white/10 p-1.5 text-white/70 transition hover:border-white/40 hover:text-white"
+              >
+                {item.icon}
+              </a>
+            ))}
+          </div>
+          <div className="flex items-center gap-1 rounded-full border border-white/15 px-2 py-1 text-xs font-semibold text-white/80">
+            {LANGUAGES.map((lang, index) => (
+              <button
+                key={lang}
+                type="button"
+                className={`rounded-full px-2 py-0.5 transition ${
+                  index === 0 ? 'bg-white text-slate-900' : 'text-white/80 hover:text-white'
+                }`}
+              >
+                {lang}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default TopBar

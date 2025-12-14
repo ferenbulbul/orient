@@ -63,18 +63,18 @@ function ProductShowcase() {
         </div>
       </div>
       <div className="group relative mt-10 overflow-hidden">
-        <div className="flex gap-6 px-6 py-2">
-          <div className="flex min-w-max flex-nowrap gap-6 animate-[marquee-reverse_30s_linear_infinite] group-hover:[animation-play-state:paused]">
+        <div className="flex gap-4 px-4 py-0 md:gap-6 md:px-6">
+          <div className="flex min-w-max flex-nowrap gap-4 md:gap-6 animate-[marquee-reverse_30s_linear_infinite] group-hover:[animation-play-state:paused]">
             {marqueeItems.map((product, index) => (
               <Link
                 to={`/urunler/${product.slug}`}
                 key={`${product.id}-${index}`}
-                className="group/product relative block min-w-[320px] overflow-hidden rounded-3xl md:min-w-[420px]"
+                className="group/product relative block min-w-[240px] overflow-hidden rounded-3xl shadow-lg md:min-w-[320px]"
               >
                 <img
                   src={product.image}
                   alt={product.title}
-                  className="h-64 w-full object-cover transition duration-500 group-hover/product:scale-105"
+                  className="h-44 w-full object-cover transition duration-500 group-hover/product:scale-105 md:h-56"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
                 <div className="absolute inset-x-0 bottom-0 flex items-center justify-between px-6 py-4">

@@ -37,7 +37,7 @@ function PortfolioGrid() {
         {works.map((work) => (
           <article key={work.id} className="group relative overflow-hidden rounded-[32px]">
             <img
-              src={`https://source.unsplash.com/520x320/?printing,press&sig=${work.id}`}
+              src="https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=1200&q=80"
               alt={work.title}
               className="h-72 w-full object-cover transition duration-500 group-hover:scale-105"
             />

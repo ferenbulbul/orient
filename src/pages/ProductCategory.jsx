@@ -27,26 +27,30 @@ function ProductCategory() {
           alt={product.title}
           className="h-[360px] w-full object-cover sm:h-[440px]"
         />
-        <div className="absolute inset-0 bg-slate-950/70" />
-        <div className="absolute inset-0 mx-auto flex max-w-5xl flex-col justify-center px-6 text-white">
-          <p className="text-sm uppercase tracking-[0.4em] text-amber-300">Neler Üretiyoruz</p>
-          <h1 className="mt-4 text-4xl font-semibold leading-tight sm:text-5xl">
-            {product.title}
-          </h1>
-          <p className="mt-4 max-w-2xl text-base text-slate-100 sm:text-lg">
-            {product.description}
-          </p>
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/85 via-slate-950/30 to-transparent" />
+        <div className="absolute inset-0 mx-auto flex max-w-5xl items-center px-6">
+          <div className="flex flex-col border-l-4 border-amber-300/80 pl-6 text-white sm:pl-10">
+            <p className="text-xs uppercase tracking-[0.55em] text-amber-200/90">
+              Neler Üretiyoruz
+            </p>
+            <h1 className="mt-5 text-4xl font-semibold tracking-tight text-white sm:text-5xl">
+              {product.title}
+            </h1>
+            <p className="mt-4 max-w-2xl text-base text-slate-100/90 sm:text-lg">
+              {product.description}
+            </p>
+          </div>
         </div>
       </section>
 
       <div className="page">
-        <section className="section">
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <section className="section pb-16 lg:pb-20">
+          <div className="grid gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 lg:gap-7">
             {(product.gridItems?.length ? product.gridItems : Array.from({ length: 6 })).map(
               (item, index) => (
                 <article
                   key={item?.title ?? index}
-                  className="group relative aspect-[4/3] cursor-pointer overflow-hidden rounded-3xl shadow-[0_25px_60px_rgba(15,23,42,0.12)] transition hover:-translate-y-1 hover:shadow-[0_30px_80px_rgba(15,23,42,0.2)] active:scale-[0.99]"
+                  className="group relative aspect-[4/3] cursor-pointer overflow-hidden rounded-[28px] bg-white shadow-[0_20px_60px_rgba(15,23,42,0.12)] transition-all duration-500 ease-out will-change-transform hover:-translate-y-1 hover:scale-[1.03] hover:shadow-[0_35px_90px_rgba(15,23,42,0.18)] active:scale-95"
                 >
                   <img
                     src={
@@ -54,25 +58,18 @@ function ProductCategory() {
                       'https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1200&q=80'
                     }
                     alt={item?.title ?? 'Üretim'}
-                    className="h-full w-full object-cover transition duration-[1200ms] group-hover:scale-105"
+                    className="h-full w-full object-cover transition duration-[1600ms] ease-out group-hover:scale-105"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                  <div className="absolute inset-x-0 bottom-0 px-5 py-4">
-                    <p className="text-lg font-semibold text-white">
+                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent transition duration-500 ease-out group-hover:from-slate-950/90 group-active:from-slate-950/75" />
+                  <div className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-col px-6 py-5">
+                    <p className="text-lg font-semibold tracking-tight text-white drop-shadow-md">
                       {item?.title ?? 'Yeni ürün grubu hazırlanıyor'}
                     </p>
+                    <span className="mt-2 h-px w-10 bg-white/60 transition duration-500 group-hover:w-16" />
                   </div>
                 </article>
               ),
             )}
-          </div>
-        </section>
-
-        <section className="section section--narrow">
-          <div className="contact-cta__actions" style={{ marginTop: 0 }}>
-            <Link className="btn primary" to="/contact">
-              Teklif Al
-            </Link>
           </div>
         </section>
       </div>

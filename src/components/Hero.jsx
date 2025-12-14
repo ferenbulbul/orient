@@ -6,7 +6,7 @@ const stats = [
   { label: 'Teslim süresi', value: '5 gün ort.' },
 ]
 
-function Hero() {
+function Hero({ onOpenQuoteModal = () => {} }) {
   const [scrollProgress, setScrollProgress] = useState(0)
 
   useEffect(() => {
@@ -53,12 +53,13 @@ function Hero() {
             kusursuz sonuçlar sunar.
           </p>
           <div className="mt-10 flex flex-wrap gap-4">
-            <a
-              href="#contact-cta"
-              className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-amber-400 via-amber-300 to-amber-200 px-10 py-3 text-base font-semibold text-slate-950 shadow-lg shadow-amber-400/40 transition hover:-translate-y-0.5"
+            <button
+              type="button"
+              onClick={onOpenQuoteModal}
+              className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-amber-400 via-amber-300 to-amber-200 px-10 py-3 text-base font-semibold text-slate-950 shadow-lg shadow-amber-400/40 transition hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/70"
             >
               Teklif Al
-            </a>
+            </button>
             <a
               href="#services"
               className="inline-flex items-center justify-center rounded-full border border-white/40 px-10 py-3 text-base font-semibold text-white transition hover:bg-white/10"
