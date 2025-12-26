@@ -46,11 +46,11 @@ function Contact() {
             </div>
           </div>
 
-          <div className="rounded-3xl border border-slate-100 bg-white p-3 shadow-[0_25px_60px_rgba(15,23,42,0.08)]">
+          <div className="relative h-full min-h-[420px] overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-[0_25px_60px_rgba(15,23,42,0.08)]">
             <iframe
               title="Orient Matbaa Konumu"
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3009.149621621108!2d28.807430076631054!3d41.0370015187357!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14cab062bcbac84f%3A0x4b3e9c5b2dc9f629!2s%C4%B0kitelli%20Organize%20Sanayi%20B%C3%B6lgesi!5e0!3m2!1str!2str!4v1700000000000!5m2!1str!2str"
-              className="h-[400px] w-full rounded-2xl"
+              className="absolute inset-0 h-full w-full"
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
             />

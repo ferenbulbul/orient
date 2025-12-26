@@ -168,12 +168,11 @@ function HomePage({ onOpenQuoteModal }) {
       <Hero onOpenQuoteModal={onOpenQuoteModal} />
       <div className="page home-page">
         <section className="section section--panel section--why">
-          <div className="section__heading">
-          
+         
             <p className="text-xs uppercase tracking-[0.4em] text-amber-300">
               Neden Biz?
             </p>
-
+             <div className="section__heading">
             <h2 className="text-amber-300">
               Orient ile iş birliği yapmanın avantajları.
             </h2>
@@ -196,11 +195,12 @@ function HomePage({ onOpenQuoteModal }) {
       <ProductShowcase />
       <div className="page home-page">
         <section className="section section--panel brands-panel">
-          <div className="section__heading">
+          
             <p className="eyebrow text-amber-300/90">
               Birlikte Çalıştığımız Markalar
             </p>
-            <h2 className="text-amber-300">Tüm portfolyomuzdan seçkiler.</h2>
+            <div className="section__heading">
+            <h2 className="text-amber-300">Portfolyomuzdan seçkiler.</h2>
             <p>
               Yıllar içinde büyüttüğümüz kurumsal müşteri ağımızın bir bölümünü
               aşağıda görebilirsiniz. Tam liste için portfolyo sayfamızı ziyaret
@@ -227,7 +227,10 @@ function HomePage({ onOpenQuoteModal }) {
             ))}
           </div>
           <div className="mt-8">
-            <Link className="btn primary" to="/portfolyo">
+            <Link
+              className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-amber-400 via-amber-300 to-amber-200 px-8 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-amber-400/40 transition hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/70"
+              to="/portfolyo"
+            >
               Tüm Portfolyoyu Gör
             </Link>
           </div>
@@ -244,7 +247,10 @@ function HomePage({ onOpenQuoteModal }) {
             </p>
           </div>
           <div className="contact-cta__actions">
-            <Link className="btn primary" to="/contact">
+            <Link
+              className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-amber-400 via-amber-300 to-amber-200 px-8 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-amber-400/40 transition hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/70"
+              to="/contact"
+            >
               İletişim Sayfasına Git
             </Link>
           </div>
