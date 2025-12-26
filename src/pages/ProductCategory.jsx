@@ -50,7 +50,7 @@ function ProductCategory() {
               (item, index) => (
                 <article
                   key={item?.title ?? index}
-                  className="group relative aspect-[4/3] cursor-pointer overflow-hidden rounded-[28px] bg-white shadow-[0_20px_60px_rgba(15,23,42,0.12)] transition-all duration-500 ease-out will-change-transform hover:-translate-y-1 hover:scale-[1.03] hover:shadow-[0_35px_90px_rgba(15,23,42,0.18)] active:scale-95"
+                  className="group relative aspect-[16/14] cursor-pointer overflow-hidden rounded-[28px] bg-white shadow-[0_20px_60px_rgba(15,23,42,0.12)] transition-all duration-500 ease-out will-change-transform hover:-translate-y-1 hover:scale-[1.03] hover:shadow-[0_35px_90px_rgba(15,23,42,0.18)] active:scale-95"
                 >
                   <img
                     src={
@@ -63,7 +63,7 @@ function ProductCategory() {
                   <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent transition duration-500 ease-out group-hover:from-slate-950/90 group-active:from-slate-950/75" />
                   <div className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-col px-6 py-5">
                     <p className="text-lg font-semibold tracking-tight text-white drop-shadow-md">
-                      {item?.title ?? 'Yeni ürün grubu hazırlanıyor'}
+                      {item?.title}
                     </p>
                     <span className="mt-2 h-px w-10 bg-white/60 transition duration-500 group-hover:w-16" />
                   </div>

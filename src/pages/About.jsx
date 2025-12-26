@@ -1,3 +1,5 @@
+import about from '../assets/images/services/about.jpg'
+
 const stats = [
   { label: 'Yıllık baskı kapasitesi', value: '45M+' },
   { label: 'Aktif müşteri', value: '800+' },
@@ -10,7 +12,7 @@ function About() {
     <div className="bg-white text-slate-900">
       <section className="relative w-full overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&w=1600&q=80"
+          src={about}
           alt="Orient Matbaa tesisleri"
           className="h-[340px] w-full object-cover sm:h-[420px]"
         />

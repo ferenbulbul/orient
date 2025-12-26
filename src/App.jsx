@@ -182,10 +182,10 @@ function HomePage({ onOpenQuoteModal }) {
               edebilirsiniz.
             </p>
           </div>
-          <div className="why-grid text-amber-300">
+          <div className="why-grid">
             {WHY_US.map((item) => (
               <article key={item.title} className="card why-card">
-                <h3>{item.title}</h3>
+                <h3 className="eyebrow text-amber-300/90">{item.title}</h3>
                 <p>{item.description}</p>
               </article>
             ))}
@@ -207,19 +207,20 @@ function HomePage({ onOpenQuoteModal }) {
               edebilirsiniz.
             </p>
           </div>
-          <div className="mt-8 grid gap-4 sm:grid-cols-3 lg:grid-cols-5">
+          <div className="mt-8 grid gap-5 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
             {FEATURED_BRANDS.map((brand) => (
               <Link
                 key={brand.id}
                 to="/portfolyo"
-                className="group block overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-[0_10px_25px_rgba(15,23,42,0.08)] transition hover:-translate-y-0.5 hover:shadow-[0_18px_38px_rgba(15,23,42,0.12)]"
+                className="group block overflow-hidden rounded-3xl border border-slate-200 bg-white px-6 py-5 shadow-[0_12px_30px_rgba(15,23,42,0.08)] transition hover:-translate-y-1 hover:shadow-[0_20px_45px_rgba(15,23,42,0.12)]"
+
                 aria-label={`${brand.name} portfolyo kartı`}
               >
-                <div className="aspect-square p-4">
+                <div className="flex aspect-square items-center justify-center">
                   <img
                     src={brand.logo}
                     alt={`${brand.name} logosu`}
-                    className="h-full w-full object-contain transition duration-400 group-hover:scale-105"
+                    className="max-h-[120px] w-full object-contain transition duration-500 ease-out group-hover:scale-105"
                     loading="lazy"
                   />
                 </div>

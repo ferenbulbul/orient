@@ -1,3 +1,4 @@
+import binding from '../assets/images/services/print.jpg'
 const blocks = [
   {
     title: 'Tel Dikiş & Amerikan Cilt',
@@ -20,7 +21,7 @@ function Binding() {
     <div className="bg-white text-slate-900">
       <section className="relative w-full overflow-hidden">
         <img
-          src='https://images.unsplash.com/photo-1454165205744-3b78555e5572?auto=format&fit=crop&w=1400&q=80'
+          src={binding}
           alt="Ciltleme ve mücellit"
           className="h-[320px] w-full object-cover sm:h-[420px]"
         />

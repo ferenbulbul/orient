@@ -1,3 +1,5 @@
+import print from '../assets/images/services/print.jpg'
+
 const blocks = [
   {
     title: 'Ofset Baskı Hattı',
@@ -20,7 +22,7 @@ function Printing() {
     <div className="bg-white text-slate-900">
       <section className="relative w-full overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1475721027785-f74eccf877e2?auto=format&fit=crop&w=1800&q=80"
+          src={print}
           alt="Ofset ve dijital baskı"
           className="h-[320px] w-full object-cover sm:h-[420px]"
         />

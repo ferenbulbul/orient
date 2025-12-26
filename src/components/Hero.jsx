@@ -1,4 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react';
+
+
+
+
+
+import hero1 from "../assets/hero1.jpg";
 
 const stats = [
   { label: 'Teslim edilen proje', value: '1200+' },
@@ -21,7 +27,7 @@ function Hero({ onOpenQuoteModal = () => {} }) {
 
   return (
     <section
-  id="home-hero"
+
   className="relative min-h-screen w-full overflow-hidden text-white -mt-20 sm:-mt-24 md:-mt-28"
 >
   <div
@@ -32,11 +38,11 @@ function Hero({ onOpenQuoteModal = () => {} }) {
     }}
   >
     <img
-      src="https://images.unsplash.com/photo-1452587925148-ce544e77e70d?auto=format&fit=crop&w=2000&q=80"
+      src={hero1}
       alt="Orient Matbaa üretim hattı"
       className="h-full w-full object-cover"
     />
-    <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/70 to-slate-950/90" />
+    <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/30 to-slate-950/90" />
   </div>
 
   <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-col gap-12 px-6 pt-[30vh] pb-24 lg:flex-row lg:items-start lg:gap-20">

@@ -1,3 +1,4 @@
+import graphic from '../assets/images/services/graphic.jpg'
 const blocks = [
   {
     title: 'Konsept & Tasarım Yöneti̇mi',
@@ -20,7 +21,7 @@ function GraphicDesign() {
     <div className="bg-white text-slate-900">
       <section className="relative w-full overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1481277542470-605612bd2d61?auto=format&fit=crop&w=1800&q=80"
+          src={graphic}
           alt="Grafik tasarım süreci"
           className="h-[320px] w-full object-cover sm:h-[420px]"
         />
