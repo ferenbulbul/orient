@@ -60,7 +60,7 @@ function MachinePark() {
         <img
           src="https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=1600&q=80"
           alt="Makine parkuru"
-          className="h-[360px] w-full object-cover sm:h-[440px]"
+          className="h-[360px] w-full object-cover sm:h-[420px]"
         />
         <div className="absolute inset-0 bg-slate-950/75" />
         <div className="absolute inset-0 mx-auto flex max-w-5xl flex-col justify-center px-6 text-white">
@@ -75,7 +75,7 @@ function MachinePark() {
         </div>
       </section>
 
-      <div className="page">
+      {/* <div className="page">
         <section className="section">
           <div className="section__heading">
             <p className="eyebrow">Üretim Altyapısı</p>
@@ -86,7 +86,7 @@ function MachinePark() {
             </p>
           </div>
         </section>
-      </div>
+      </div> */}
 
       <div className="bg-slate-50/50">
         <div className="mx-auto max-w-6xl space-y-16 px-6 py-16 sm:py-20">

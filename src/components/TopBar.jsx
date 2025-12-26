@@ -33,22 +33,33 @@ const socials = [
 
 const LANGUAGES = ['TR', 'EN', 'DE', 'RU']
 
-function TopBar({ onRequestQuote }) {
+function TopBar({ onRequestQuote, isVisible = true }) {
   return (
-    <div className="fixed top-0 left-0 z-[70] h-10 w-full border-b border-slate-900/20 bg-slate-900/95 text-white">
+    <div
+      className={`fixed top-0 left-0 z-[70] h-10 w-full border-b border-slate-900/20 bg-slate-900/95 text-white transition-all duration-200 ${
+        isVisible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0 pointer-events-none'
+      }`}
+    >
       <div className="mx-auto flex h-full max-w-6xl flex-wrap items-center gap-3 px-4 text-sm sm:flex-nowrap sm:gap-4 sm:px-6">
-        <div className="flex flex-1 flex-wrap items-center gap-4 text-white/80">
+        <div className="flex flex-1 flex-nowrap items-center gap-4 whitespace-nowrap text-white/80">
           <a
             href="tel:+902123334455"
-            className="font-semibold text-white transition hover:text-amber-300"
+            className="flex items-center gap-2 font-semibold text-white transition hover:text-amber-300"
           >
+            <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current">
+              <path d="M6.6 10.8a11.7 11.7 0 0 0 6.6 6.6l1.5-1.5a1 1 0 0 1 1-.25 8.9 8.9 0 0 0 2.8.45 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A15.4 15.4 0 0 1 3 5a1 1 0 0 1 1-1h2.9a1 1 0 0 1 1 1 8.9 8.9 0 0 0 .46 2.8 1 1 0 0 1-.25 1z" />
+            </svg>
             +90 212 333 44 55
           </a>
           <span className="hidden h-4 w-px bg-white/20 sm:block" />
           <a
             href="mailto:info@orientmatbaa.com"
-            className="text-white/80 transition hover:text-amber-300"
+            className="flex items-center gap-2 text-white/80 transition hover:text-amber-300"
           >
+            <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current">
+              <path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z" />
+              <path d="m4 7 7.5 5.5c.3.2.7.2 1 0L20 7" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+            </svg>
             info@orientmatbaa.com
           </a>
         </div>

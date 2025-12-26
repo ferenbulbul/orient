@@ -25,10 +25,10 @@ function ProductCategory() {
         <img
           src={product.heroImage}
           alt={product.title}
-          className="h-[360px] w-full object-cover sm:h-[440px]"
+          className="h-[320px] w-full object-cover sm:h-[420px]"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-slate-950/85 via-slate-950/30 to-transparent" />
-        <div className="absolute inset-0 mx-auto flex max-w-5xl items-center px-6">
+        <div className="absolute inset-0 mx-auto flex max-w-6xl items-center px-6">
           <div className="flex flex-col border-l-4 border-amber-300/80 pl-6 text-white sm:pl-10">
             <p className="text-xs uppercase tracking-[0.55em] text-amber-200/90">
               Neler Üretiyoruz

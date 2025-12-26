@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
+import logo from '../assets/logo.svg'
 
 const NAV_LINKS = [
   { id: 'home', label: 'Ana Sayfa', target: 'home' },
@@ -22,9 +23,9 @@ const NAV_LINKS = [
 ]
 
 const SERVICE_DROPDOWN = [
-  { id: 'design', label: 'Grafik Tasarım', target: 'services' },
-  { id: 'print', label: 'Baskı', target: 'services' },
-  { id: 'binding', label: 'Mücellit', target: 'services' },
+  { id: 'design', label: 'Grafik Tasarım', path: '/hizmetler/grafik-tasarim', icon: 'design' },
+  { id: 'print', label: 'Baskı', path: '/hizmetler/baski', icon: 'print' },
+  { id: 'binding', label: 'Mücellit', path: '/hizmetler/mucellit', icon: 'binding' },
 ]
 
 const PRODUCT_MEGA_MENU = [
@@ -94,7 +95,31 @@ const PRODUCT_ICONS = {
   ),
 }
 
-function Navbar({ activeSection = 'home', onNavigate }) {
+const SERVICE_ICONS = {
+  design: (
+    <svg viewBox="0 0 24 24" className="h-4 w-4 fill-none stroke-current stroke-[1.6]" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 20h4l10-10a2.8 2.8 0 0 0-4-4L4 16v4z" />
+      <path d="M13.5 6.5 17 10" />
+    </svg>
+  ),
+  print: (
+    <svg viewBox="0 0 24 24" className="h-4 w-4 fill-none stroke-current stroke-[1.6]" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M7 8V4h10v4" />
+      <rect x="5" y="11" width="14" height="7" rx="2" />
+      <path d="M7 15h10" />
+    </svg>
+  ),
+  binding: (
+    <svg viewBox="0 0 24 24" className="h-4 w-4 fill-none stroke-current stroke-[1.6]" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="4" y="3" width="12" height="18" rx="2" />
+      <path d="M16 7h2a2 2 0 0 1 2 2v8a3 3 0 0 1-3 3H9" />
+      <path d="M8 7h4" />
+      <path d="M8 11h4" />
+    </svg>
+  ),
+}
+
+function Navbar({ activeSection = 'home', onNavigate, topOffsetClass = 'top-10' }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [hasScrolled, setHasScrolled] = useState(false)
   const [hoverMenu, setHoverMenu] = useState(null)
@@ -182,10 +207,10 @@ function Navbar({ activeSection = 'home', onNavigate }) {
 
   const headerClasses = useMemo(() => {
     if (shouldUseLightTheme) {
-      return 'sticky top-10 z-50 w-full border-b border-slate-100 bg-white/95 shadow-[0_15px_40px_rgba(15,23,42,0.12)] backdrop-blur-md transition-all duration-300'
+      return `sticky ${topOffsetClass} z-50 w-full border-b border-slate-100 bg-white/95 shadow-[0_15px_40px_rgba(15,23,42,0.12)] backdrop-blur-md transition-all duration-300`
     }
-    return 'sticky top-10 z-50 w-full border-b border-transparent bg-white/10 backdrop-blur-xl transition-all duration-300'
-  }, [shouldUseLightTheme])
+    return `sticky ${topOffsetClass} z-50 w-full border-b border-transparent bg-white/10 backdrop-blur-xl transition-all duration-300`
+  }, [shouldUseLightTheme, topOffsetClass])
   const innerPadding = hasScrolled ? 'py-3' : 'py-6'
   const logoCircleClass = `flex items-center justify-center rounded-full bg-slate-900 text-white transition-all duration-300 ${
     hasScrolled ? 'h-12 w-12 text-lg' : 'h-16 w-16 text-2xl'
@@ -209,6 +234,9 @@ function Navbar({ activeSection = 'home', onNavigate }) {
     if (link.id === 'products' && currentPath.startsWith('/urunler')) {
       return true
     }
+    if (link.id === 'services' && currentPath.startsWith('/hizmetler')) {
+      return true
+    }
     if (!link.path && currentPath === '/' && activeSection) {
       return activeSection === (link.target ?? link.id)
     }
@@ -218,24 +246,12 @@ function Navbar({ activeSection = 'home', onNavigate }) {
   return (
     <header className={headerClasses}>
       <div className={`flex w-full items-center justify-between px-4 sm:px-6 transition-all duration-300 ${innerPadding}`}>
-        <a href="#top" className="flex items-center gap-3">
-          <div className={logoCircleClass}>OR</div>
-          <div className={brandTextClass}>
-            <p
-              className={`font-semibold ${
-                shouldUseLightTheme ? 'text-slate-900' : 'text-white'
-              }`}
-            >
-              Orient Matbaa
-            </p>
-            <p
-              className={`text-xs uppercase tracking-[0.32em] ${
-                shouldUseLightTheme ? 'text-slate-400' : 'text-white/70'
-              }`}
-            >
-              Kurumsal Baskı
-            </p>
-          </div>
+        <a href="#top" className="flex items-center gap-3 pl-4 sm:pl-6 lg:pl-8">
+          <img
+            src={logo}
+            alt="Euromat Print"
+            className={`h-10 w-auto flex-shrink-0 ${shouldUseLightTheme ? '' : 'brightness-0 invert'}`}
+          />
         </a>
 
         <nav className="hidden items-center gap-1.5 whitespace-nowrap lg:flex lg:flex-nowrap">
@@ -294,8 +310,12 @@ function Navbar({ activeSection = 'home', onNavigate }) {
                               handleNavigate({ page: 'products', slug: item.slug })
                               return
                             }
-                            if (link.type === 'dropdown' && item.target) {
-                              handleNavigate({ sectionTarget: item.target })
+                            if (link.type === 'dropdown') {
+                              if (item.path) {
+                                handleNavigate({ path: item.path })
+                              } else if (item.target) {
+                                handleNavigate({ sectionTarget: item.target })
+                              }
                             }
                           }}
                           className={`flex w-full items-center gap-3 px-3 py-2 text-left text-sm font-semibold transition-colors duration-200 ${dropdownItemBase}`}
@@ -307,11 +327,9 @@ function Navbar({ activeSection = 'home', onNavigate }) {
                                 : 'border-white/20 bg-white/5 text-white/80'
                             }`}
                           >
-                            {link.type === 'mega' ? (
-                              PRODUCT_ICONS[item.icon] ?? PRODUCT_ICONS.book
-                            ) : (
-                              <span className="h-2 w-2 rounded-full bg-current" />
-                            )}
+                            {link.type === 'mega'
+                              ? PRODUCT_ICONS[item.icon] ?? PRODUCT_ICONS.book
+                              : SERVICE_ICONS[item.icon] ?? <span className="h-2 w-2 rounded-full bg-current" />}
                           </span>
                           <span className="flex-1 text-left">{item.label}</span>
                         </button>
@@ -396,18 +414,20 @@ function Navbar({ activeSection = 'home', onNavigate }) {
                                   handleNavigate({ page: 'products', slug: item.slug })
                                   return
                                 }
-                                if (link.type === 'dropdown' && item.target) {
-                                  handleNavigate({ sectionTarget: item.target })
+                                if (link.type === 'dropdown') {
+                                  if (item.path) {
+                                    handleNavigate({ path: item.path })
+                                  } else if (item.target) {
+                                    handleNavigate({ sectionTarget: item.target })
+                                  }
                                 }
                               }}
                               className="flex items-center gap-3 px-3 py-2.5 text-left text-sm font-semibold text-slate-700"
                             >
                               <span className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-slate-500">
-                                {link.type === 'mega' ? (
-                                  PRODUCT_ICONS[item.icon] ?? PRODUCT_ICONS.book
-                                ) : (
-                                  <span className="h-2 w-2 rounded-full bg-current" />
-                                )}
+                                {link.type === 'mega'
+                                  ? PRODUCT_ICONS[item.icon] ?? PRODUCT_ICONS.book
+                                  : SERVICE_ICONS[item.icon] ?? <span className="h-2 w-2 rounded-full bg-current" />}
                               </span>
                               <span>{item.label}</span>
                             </button>

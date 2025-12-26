@@ -98,9 +98,9 @@ function QuoteModal({ isOpen, onClose }) {
       >
         <div className="mb-6 flex items-start justify-between">
           <div>
-            <p className="text-xs uppercase tracking-[0.4em] text-rose-500">Teklif Formu</p>
-            <h2 className="mt-3 text-3xl font-semibold text-slate-900">Teklif İste</h2>
-            <p className="mt-2 text-sm text-slate-500">
+            <p className="text-xs uppercase tracking-[0.4em] text-[#c1121f]">Teklif Formu</p>
+            <h2 className="mt-3 text-3xl font-semibold text-[#0b1220]">Teklif İste</h2>
+            <p className="mt-2 text-sm text-slate-600">
               Projenize en uygun baskı ve üretim planını birlikte oluşturalım.
             </p>
           </div>
@@ -115,7 +115,7 @@ function QuoteModal({ isOpen, onClose }) {
         </div>
         <form className="space-y-8" onSubmit={handleSubmit}>
           <div className="grid gap-6 sm:grid-cols-2">
-            <label className="flex flex-col gap-2 text-sm font-semibold text-slate-600">
+            <label className="flex flex-col gap-2 text-sm font-semibold text-[#0b1220]">
               Ürün *
               <select
                 name="productType"
@@ -131,7 +131,7 @@ function QuoteModal({ isOpen, onClose }) {
                 ))}
               </select>
             </label>
-            <label className="flex flex-col gap-2 text-sm font-semibold text-slate-600">
+            <label className="flex flex-col gap-2 text-sm font-semibold text-[#0b1220]">
               Ürün Adedi *
               <input
                 type="number"
@@ -143,7 +143,7 @@ function QuoteModal({ isOpen, onClose }) {
                 className="rounded-2xl border border-slate-200 px-4 py-3 text-base text-slate-900 outline-none transition focus:border-slate-400"
               />
             </label>
-            <label className="flex flex-col gap-2 text-sm font-semibold text-slate-600">
+            <label className="flex flex-col gap-2 text-sm font-semibold text-[#0b1220]">
               Sayfa Sayısı *
               <input
                 type="number"
@@ -155,7 +155,7 @@ function QuoteModal({ isOpen, onClose }) {
                 className="rounded-2xl border border-slate-200 px-4 py-3 text-base text-slate-900 outline-none transition focus:border-slate-400"
               />
             </label>
-            <label className="flex flex-col gap-2 text-sm font-semibold text-slate-600">
+            <label className="flex flex-col gap-2 text-sm font-semibold text-[#0b1220]">
               Ölçü (mm) *
               <input
                 type="text"
@@ -167,7 +167,7 @@ function QuoteModal({ isOpen, onClose }) {
                 className="rounded-2xl border border-slate-200 px-4 py-3 text-base text-slate-900 outline-none transition focus:border-slate-400"
               />
             </label>
-            <label className="flex flex-col gap-2 text-sm font-semibold text-slate-600">
+            <label className="flex flex-col gap-2 text-sm font-semibold text-[#0b1220]">
               Kağıt &amp; Gramaj *
               <input
                 type="text"
@@ -183,7 +183,7 @@ function QuoteModal({ isOpen, onClose }) {
 
           <div className="grid gap-6 md:grid-cols-2">
             <fieldset className="rounded-3xl border border-slate-100 p-4">
-              <legend className="px-2 text-sm font-semibold text-slate-600">İç Sayfa Rengi *</legend>
+              <legend className="px-2 text-sm font-semibold text-[#0b1220]">İç Sayfa Rengi *</legend>
               <div className="mt-3 flex flex-wrap gap-3">
                 {COLORS.map((option) => (
                   <label
@@ -207,7 +207,7 @@ function QuoteModal({ isOpen, onClose }) {
               </div>
             </fieldset>
             <fieldset className="rounded-3xl border border-slate-100 p-4">
-              <legend className="px-2 text-sm font-semibold text-slate-600">Ciltleme *</legend>
+              <legend className="px-2 text-sm font-semibold text-[#0b1220]">Ciltleme *</legend>
               <div className="mt-3 flex flex-wrap gap-3">
                 {BINDINGS.map((option) => (
                   <label
@@ -234,7 +234,7 @@ function QuoteModal({ isOpen, onClose }) {
 
           <div className="grid gap-6 md:grid-cols-2">
             <fieldset className="rounded-3xl border border-slate-100 p-4">
-              <legend className="px-2 text-sm font-semibold text-slate-600">Numune *</legend>
+              <legend className="px-2 text-sm font-semibold text-[#0b1220]">Numune *</legend>
               <div className="mt-3 flex flex-wrap gap-3">
                 {SAMPLE_TYPES.map((option) => (
                   <label
@@ -257,7 +257,7 @@ function QuoteModal({ isOpen, onClose }) {
                 ))}
               </div>
             </fieldset>
-            <label className="flex flex-col gap-2 text-sm font-semibold text-slate-600">
+            <label className="flex flex-col gap-2 text-sm font-semibold text-[#0b1220]">
               Açıklama
               <textarea
                 name="notes"
@@ -271,7 +271,7 @@ function QuoteModal({ isOpen, onClose }) {
           </div>
 
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            <label className="flex flex-col gap-2 text-sm font-semibold text-slate-600">
+            <label className="flex flex-col gap-2 text-sm font-semibold text-[#0b1220]">
               İsim Soyisim *
               <input
                 type="text"
@@ -282,7 +282,7 @@ function QuoteModal({ isOpen, onClose }) {
                 className="rounded-2xl border border-slate-200 px-4 py-3 text-base text-slate-900 outline-none transition focus:border-slate-400"
               />
             </label>
-            <label className="flex flex-col gap-2 text-sm font-semibold text-slate-600">
+            <label className="flex flex-col gap-2 text-sm font-semibold text-[#0b1220]">
               E-posta *
               <input
                 type="email"
@@ -293,7 +293,7 @@ function QuoteModal({ isOpen, onClose }) {
                 className="rounded-2xl border border-slate-200 px-4 py-3 text-base text-slate-900 outline-none transition focus:border-slate-400"
               />
             </label>
-            <label className="flex flex-col gap-2 text-sm font-semibold text-slate-600">
+            <label className="flex flex-col gap-2 text-sm font-semibold text-[#0b1220]">
               Telefon *
               <input
                 type="tel"
