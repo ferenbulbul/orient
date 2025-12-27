@@ -18,7 +18,7 @@ const NAV_LINKS = [
     type: 'mega',
   },
   { id: 'machine', label: 'Makine Parkuru', path: '/makine-parkuru' },
-  { id: 'portfolyo', label: 'Portfolyo', path: '/portfolyo' },
+  { id: 'portfolio', label: 'Portfolyo', path: '/portfolio' },
   { id: 'contact', label: 'İletişim', path: '/contact' },
 ]
 
