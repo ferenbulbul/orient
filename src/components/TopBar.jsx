@@ -36,11 +36,11 @@ const LANGUAGES = ['TR', 'EN', 'DE', 'RU']
 function TopBar({ onRequestQuote, isVisible = true }) {
   return (
     <div
-      className={`fixed top-0 left-0 z-[70] w-full border-b border-slate-900/20 bg-slate-900/95 text-white transition-all duration-200 ${
+      className={`fixed top-0 left-0 z-[70] hidden w-full border-b border-slate-900/20 bg-slate-900/95 text-white transition-all duration-200 sm:block ${
         isVisible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0 pointer-events-none'
       }`}
     >
-      <div className="mx-auto flex min-h-[48px] max-w-6xl flex-col gap-2 px-4 py-2 text-sm sm:flex-row sm:flex-wrap sm:items-center sm:gap-3 sm:px-6 sm:py-0 sm:h-10 sm:min-h-0">
+      <div className="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-2 text-sm sm:h-12 sm:min-h-[48px] sm:flex-row sm:flex-nowrap sm:items-center sm:gap-4 sm:px-6 sm:py-0">
         <div className="flex w-full flex-wrap items-center gap-3 text-white/80 sm:flex-1 sm:flex-nowrap sm:gap-4">
           <a
             href="tel:+902123334455"
