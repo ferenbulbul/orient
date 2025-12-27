@@ -89,7 +89,7 @@ function MachinePark() {
                     <div className="flex h-[260px] items-center rounded-2xl border border-slate-200/90 bg-white/90 p-6 shadow-[0_20px_44px_rgba(15,23,42,0.12)] backdrop-blur sm:h-[300px] lg:h-[320px]">
                       <div>
                         <p className="text-[11px] uppercase tracking-[0.45em] text-amber-500">Üretim Notu</p>
-                        <p className="mt-3 text-sm text-slate-600">
+                        <p className="mt-3  text-slate-700">
                           Endüstriyel hatlarımız planlı bakım, hassas kalibrasyon ve sürekli kontrolle tutarlı üretim
                           kalitesi sunar.
                         </p>
