@@ -128,7 +128,7 @@ function App() {
       <Navbar
         activeSection={location.pathname === "/" ? activeSection : null}
         onNavigate={handleNavigate}
-        topOffsetClass={showTopBar ? "top-10" : "top-0"}
+        topOffsetClass={showTopBar ? "top-[88px] sm:top-12" : "top-0"}
       />
       <main className="content-area">
         <Routes>
@@ -174,7 +174,7 @@ function HomePage({ onOpenQuoteModal }) {
             </p>
              <div className="section__heading">
             <h2 className="text-amber-300">
-              Orient ile iş birliği yapmanın avantajları.
+              EuromatPrint ile iş birliği yapmanın avantajları.
             </h2>
             <p>
               Uzman üretim kadromuz, modern makine parkurumuz ve sektörel
@@ -185,7 +185,7 @@ function HomePage({ onOpenQuoteModal }) {
           <div className="why-grid">
             {WHY_US.map((item) => (
               <article key={item.title} className="card why-card">
-                <h3 className="eyebrow text-amber-300/90">{item.title}</h3>
+                <h3 className="tracking-[0.4em] text-amber-400">{item.title}</h3>
                 <p>{item.description}</p>
               </article>
             ))}

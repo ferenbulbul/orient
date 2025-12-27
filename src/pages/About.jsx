@@ -13,17 +13,17 @@ function About() {
       <section className="relative w-full overflow-hidden">
         <img
           src={about}
-          alt="Orient Matbaa tesisleri"
+          alt="Euromat Print tesisleri"
           className="h-[340px] w-full object-cover sm:h-[420px]"
         />
         <div className="absolute inset-0 bg-slate-950/70" />
         <div className="absolute inset-0 mx-auto flex max-w-5xl flex-col justify-center px-6 text-white">
-          <p className="text-sm uppercase tracking-[0.4em] text-amber-300">Orient Matbaa</p>
+          <p className="text-sm uppercase tracking-[0.4em] text-amber-300">Euromat Print</p>
           <h1 className="mt-4 text-4xl font-semibold leading-tight sm:text-5xl">
             Hakkımızda
           </h1>
           <p className="mt-4 max-w-2xl text-base text-slate-100 sm:text-lg">
-            35 yılı aşkın süredir matbaa sektöründe faaliyet gösteren Orient, ofset
+            35 yılı aşkın süredir matbaa sektöründe faaliyet gösteren Euromat Print, ofset
             ve dijital baskı teknolojilerini bir araya getirerek, markalara tutarlı ve
             güvenilir üretim ortağı sunar.
           </p>
@@ -38,7 +38,7 @@ function About() {
             </p>
             <h2 className="mt-4 text-3xl font-semibold">Türkiye’nin üretim odaklı matbaa ekiplerinden biriyiz.</h2>
             <p className="mt-4 text-slate-600">
-              Orient Matbaa, kurulduğu günden bu yana ofset, dijital baskı ve özel
+              Euromat Print , kurulduğu günden bu yana ofset, dijital baskı ve özel
               uygulama çözümleri konusunda kapsamlı hizmet sunar. Tasarım
               danışmanlığından lojistiğe kadar tüm süreç tek ekip tarafından
               yönetilir.
@@ -87,7 +87,7 @@ function About() {
               ))}
             </div>
             <p className="mt-6 text-sm text-slate-300">
-              Veriler 2024 yılı üretim raporlarından derlenmiştir. Orient Matbaa, her
+              Veriler 2024 yılı üretim raporlarından derlenmiştir.Euromat Print, her
               ölçekte marka için güvenilir çözüm ortağıdır.
             </p>
           </article>

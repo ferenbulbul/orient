@@ -36,12 +36,12 @@ const LANGUAGES = ['TR', 'EN', 'DE', 'RU']
 function TopBar({ onRequestQuote, isVisible = true }) {
   return (
     <div
-      className={`fixed top-0 left-0 z-[70] h-10 w-full border-b border-slate-900/20 bg-slate-900/95 text-white transition-all duration-200 ${
+      className={`fixed top-0 left-0 z-[70] w-full border-b border-slate-900/20 bg-slate-900/95 text-white transition-all duration-200 ${
         isVisible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0 pointer-events-none'
       }`}
     >
-      <div className="mx-auto flex h-full max-w-6xl flex-wrap items-center gap-3 px-4 text-sm sm:flex-nowrap sm:gap-4 sm:px-6">
-        <div className="flex flex-1 flex-nowrap items-center gap-4 whitespace-nowrap text-white/80">
+      <div className="mx-auto flex min-h-[48px] max-w-6xl flex-col gap-2 px-4 py-2 text-sm sm:flex-row sm:flex-wrap sm:items-center sm:gap-3 sm:px-6 sm:py-0 sm:h-10 sm:min-h-0">
+        <div className="flex w-full flex-wrap items-center gap-3 text-white/80 sm:flex-1 sm:flex-nowrap sm:gap-4">
           <a
             href="tel:+902123334455"
             className="flex items-center gap-2 font-semibold text-white transition hover:text-amber-300"
@@ -53,26 +53,26 @@ function TopBar({ onRequestQuote, isVisible = true }) {
           </a>
           <span className="hidden h-4 w-px bg-white/20 sm:block" />
           <a
-            href="mailto:info@orientmatbaa.com"
+            href="mailto:info@euromatprint.com"
             className="flex items-center gap-2 text-white/80 transition hover:text-amber-300"
           >
             <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current">
               <path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z" />
               <path d="m4 7 7.5 5.5c.3.2.7.2 1 0L20 7" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" fill="none" />
             </svg>
-            info@orientmatbaa.com
+            info@euromatprint
           </a>
         </div>
-        <div className="flex flex-1 justify-center">
+        <div className="flex w-full justify-center sm:flex-1">
           <button
             type="button"
             onClick={onRequestQuote}
-            className="inline-flex items-center justify-center rounded-full bg-rose-600 px-5 py-1.5 text-sm font-semibold text-white shadow-lg shadow-rose-600/30 transition hover:bg-rose-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-300"
+            className="inline-flex w-full items-center justify-center rounded-full bg-rose-600 px-5 py-1.5 text-sm font-semibold text-white shadow-lg shadow-rose-600/30 transition hover:bg-rose-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-300 sm:w-auto"
           >
             Teklif İste
           </button>
         </div>
-        <div className="flex flex-1 items-center justify-end gap-4">
+        <div className="flex w-full flex-wrap items-center justify-between gap-3 sm:flex-1 sm:flex-nowrap sm:justify-end sm:gap-4">
           <div className="flex items-center gap-3 text-white/70">
             {socials.map((item) => (
               <a

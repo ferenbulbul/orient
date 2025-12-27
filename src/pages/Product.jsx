@@ -60,7 +60,7 @@ function Product() {
 
         <section className="section">
           <div className="section__heading">
-            <p className="eyebrow">Neden Orient Matbaa?</p>
+            <p className="eyebrow">Neden Euromat Print?</p>
             <h2>Planlama, üretim ve teslimat tek ekipte.</h2>
             <p>
               Tüm ürün familyaları için aynı kalite standartlarını uygular, veri temelli

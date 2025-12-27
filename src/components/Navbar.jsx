@@ -212,12 +212,7 @@ function Navbar({ activeSection = 'home', onNavigate, topOffsetClass = 'top-10' 
     return `sticky ${topOffsetClass} z-50 w-full border-b border-transparent bg-white/10 backdrop-blur-xl transition-all duration-300`
   }, [shouldUseLightTheme, topOffsetClass])
   const innerPadding = hasScrolled ? 'py-3' : 'py-6'
-  const logoCircleClass = `flex items-center justify-center rounded-full bg-slate-900 text-white transition-all duration-300 ${
-    hasScrolled ? 'h-12 w-12 text-lg' : 'h-16 w-16 text-2xl'
-  }`
-  const brandTextClass = `text-left transition-all duration-300 ${
-    hasScrolled ? 'text-base' : 'text-lg'
-  }`
+ 
   const dropdownPanelBase = shouldUseLightTheme
     ? 'border-slate-100 bg-white text-slate-700 shadow-xl'
     : 'border-white/10 bg-slate-900/85 text-white shadow-[0_20px_45px_rgba(0,0,0,0.45)] backdrop-blur'

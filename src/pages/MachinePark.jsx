@@ -1,54 +1,49 @@
-const machineCategories = [
+import machine from "../assets/images/machine/machine.jpg";
+import parkur1 from "../assets/images/machine/parkur1.jpg";
+import parkur2 from "../assets/images/machine/parkur2.jpg";
+import parkur3 from "../assets/images/machine/parkur3.jpg";
+const STAGES = [
   {
-    id: 'ofset-baski',
-    title: 'Ofset Baskı Makineleri',
-    description:
-      'Yüksek tirajlı işler için Heidelberg ve Komori ofset hatlarımız, renk yönetimi ve inline kontrol sistemleri ile çalışır.',
+    id: 'prepress',
+    title: 'Baskı Öncesi',
     image:
-      'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1600&q=80',
-    machines: [
-      'Heidelberg Speedmaster XL 106 - 5 Renk + Dispersiyon',
-      'Komori Lithrone GL 840P - 8 Renk Ters Simetrik',
-      'Heidelberg CD 74 - UV Lak Ünitesi',
+      parkur1,
+    items: [
+      { no: 1, name: 'Mac Pro Quad-Core', size: 'Standart', qty: 2 },
+      { no: 2, name: 'PC', size: 'Standart', qty: 3 },
+      { no: 3, name: 'Eizo Color Edge', size: 'Standart', qty: 2 },
+      { no: 4, name: 'HP Designjet T794 44in', size: 'Standart', qty: 1 },
+      { no: 5, name: 'Kodak Magnus 800 Quantum', size: '70x100', qty: 1 },
     ],
   },
   {
-    id: 'dijital-baski',
-    title: 'Dijital Baskı Makineleri',
-    description:
-      'Kişiselleştirilmiş ve düşük tirajlı işleri Canon ve Xerox dijital platformlarımızda hızlıca tamamlıyoruz.',
+    id: 'press',
+    title: 'Baskı',
     image:
-      'https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=1600&q=80',
-    machines: [
-      'Canon imagePRESS V1350 - 135ppm, 350gsm destek',
-      'Xerox Iridesse Production - Metalik Toner',
-      'HP Indigo 7900 - Gelişmiş renk yönetimi',
+      parkur2,
+    items: [
+      { no: 1, name: 'Roland RZK 1+1 - 2+0', size: '70x100', qty: 1 },
+      { no: 2, name: 'Roland RZK 1+1 - 2+0', size: '70x100', qty: 1 },
+      { no: 3, name: 'Roland 704 2+2 - 4+0', size: '70x100', qty: 1 },
+      { no: 4, name: 'Komori Lithrone S40 4+4 - 8+0', size: '70x100', qty: 1 },
     ],
   },
   {
-    id: 'mucellit-ve-cilt',
-    title: 'Mücellit & Ciltleme',
-    description:
-      'Dikiş, tutkallama, sert kapak ve spiral çözümleri ile baskı sonrası süreçleri uçtan uca kontrol ediyoruz.',
+    id: 'postpress',
+    title: 'Baskı Sonrası',
     image:
-      'https://images.unsplash.com/photo-1481988535861-271139e06469?auto=format&fit=crop&w=1600&q=80',
-    machines: [
-      'Muller Martini Alegro - Otomatik mücellit',
-      'Duplo iSaddle X - İplik dikiş',
-      'Kolbus DA 270 - Sert kapak üretimi',
-    ],
-  },
-  {
-    id: 'yardimci-ekipmanlar',
-    title: 'Yardımcı Ekipmanlar',
-    description:
-      'Kalite kontrol, laminasyon ve kesim süreçlerini destekleyen ekipmanlarımız üretim hattını tamamlar.',
-    image:
-      'https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1600&q=80',
-    machines: [
-      'Polar N 137 AT - Hidrolik kesim',
-      'Foliant Mercury 760 - Laminasyon',
-      'GMG ColorProof sistemi - Renk doğrulama',
+      parkur3,
+    items: [
+      { no: 1, name: 'MBO 4 Çanta 2 Balta', size: '64x90', qty: 1 },
+      { no: 2, name: 'MBO 8 Çanta', size: '70x100', qty: 1 },
+      { no: 3, name: 'Haidelberg Stahl 4 Çanta 2 Balta', size: '70x100', qty: 1 },
+      { no: 4, name: 'Eurocutter Schneider 115', size: 'Standart', qty: 1 },
+      { no: 5, name: 'Smyth thread F150', size: 'Standart', qty: 1 },
+      { no: 6, name: 'Wohlenberg Golf 370', size: '20 İstasyon', qty: 1 },
+      { no: 7, name: 'Müller Martini Persto', size: '6 İstasyon', qty: 1 },
+      { no: 8, name: 'Otomatik Bandrol', size: 'Standart', qty: 1 },
+      { no: 9, name: 'Köşe Kesim', size: 'Standart', qty: 1 },
+      { no: 10, name: 'Kazanlı Kesim', size: 'Standart', qty: 1 },
     ],
   },
 ]
@@ -58,7 +53,7 @@ function MachinePark() {
     <div className="bg-white text-slate-900">
       <section className="relative w-full overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=1600&q=80"
+          src={machine}
           alt="Makine parkuru"
           className="h-[360px] w-full object-cover sm:h-[420px]"
         />
@@ -75,61 +70,64 @@ function MachinePark() {
         </div>
       </section>
 
-      {/* <div className="page">
-        <section className="section">
-          <div className="section__heading">
-            <p className="eyebrow">Üretim Altyapısı</p>
-            <h2>Kaliteyi tutarlı kılan makinelerimiz.</h2>
-            <p>
-              Tüm ekipmanlarımızı kalibrasyon programları ve enerji verimliliği odaklı planlarla
-              yönetiyoruz. Aşağıda temel kategorilerimiz yer alıyor.
-            </p>
-          </div>
-        </section>
-      </div> */}
-
       <div className="bg-slate-50/50">
         <div className="mx-auto max-w-6xl space-y-16 px-6 py-16 sm:py-20">
-          {machineCategories.map((category, index) => (
-            <section
-              key={category.id}
-              id={category.id}
-              className={`scroll-mt-32 ${index !== 0 ? 'pt-4' : ''}`}
-            >
-              <div
-                className={`flex flex-col items-stretch gap-10 lg:gap-14 ${
-                  index % 2 === 1 ? 'lg:flex-row-reverse' : 'lg:flex-row'
-                }`}
-              >
-                <div className="lg:w-1/2">
-                  <div className="relative overflow-hidden rounded-[32px] shadow-[0_30px_60px_rgba(15,23,42,0.18)]">
-                    <img
-                      src={category.image}
-                      alt={category.title}
-                      className="h-full w-full object-cover transition duration-700 ease-out hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-tr from-slate-950/30 via-transparent to-transparent" />
+          {STAGES.map((stage, index) => (
+            <section key={stage.id} id={stage.id} className={`scroll-mt-32 ${index !== 0 ? 'pt-4' : ''}`}>
+              <div className="flex flex-col gap-8 sm:gap-10">
+                <div className="flex flex-col gap-3">
+                  <p className="text-xs uppercase tracking-[0.5em] text-amber-500/80">Makine Parkuru</p>
+                  <h3 className="text-3xl font-semibold text-slate-900">{stage.title}</h3>
+                </div>
+
+                <div
+                  className={`flex flex-col gap-6 lg:items-stretch lg:gap-8 ${
+                    index % 2 === 1 ? 'lg:flex-row-reverse' : 'lg:flex-row'
+                  }`}
+                >
+                  <div className="flex-1">
+                    <div className="flex h-[260px] items-center rounded-2xl border border-slate-200/90 bg-white/90 p-6 shadow-[0_20px_44px_rgba(15,23,42,0.12)] backdrop-blur sm:h-[300px] lg:h-[320px]">
+                      <div>
+                        <p className="text-[11px] uppercase tracking-[0.45em] text-amber-500">Üretim Notu</p>
+                        <p className="mt-3 text-sm text-slate-600">
+                          Endüstriyel hatlarımız planlı bakım, hassas kalibrasyon ve sürekli kontrolle tutarlı üretim
+                          kalitesi sunar.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <div className="relative h-[260px] overflow-hidden rounded-2xl border border-slate-200/70 shadow-[0_22px_44px_rgba(15,23,42,0.12)] sm:h-[300px] lg:h-[320px]">
+                      <img
+                        src={stage.image}
+                        alt={stage.title}
+                        className="h-full w-full object-cover object-center transition duration-700 ease-out hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-tr from-slate-950/30 via-transparent to-transparent" />
+                    </div>
                   </div>
                 </div>
-                <div className="flex flex-col justify-center lg:w-1/2">
-                  <p className="text-xs uppercase tracking-[0.5em] text-amber-500/80">
-                    Makine Parkuru
-                  </p>
-                  <h3 className="mt-3 text-3xl font-semibold text-slate-900">
-                    {category.title}
-                  </h3>
-                  <p className="mt-4 text-base text-slate-600">{category.description}</p>
-                  <ul className="mt-6 space-y-3">
-                    {category.machines.map((machine) => (
-                      <li
-                        key={machine}
-                        className="flex items-start gap-3 rounded-2xl bg-white/90 p-4 text-sm font-medium text-slate-800 shadow-[0_15px_35px_rgba(15,23,42,0.08)]"
+
+                <div className="rounded-2xl border border-slate-200/90 bg-white/85 shadow-[0_18px_40px_rgba(15,23,42,0.08)] backdrop-blur">
+                  <div className="grid grid-cols-12 border-b border-slate-200 px-5 py-3 text-[12px] font-semibold uppercase tracking-[0.4em] text-[#c1121f]">
+                    <span className="col-span-2">#</span>
+                    <span className="col-span-6">Ürün</span>
+                    <span className="col-span-2 text-right">Ebat</span>
+                    <span className="col-span-2 text-right">Adet</span>
+                  </div>
+                  <div className="divide-y divide-slate-100/80">
+                    {stage.items.map((row) => (
+                      <div
+                        key={`${stage.id}-${row.no}-${row.name}`}
+                        className="grid grid-cols-12 items-center px-5 py-3 text-sm text-slate-800 transition hover:bg-slate-50/90"
                       >
-                        <span className="mt-1 h-2 w-2 rounded-full bg-amber-500" />
-                        <span>{machine}</span>
-                      </li>
+                        <span className="col-span-2 font-semibold text-slate-500">{row.no}</span>
+                        <span className="col-span-6 leading-snug">{row.name}</span>
+                        <span className="col-span-2 text-right text-slate-600">{row.size}</span>
+                        <span className="col-span-2 text-right font-semibold">{row.qty}</span>
+                      </div>
                     ))}
-                  </ul>
+                  </div>
                 </div>
               </div>
             </section>
