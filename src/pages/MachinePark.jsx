@@ -56,6 +56,9 @@ function MachinePark() {
           src={machine}
           alt="Makine parkuru"
           className="h-[360px] w-full object-cover sm:h-[420px]"
+          loading="eager"
+          fetchpriority="high"
+          decoding="async"
         />
         <div className="absolute inset-0 bg-slate-950/75" />
         <div className="absolute inset-0 mx-auto flex max-w-5xl flex-col justify-center px-6 text-white">

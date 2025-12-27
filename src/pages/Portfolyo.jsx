@@ -5,9 +5,12 @@ function Portfolyo() {
     <div className="bg-white text-slate-900">
       <section className="relative w-full overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?auto=format&fit=crop&w=1600&q=80"
+          src="https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?auto=format&fit=crop&w=1400&q=60"
           alt="Kurumsal çalışmalar"
           className="h-[320px] w-full object-cover sm:h-[420px]"
+          loading="eager"
+          fetchpriority="high"
+          decoding="async"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-slate-950/85 via-slate-900/60 to-transparent" />
         <div className="absolute inset-0 mx-auto flex max-w-5xl flex-col justify-center px-6 text-white">

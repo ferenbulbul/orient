@@ -24,6 +24,9 @@ function GraphicDesign() {
           src={graphic}
           alt="Grafik tasarım süreci"
           className="h-[320px] w-full object-cover sm:h-[420px]"
+          loading="eager"
+          fetchpriority="high"
+          decoding="async"
         />
         <div className="absolute inset-0 bg-[rgba(11,18,32,0.6)]" />
         <div className="absolute inset-0 mx-auto flex max-w-6xl flex-col justify-center px-6 text-white">

@@ -49,7 +49,7 @@ const SECTION_TARGETS = {
   products: "#product-band",
 };
 
-const FEATURED_BRANDS = BRAND_LOGOS.slice(0, 5);
+const FEATURED_BRANDS = BRAND_LOGOS.slice(0, 4);
 
 function App() {
   const [activeSection, setActiveSection] = useState("home");
@@ -207,7 +207,7 @@ function HomePage({ onOpenQuoteModal }) {
               edebilirsiniz.
             </p>
           </div>
-          <div className="mt-8 grid gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4">
             {FEATURED_BRANDS.map((brand) => (
               <Link
                 key={brand.id}
@@ -220,7 +220,7 @@ function HomePage({ onOpenQuoteModal }) {
                   <img
                     src={brand.logo}
                     alt={`${brand.name} logosu`}
-                    className="max-h-[90px] w-full object-contain transition duration-500 ease-out group-hover:scale-105 sm:max-h-[110px] lg:max-h-[120px]"
+                    className="max-h-[60px] w-full object-contain transition duration-500 ease-out group-hover:scale-105 sm:max-h-[84px] lg:max-h-[96px]"
                     loading="lazy"
                   />
                 </div>
