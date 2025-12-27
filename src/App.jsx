@@ -207,12 +207,12 @@ function HomePage({ onOpenQuoteModal }) {
               edebilirsiniz.
             </p>
           </div>
-          <div className="mt-8 grid gap-5 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+          <div className="mt-8 grid gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
             {FEATURED_BRANDS.map((brand) => (
               <Link
                 key={brand.id}
                 to="/portfolyo"
-                className="group block overflow-hidden rounded-3xl border border-slate-200 bg-white px-6 py-5 shadow-[0_12px_30px_rgba(15,23,42,0.08)] transition hover:-translate-y-1 hover:shadow-[0_20px_45px_rgba(15,23,42,0.12)]"
+                className="group block overflow-hidden rounded-3xl border border-slate-200 bg-white px-5 py-4 shadow-[0_12px_30px_rgba(15,23,42,0.08)] transition hover:-translate-y-1 hover:shadow-[0_20px_45px_rgba(15,23,42,0.12)]"
 
                 aria-label={`${brand.name} portfolyo kartı`}
               >
@@ -220,7 +220,7 @@ function HomePage({ onOpenQuoteModal }) {
                   <img
                     src={brand.logo}
                     alt={`${brand.name} logosu`}
-                    className="max-h-[120px] w-full object-contain transition duration-500 ease-out group-hover:scale-105"
+                    className="max-h-[90px] w-full object-contain transition duration-500 ease-out group-hover:scale-105 sm:max-h-[110px] lg:max-h-[120px]"
                     loading="lazy"
                   />
                 </div>

@@ -1,16 +1,20 @@
 function Contact() {
   return (
-    <div className="bg-white text-slate-900">
-      <header className="section section--narrow">
-        <p className="eyebrow">İletişime Geçin</p>
-        <h1>Ofisimizi ziyaret edin ya da hemen arayın.</h1>
-        <p>
-          Baskı süreçlerinizi planlamak için randevu alabilir veya dosyalarınızı dijital olarak
-          iletebilirsiniz. Ekibimiz hafta içi 09:00-19:00 saatleri arasında aktiftir.
-        </p>
+    <div className="bg-white text-slate-900 ">
+      <header className="px-4 pt-24">
+        <div className="mx-auto max-w-6xl">
+          <div className="rounded-3xl border border-slate-100 bg-white p-8 shadow-[0_25px_60px_rgba(15,23,42,0.08)]">
+            <p className="eyebrow">İletişime Geçin</p>
+            <h1 className="mt-2">Ofisimizi ziyaret edin ya da hemen arayın.</h1>
+            <p className="mt-3 text-slate-700">
+              Baskı süreçlerinizi planlamak için randevu alabilir veya dosyalarınızı dijital olarak
+              iletebilirsiniz. Ekibimiz hafta içi 09:00-19:00 saatleri arasında aktiftir.
+            </p>
+          </div>
+        </div>
       </header>
 
-      <section className="px-4 py-12">
+      <section className="px-4 py-8">
         <div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-2">
           <div className="rounded-3xl border border-slate-100 bg-white p-8 shadow-[0_25px_60px_rgba(15,23,42,0.08)]">
             <p className="eyebrow">Genel Merkez</p>
