@@ -128,7 +128,7 @@ function App() {
       <Navbar
         activeSection={location.pathname === "/" ? activeSection : null}
         onNavigate={handleNavigate}
-        topOffsetClass={showTopBar ? "top-[88px] sm:top-12" : "top-0"}
+        topOffsetClass={showTopBar ? "top-0 sm:top-10" : "top-0"}
       />
       <main className="content-area">
         <Routes>
