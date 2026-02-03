@@ -465,10 +465,44 @@ function MachinePark() {
                   ))}
                 </div>
               </div>
+              {/* Machine Cards - MOBILE */}
+              <div className="md:hidden space-y-4">
+                {group.items.map((item, i) => (
+                  <div
+                    key={i}
+                    className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
+                  >
+                    <div className="flex items-center justify-between text-xs text-slate-500">
+                      <div className="flex items-center gap-1">
+                        <Calendar className="h-3.5 w-3.5 text-amber-400" />
+                        <span>{item.date}</span>
+                      </div>
+
+                      <span className="rounded-full bg-amber-100 px-2.5 py-1 text-[10px] font-semibold text-amber-700">
+                        {item.unit}
+                      </span>
+                    </div>
+
+                    <h4 className="mt-2 text-sm font-semibold text-slate-900">
+                      {item.name}
+                    </h4>
+
+                    <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
+                      <div className="rounded-lg bg-slate-100 px-2 py-1">
+                        <span className="font-medium">Model:</span>{" "}
+                        {item.modelYear}
+                      </div>
+                      <div className="rounded-lg bg-slate-100 px-2 py-1">
+                        {item.feature}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
 
               {/* Machine Table */}
               <div
-                className={`overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl transition-all duration-1000 ${
+                className={`hidden md:block overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl transition-all duration-1000 ${
                   visibleSections.has(group.id)
                     ? "opacity-100 translate-y-0"
                     : "opacity-0 translate-y-12"

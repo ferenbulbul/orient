@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+
 import { ArrowRight, Sparkles } from "lucide-react";
 import book from "../assets/images/category/book.jpg";
 import calender from "../assets/images/category/calender.jpg";
@@ -114,8 +114,8 @@ function ProductShowcase() {
             "
           >
             {marqueeItems.map((product, index) => (
-              <Link
-                to={`/urunler/${product.slug}`}
+              <div
+
                 key={`${product.id}-${index}`}
                 className="
                   group/product relative block min-w-[280px] md:min-w-[340px]
@@ -182,7 +182,7 @@ function ProductShowcase() {
                   {/* Decorative Line */}
                   <div className="mt-4 h-1 w-0 rounded-full bg-gradient-to-r from-amber-400 to-amber-300 transition-all duration-500 group-hover/product:w-full" />
                 </div>
-              </Link>
+              </div>
             ))}
           </div>
         </div>
