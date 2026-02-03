@@ -10,7 +10,7 @@ const CONTACT_INFO = [
   {
     icon: Phone,
     label: "Telefon",
-    value: "+90 (216) 000 00 00",
+    value: "+90 (216) 002 00 00",
     href: "tel:+902160000000"
   },
   {
