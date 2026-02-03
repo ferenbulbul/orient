@@ -22,7 +22,7 @@ function Hero({ onOpenQuoteModal = () => {} }) {
   }, []);
 
   return (
-    <section className="relative min-h-screen w-full overflow-hidden text-white -mt-20 sm:-mt-24 md:-mt-28">
+    <section className="relative min-h-[calc(100vh+5rem)] sm:min-h-[calc(100vh+6rem)] md:min-h-[calc(100vh+7rem)] w-full overflow-hidden text-white -mt-20 sm:-mt-24 md:-mt-28">
       <div
         className="absolute inset-0 w-full overflow-hidden transition duration-300 ease-out"
         style={{

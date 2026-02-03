@@ -15,14 +15,16 @@ import TopBar from "./components/TopBar";
 import QuoteModal from "./components/QuoteModal";
 import { BRAND_LOGOS } from "./data/brands";
 import About from "./pages/About";
+import Vision from "./pages/Vision";
+import Mission from "./pages/Mission";
 import Contact from "./pages/Contact";
 import MachinePark from "./pages/MachinePark";
 import ProductCategory from "./pages/ProductCategory";
-import GraphicDesign from "./pages/GraphicDesign";
+import PrePress from "./pages/PrePress";
 import Printing from "./pages/Printing";
 import Binding from "./pages/Binding";
+import HomePage from "./pages/Home";
 import "./App.css";
-import Portfolio from "./pages/Portfolio";
 
 const WHY_US = [
   {
@@ -135,13 +137,14 @@ function App() {
             path="/"
             element={<HomePage onOpenQuoteModal={openQuoteModal} />}
           />
-          <Route path="/about" element={<About />} />
-          <Route path="/portfolio" element={<Portfolio />} />
-          <Route path="/hizmetler/grafik-tasarim" element={<GraphicDesign />} />
-          <Route path="/hizmetler/baski" element={<Printing />} />
-          <Route path="/hizmetler/mucellit" element={<Binding />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/makine-parkuru" element={<MachinePark />} />
+          <Route path="/kurumsal/hakkimizda" element={<About />} />
+          <Route path="/kurumsal/vizyon" element={<Vision />} />
+          <Route path="/kurumsal/misyon" element={<Mission />} />
+          <Route path="/hizmetlerimiz/baski-oncesi" element={<PrePress />}/>
+          <Route path="/hizmetlerimiz/baski" element={<Printing />} />
+          <Route path="/hizmetlerimiz/baski-sonrasi" element={<Binding />} />
+          <Route path="/iletisim" element={<Contact />} />
+          <Route path="/parkurumuz" element={<MachinePark />} />
           <Route path="/urunler/:slug" element={<ProductCategory />} />
           <Route
             path="*"
@@ -160,105 +163,3 @@ function App() {
 
 export default App;
 
-function HomePage({ onOpenQuoteModal }) {
-  return (
-    <>
-      <Hero onOpenQuoteModal={onOpenQuoteModal} />
-      <div className="page home-page">
-        <section className="section section--panel section--why">
-          <p className="text-xs uppercase tracking-[0.4em] text-amber-300">
-            Neden Biz?
-          </p>
-          <div className="section__heading">
-            <h2 className="text-amber-300">
-              EuromatPrint ile iş birliği yapmanın avantajları.
-            </h2>
-            <p>
-              Uzman üretim kadromuz, modern makine parkurumuz ve sektörel
-              deneyimimiz sayesinde, baskı süreçlerinizi güvenle teslim
-              edebilirsiniz.
-            </p>
-          </div>
-          <div className="why-grid">
-            {WHY_US.map((item) => (
-              <article key={item.title} className="card why-card">
-                <h3 className="tracking-[0.4em] text-amber-400">
-                  {item.title}
-                </h3>
-                <p>{item.description}</p>
-              </article>
-            ))}
-          </div>
-        </section>
-      </div>
-      <ProductShowcase />
-      <div className="page home-page">
-        <section className="section section--panel brands-panel">
-          <p className="eyebrow text-amber-300/90">
-            Birlikte Çalıştığımız Markalar
-          </p>
-          <div className="section__heading">
-            <h2 className="text-amber-300">Portfolyomuzdan seçkiler.</h2>
-            <p>
-              Yıllar içinde büyüttüğümüz kurumsal müşteri ağımızın bir bölümünü
-              aşağıda görebilirsiniz. Tam liste için portfolyo sayfamızı ziyaret
-              edebilirsiniz.
-            </p>
-          </div>
-          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {FEATURED_BRANDS.map((brand) => (
-              <Link
-                key={brand.id}
-                to="/portfolio"
-                aria-label={`${brand.name} portfolyo kartı`}
-                className="group block aspect-square max-w-[220px] rounded-3xl border border-slate-200 bg-white
-                 shadow-[0_10px_28px_rgba(15,23,42,0.08)] transition
-                 hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(15,23,42,0.12)]"
-              >
-                <div className="flex h-full w-full items-center justify-center p-4">
-                  <img
-                    src={brand.logo}
-                    alt={`${brand.name} logosu`}
-                    className="max-h-[72px] w-auto object-contain transition duration-500 ease-out
-                     group-hover:scale-105 sm:max-h-[80px]"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-              </Link>
-            ))}
-          </div>
-
-          <div className="mt-8">
-            <Link
-              className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-amber-400 via-amber-300 to-amber-200 px-8 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-amber-400/40 transition hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/70"
-              to="/portfolio"
-            >
-              Tüm Portfolyoyu Gör
-            </Link>
-          </div>
-        </section>
-      </div>
-      <div className="page home-page">
-        <section className="section contact-cta" id="contact-cta">
-          <div>
-            <p className="eyebrow">İletişim</p>
-            <h2>Projenizi konuşalım.</h2>
-            <p>
-              İhtiyaçlarınızı paylaştığınızda, ilgili ekip sizi yeni iletişim
-              sayfamız üzerinden yönlendirir ve teklif sürecini başlatır.
-            </p>
-          </div>
-          <div className="contact-cta__actions">
-            <Link
-              className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-amber-400 via-amber-300 to-amber-200 px-8 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-amber-400/40 transition hover:-translate-y-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-200/70"
-              to="/contact"
-            >
-              İletişim Sayfasına Git
-            </Link>
-          </div>
-        </section>
-      </div>
-    </>
-  );
-}

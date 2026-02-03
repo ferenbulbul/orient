@@ -1,30 +1,30 @@
-import { Printer, Palette, Zap, Award } from "lucide-react";
-import print from '../assets/images/services/print.jpg';
+import { Target, TrendingUp, Globe, Lightbulb } from "lucide-react";
+import about from '../assets/images/services/about.jpg';
 
-const PRINTING_POINTS = [
+const VISION_POINTS = [
   {
-    icon: Printer,
-    title: "Ofset Baskı Hattı",
-    description: "Yüksek tirajlı işler için 4-8 renk ofset makinelerimizde renk tutarlılığı, lak ve kesim süreçlerini tek akışta yönetiyoruz. ISO renk standartlarıyla doğrulanmış üretim."
+    icon: Target,
+    title: "Teknolojik Liderlik",
+    description: "Dünya standartlarında makine parkuru ve sürekli yenilik"
   },
   {
-    icon: Palette,
-    title: "Dijital & Kişiselleştirme",
-    description: "Düşük tirajlı, değişken verili veya acil teslimatlar için dijital baskı hatları kullanıyoruz. Kişiselleştirilmiş katalog, broşür ve kitap baskıları kısa sürede tamamlanır."
+    icon: TrendingUp,
+    title: "Sürdürülebilir Üretim",
+    description: "Çevre dostu ve verimli üretim süreçleri"
   },
   {
-    icon: Zap,
-    title: "Hız ve Verimlilik",
-    description: "Optimize edilmiş üretim süreçlerimizle hızlı teslimat sağlarken kaliteden ödün vermiyoruz."
+    icon: Globe,
+    title: "Bölgesel Önderlik",
+    description: "Türkiye ve bölgenin tercih edilen basım merkezi"
   },
   {
-    icon: Award,
-    title: "Renk Doğruluğu",
-    description: "ISO standartlarında renk yönetimi ile her baskıda tutarlı ve profesyonel sonuçlar."
+    icon: Lightbulb,
+    title: "Estetik & Hız",
+    description: "Grafik tasarımın estetiği ile endüstriyel üretim gücü"
   }
 ];
 
-function Printing() {
+function Vision() {
   return (
     <div className="bg-slate-50">
       {/* Hero Section */}
@@ -37,26 +37,30 @@ function Printing() {
             {/* Left: Text */}
             <div>
               <div className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-100 to-amber-50 px-4 py-2 shadow-sm">
-                <Printer className="h-4 w-4 text-amber-600" />
+                <Target className="h-4 w-4 text-amber-600" />
                 <span className="text-xs font-semibold uppercase tracking-[0.3em] text-amber-700">
-                  Baskı
+                  Vizyonumuz
                 </span>
               </div>
 
               <h1 className="mt-6 text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl leading-tight">
-                Hız ve kalite{" "}
+                Geleceğin baskı{" "}
                 <span className="bg-gradient-to-r from-amber-600 to-amber-500 bg-clip-text text-transparent">
-                  birlikte
+                  standartlarını
                 </span>{" "}
-                ilerler
+                belirliyoruz
               </h1>
 
               <p className="mt-6 text-lg leading-relaxed text-slate-600">
-                Ofset ve dijital baskı teknolojilerimizle, renk doğruluğu yüksek, net ve profesyonel sonuçlar sunuyoruz.
+                Teknolojik yatırımlarımız ve sürdürülebilir üretim anlayışımızla,
+                Türkiye'nin ve bölgenin en çok tercih edilen entegre basım merkezi
+                olmak.
               </p>
 
               <p className="mt-4 text-base leading-relaxed text-slate-600">
-                Yüksek hacimli üretimlerde dahi baskı kalitesini koruyarak markanızın görsel gücünü en iyi şekilde yansıtıyoruz.
+                Grafik tasarımın estetiğini, endüstriyel üretimin hızıyla
+                harmanlayarak; dijitalleşen dünyada basılı materyalin gücünü ve
+                kalitesini en üst seviyeye taşımak.
               </p>
             </div>
 
@@ -64,8 +68,8 @@ function Printing() {
             <div className="relative">
               <div className="group overflow-hidden rounded-3xl border border-slate-200 shadow-xl">
                 <img
-                  src={print}
-                  alt="Ofset ve dijital baskı teknolojileri"
+                  src={about}
+                  alt="Baskı üretiminde teknoloji ve kalite odağı"
                   className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                   loading="lazy"
                   decoding="async"
@@ -78,13 +82,13 @@ function Printing() {
         </div>
       </section>
 
-      {/* Printing Points */}
+      {/* Vision Points */}
       <section className="relative py-20">
         <div className="absolute bottom-0 left-1/4 h-96 w-96 rounded-full bg-slate-200/50 blur-3xl" />
         
         <div className="relative z-10 mx-auto max-w-6xl px-6">
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {PRINTING_POINTS.map((point, idx) => {
+            {VISION_POINTS.map((point, idx) => {
               const IconComponent = point.icon;
               return (
                 <div 
@@ -119,10 +123,11 @@ function Printing() {
         <div className="mx-auto max-w-4xl px-6 text-center">
           <div className="rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-slate-50 p-8 shadow-sm">
             <p className="text-lg leading-relaxed text-slate-700">
-              <span className="font-semibold text-amber-600">Ofset ve dijital hatlarımızla</span>{" "}
-              tiraj, hız ve kalite dengesini işinize özel kuruyoruz. Her projede{" "}
-              <span className="font-semibold text-slate-900">mükemmel sonuçlar</span>{" "}
-              için çalışıyoruz.
+              <span className="font-semibold text-amber-600">Dijitalleşen dünyada</span>{" "}
+              basılı materyalin gücünü ve kalitesini en üst seviyeye taşıyarak,
+              sektörde fark yaratan bir{" "}
+              <span className="font-semibold text-slate-900">basım merkezi</span>{" "}
+              olmayı hedefliyoruz.
             </p>
           </div>
         </div>
@@ -131,4 +136,4 @@ function Printing() {
   );
 }
 
-export default Printing;
+export default Vision;
