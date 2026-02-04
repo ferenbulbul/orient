@@ -9,7 +9,6 @@ import {
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Hero from "./components/Hero";
-import ProductShowcase from "./components/ProductShowcase";
 import ScrollToTop from "./components/ScrollToTop";
 import TopBar from "./components/TopBar";
 import QuoteModal from "./components/QuoteModal";
@@ -26,23 +25,7 @@ import Binding from "./pages/Binding";
 import HomePage from "./pages/Home";
 import "./App.css";
 
-const WHY_US = [
-  {
-    title: "Uçtan Uca Hizmet",
-    description:
-      "Tasarım, baskı, kalite kontrol ve sevkiyat süreçlerini tek ekip yönetir.",
-  },
-  {
-    title: "Şeffaf Planlama",
-    description:
-      "Her iş için üretim takvimi paylaşır, kritik tarihleri birlikte takip ederiz.",
-  },
-  {
-    title: "Sürdürülebilir Üretim",
-    description:
-      "Geri dönüştürülebilir kağıtlar ve düşük israf prensibi ile çalışıyoruz.",
-  },
-];
+
 
 const SECTION_TARGETS = {
   home: "#top",
@@ -50,7 +33,6 @@ const SECTION_TARGETS = {
   products: "#product-band",
 };
 
-const FEATURED_BRANDS = BRAND_LOGOS.slice(0, 4);
 
 function App() {
   const [activeSection, setActiveSection] = useState("home");
@@ -140,10 +122,14 @@ function App() {
           <Route path="/kurumsal/hakkimizda" element={<About />} />
           <Route path="/kurumsal/vizyon" element={<Vision />} />
           <Route path="/kurumsal/misyon" element={<Mission />} />
-          <Route path="/hizmetlerimiz/baski-oncesi" element={<PrePress />}/>
+          <Route path="/hizmetlerimiz/baski-oncesi" element={<PrePress />} />
           <Route path="/hizmetlerimiz/baski" element={<Printing />} />
           <Route path="/hizmetlerimiz/baski-sonrasi" element={<Binding />} />
-          <Route path="/iletisim" element={<Contact />} />
+          <Route
+            path="/iletisim"
+            element={<Contact onOpenQuoteModal={openQuoteModal} />}
+          />
+
           <Route path="/parkurumuz" element={<MachinePark />} />
           <Route path="/urunler/:slug" element={<ProductCategory />} />
           <Route
@@ -162,4 +148,3 @@ function App() {
 }
 
 export default App;
-

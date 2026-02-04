@@ -64,11 +64,12 @@ function Hero({ onOpenQuoteModal = () => {} }) {
             </button>
 
             <a
-              href="#services"
+             href="#product-band"
               className="inline-flex items-center justify-center rounded-full backdrop-blur border border-white/40 px-10 py-3 text-base font-semibold text-white shadow-lg shadow-black/20 transition hover:-translate-y-0.5 hover:bg-white/10active:translate-y-0 active:shadow-black/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
             >
               Neler Üretiyoruz
             </a>
+            
           </div>
 
           <div className="mt-12 flex flex-wrap items-center gap-4 text-xs uppercase tracking-[0.4em] text-slate-200">

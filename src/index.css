@@ -44,3 +44,6 @@ textarea {
 main {
   display: block;
 }
+html {
+  scroll-behavior: smooth;
+}

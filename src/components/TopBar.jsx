@@ -1,7 +1,7 @@
 const socials = [
   {
     id: 'facebook',
-    href: '#',
+    href: 'https://www.facebook.com/euromat.print',
     label: 'Facebook',
     icon: (
       <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current">
@@ -11,7 +11,7 @@ const socials = [
   },
   {
     id: 'instagram',
-    href: '#',
+    href: 'https://www.instagram.com/euromatprint',
     label: 'Instagram',
     icon: (
       <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current">
@@ -19,19 +19,10 @@ const socials = [
       </svg>
     ),
   },
-  {
-    id: 'linkedin',
-    href: '#',
-    label: 'LinkedIn',
-    icon: (
-      <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current">
-        <path d="M6.5 6.5A1.75 1.75 0 104.75 4.75 1.75 1.75 0 006.5 6.5zM4 9h5v11H4zm7 0h4.7v1.6h.1c.6-1.1 2-2.3 4-2.3 4.3 0 5.1 2.8 5.1 6.4V20H20v-5c0-1.2 0-2.7-1.7-2.7-1.7 0-2 1.3-2 2.6V20h-5z" />
-      </svg>
-    ),
-  },
+ 
 ]
 
-const LANGUAGES = ['TR', 'EN', 'DE', 'RU']
+const LANGUAGES = ['TR', 'EN']
 
 function TopBar({ onRequestQuote, isVisible = true }) {
   return (
@@ -43,13 +34,13 @@ function TopBar({ onRequestQuote, isVisible = true }) {
       <div className="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-2 text-sm sm:h-12 sm:min-h-[48px] sm:flex-row sm:flex-nowrap sm:items-center sm:gap-4 sm:px-6 sm:py-0">
         <div className="flex w-full flex-wrap items-center gap-3 text-white/80 sm:flex-1 sm:flex-nowrap sm:gap-4">
           <a
-            href="tel:+902123334455"
+            href="tel:+905417252006"
             className="flex items-center gap-2 font-semibold text-white transition hover:text-amber-300"
           >
             <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current">
               <path d="M6.6 10.8a11.7 11.7 0 0 0 6.6 6.6l1.5-1.5a1 1 0 0 1 1-.25 8.9 8.9 0 0 0 2.8.45 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A15.4 15.4 0 0 1 3 5a1 1 0 0 1 1-1h2.9a1 1 0 0 1 1 1 8.9 8.9 0 0 0 .46 2.8 1 1 0 0 1-.25 1z" />
             </svg>
-            +90 212 333 44 55
+            +90 541 725 20 06
           </a>
           <span className="hidden h-4 w-px bg-white/20 sm:block" />
           <a

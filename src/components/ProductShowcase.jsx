@@ -14,7 +14,7 @@ const products = [
     title: "Kitap", 
     image: book,
     description: "Ciltli ve karton kapak",
-    features: ["Ofset baskı", "Yüksek tiraj"]
+
   },
   { 
     id: "katalog", 
@@ -22,7 +22,7 @@ const products = [
     title: "Katalog", 
     image: catalog,
     description: "Ürün ve hizmet tanıtımı",
-    features: ["Renk yönetimi", "Premium kağıt"]
+
   },
   { 
     id: "takvim", 
@@ -30,7 +30,7 @@ const products = [
     title: "Takvim", 
     image: calender,
     description: "Kurumsal ve promosyon",
-    features: ["Özel tasarım", "Spiral cilt"]
+
   },
   { 
     id: "ajanda", 
@@ -38,7 +38,7 @@ const products = [
     title: "Ajanda", 
     image: agenda,
     description: "Deri ve bez kaplı",
-    features: ["Logo baskı", "Özel üretim"]
+
   },
   { 
     id: "karton-canta", 
@@ -46,7 +46,7 @@ const products = [
     title: "Karton Çanta", 
     image: cardboard,
     description: "Lüks ve ekonomik",
-    features: ["Mat/Parlak selefon", "İp kulp"]
+
   },
   { 
     id: "dergi", 
@@ -54,7 +54,7 @@ const products = [
     title: "Dergi", 
     image: magazine,
     description: "Periyodik yayınlar",
-    features: ["Tel dikiş", "Laminasyon"]
+
   },
 ];
 
@@ -162,26 +162,6 @@ function ProductShowcase() {
                   </div>
                 </div>
 
-                {/* Content Section */}
-                <div className="relative p-6">
-                  {/* Features */}
-                  <div className="flex flex-wrap gap-2">
-                    {product.features.map((feature, idx) => (
-                      <span
-                        key={idx}
-                        className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-700 transition-colors group-hover/product:bg-amber-50 group-hover/product:text-amber-700"
-                      >
-                        <div className="h-1 w-1 rounded-full bg-amber-400" />
-                        {feature}
-                      </span>
-                    ))}
-                  </div>
-
-                 
-
-                  {/* Decorative Line */}
-                  <div className="mt-4 h-1 w-0 rounded-full bg-gradient-to-r from-amber-400 to-amber-300 transition-all duration-500 group-hover/product:w-full" />
-                </div>
               </div>
             ))}
           </div>

@@ -311,7 +311,7 @@ function QuoteModal({ isOpen, onClose }) {
           {/* NOTES */}
           <textarea
             name="notes"
-            placeholder="Açıklama"
+            placeholder="İşinize dair ek bilgiler veriniz."
             value={form.notes}
             onChange={handleChange}
             rows={4}

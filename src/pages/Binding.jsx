@@ -1,26 +1,26 @@
-import { BookOpen, Shield, Scissors, Package } from "lucide-react";
+import { BookOpen, Scissors, Layers, Package } from "lucide-react";
 import binding from '../assets/images/services/mücellet.jpg';
 
 const BINDING_POINTS = [
   {
-    icon: BookOpen,
-    title: "Tel Dikiş & Amerikan Cilt",
-    description: "Dikiş ve tutkallama süreçlerinde yapıştırma mukavemetini, sayfa düzenini ve teslim dayanıklılığını üst seviyede tutuyoruz. Katalog ve kitaplar için temiz, rafine bitişler."
+    icon: Layers,
+    title: "Harmanlama & Katlama",
+    description: "Formaların sayfa sırasına göre yan yana veya iç içe dizilmesi ve kağıdın istenilen ölçüde katlanması işlemleri hassasiyetle gerçekleştirilir."
   },
   {
-    icon: Shield,
-    title: "Sert Kapak & Özel Kapak İşçiliği",
-    description: "Sert kapaklı, laklı, gofre veya selefonlu kapak çözümlerinde ölçü, kırım ve mukavva seçimleri üretim öncesi netleştirilir. Premium kitap ve ajanda üretiminde kusursuz ciltleme."
+    icon: BookOpen,
+    title: "Dikiş & Ciltleme Çeşitleri",
+    description: "Tel dikiş, omega tel dikiş, iplik dikiş ve amerikan cilt gibi farklı ciltleme teknikleriyle her projeye uygun çözümler sunuyoruz."
   },
   {
     icon: Scissors,
-    title: "Kesim ve Şekillendirme",
-    description: "Profesyonel kesim teknolojileriyle hassas ölçüler ve düzgün kenarlar sağlıyoruz."
+    title: "Kesim & Şekillendirme",
+    description: "Profesyonel kesim teknolojileriyle hassas ölçüler ve düzgün kenar kesimleri sağlıyoruz. Gofre, perforaj ve pilyaj işlemleri ile özel şekillendirmeler."
   },
   {
     icon: Package,
-    title: "Kalite Kontrol & Paketleme",
-    description: "Her iş, son kullanıcıya ulaşmadan önce detaylı kalite kontrol aşamalarından geçirilir."
+    title: "Kapak İşleme & Paketleme",
+    description: "Sert kapak, lak, selofon ve şömiz uygulamaları ile son kalite kontrol ve paketleme aşamalarında titizlikle çalışıyoruz."
   }
 ];
 
@@ -39,24 +39,23 @@ function Binding() {
               <div className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-100 to-amber-50 px-4 py-2 shadow-sm">
                 <BookOpen className="h-4 w-4 text-amber-600" />
                 <span className="text-xs font-semibold uppercase tracking-[0.3em] text-amber-700">
-                  Baskı Sonrası
+                  Mücellit 
                 </span>
               </div>
 
               <h1 className="mt-6 text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl leading-tight">
-                Dayanıklılık ve{" "}
+                Baskı sonrası{" "}
                 <span className="bg-gradient-to-r from-amber-600 to-amber-500 bg-clip-text text-transparent">
-                  sunum
-                </span>{" "}
-                ön planda
+                  mükemmellik
+                </span>
               </h1>
 
               <p className="mt-6 text-lg leading-relaxed text-slate-600">
-                Baskı sonrası süreçlerde, ürünün dayanıklılığı ve sunumu ön plana çıkar.
+                Basılmış olan kitap, mecmua, broşür ve buna benzer bütün yazılı veya resimli işlerin bulunduğu kağıtların sayfa ve forma sırasına göre katlanıp bir araya getirilmesi ve bunların blok teşkil ettikten sonra üzerlerine muhafaza olarak bir kap geçirilmesi veya dağılmaması için birbirlerine tutturulması işlemine ciltleme, bu sanata da mücellit sanatı denilmektedir.
               </p>
 
               <p className="mt-4 text-base leading-relaxed text-slate-600">
-                Mücellit hatlarımızda yapılan ciltleme, kesim ve paketleme işlemleri, ürünün hem estetik hem de fonksiyonel açıdan kusursuz olmasını sağlar. Her iş, son kullanıcıya ulaşmadan önce kalite kontrol aşamalarından geçirilir.
+                Hazırlığı, filmi, kağıdı ve baskısı ne kadar mükemmel olsa da, işin mücellithaneden çıktıktan sonraki görünümü ve kalitesi gerçek bir sanattır. Teknolojinin gelişmesiyle harmanlama, dikiş, tutkal, kapak takma, kesme ve paketleme işlemlerini kusursuz bir şekilde gerçekleştiriyoruz.
               </p>
             </div>
 
@@ -114,15 +113,100 @@ function Binding() {
         </div>
       </section>
 
-      {/* Bottom Statement */}
+      {/* Detailed Information Section */}
       <section className="relative bg-white py-16">
+        <div className="mx-auto max-w-6xl px-6">
+          <div className="grid gap-8 lg:grid-cols-2">
+            
+            {/* Left Column - Main Text */}
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-2xl font-bold text-slate-900 mb-4">
+                  Mücellit Nedir?
+                </h2>
+                <p className="text-base leading-relaxed text-slate-600">
+                  Mücellit sadece bir kitabın, bir mecmuanın ciltlenmesi anlamına gelmez. Örneğin, baskı makinesine basılmak için bir iş geldi. Basılacak kağıdın makineye istenilen ebatta kesilerek yüklenecek hale gelmesi de bu işin bir parçasıdır.
+                </p>
+              </div>
+
+              <div>
+                <p className="text-base leading-relaxed text-slate-600">
+                  Baskı sonrası formaların birbirini takip edecek şekilde sayfa numarası ile katlanması, yine sıra ile dikilmesi veya tel dikişle tutturulması (zımbalanması), pilyaj yapılması, gofre gibi işlemlerden geçmesi hepsi mücellit işidir.
+                </p>
+              </div>
+
+              <div className="rounded-2xl border border-amber-200 bg-amber-50/50 p-6">
+                <p className="text-base leading-relaxed text-slate-700">
+                  <span className="font-semibold text-amber-700">Baskı sonrası,</span> basılan bir işin son durumunu gösteren bir ayna görevini yerine getirmektedir. Günümüzde mücellit işçiliği son derece ilerlemiştir. Teknolojinin gelişmesi ile formaların harmanlanması, dikişli tutkalı, kapak takması, kesme işlemleri, hatta paketleme işlemleri bile makineler tarafından yapılmaktadır.
+                </p>
+              </div>
+            </div>
+
+            {/* Right Column - Terms */}
+            <div className="rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-slate-50 p-8">
+              <h3 className="text-xl font-bold text-slate-900 mb-6">Ciltcilik Terimleri</h3>
+              <div className="space-y-4">
+                <div className="border-l-4 border-amber-400 pl-4">
+                  <h4 className="font-semibold text-slate-900 text-sm">Kırım & Katlama</h4>
+                  <p className="text-sm text-slate-600 mt-1">Basılı bir formayı katlama işi. Kağıdın istenilen ölçüde katlanması.</p>
+                </div>
+                
+                <div className="border-l-4 border-amber-400 pl-4">
+                  <h4 className="font-semibold text-slate-900 text-sm">Harmanlama</h4>
+                  <p className="text-sm text-slate-600 mt-1">Formaların, cilt öncesi kitap birimi haline getirilmek üzere sırayla yan yana veya iç içe dizilmesi.</p>
+                </div>
+                
+                <div className="border-l-4 border-amber-400 pl-4">
+                  <h4 className="font-semibold text-slate-900 text-sm">Perforaj</h4>
+                  <p className="text-sm text-slate-600 mt-1">Basılan bir işin aynı sayfa üzerinden rahat koparılabilmesi için sık aralıklarla açılan delik işlemi.</p>
+                </div>
+                
+                <div className="border-l-4 border-amber-400 pl-4">
+                  <h4 className="font-semibold text-slate-900 text-sm">Pilyaj</h4>
+                  <p className="text-sm text-slate-600 mt-1">Cilt işlerinde, katlamayı kolaylaştırmak için karton veya mukavva üzerinde oyuk açmak.</p>
+                </div>
+                
+                <div className="border-l-4 border-amber-400 pl-4">
+                  <h4 className="font-semibold text-slate-900 text-sm">Tel Dikiş & Omega Tel Dikiş</h4>
+                  <p className="text-sm text-slate-600 mt-1">En az iki yaprağın birbirine tel ile zımbalanması. Omega: Dosyalara takabilmek için sırtı kambur şeklindeki çeşit.</p>
+                </div>
+                
+                <div className="border-l-4 border-amber-400 pl-4">
+                  <h4 className="font-semibold text-slate-900 text-sm">Amerikan Cilt</h4>
+                  <p className="text-sm text-slate-600 mt-1">Harmanlanan formaların freze ile sırtlarının tıraşlanması ve tutkallanarak yapıştırılması işlemi.</p>
+                </div>
+                
+                <div className="border-l-4 border-amber-400 pl-4">
+                  <h4 className="font-semibold text-slate-900 text-sm">İplik Dikiş</h4>
+                  <p className="text-sm text-slate-600 mt-1">Düğümlü, atlamalı veya normal olarak çeşitleri olan ve harmanlanan formaların iplik ile birbirlerine sırt kısımlarından tutturulma işlemi.</p>
+                </div>
+                
+                <div className="border-l-4 border-amber-400 pl-4">
+                  <h4 className="font-semibold text-slate-900 text-sm">Şömiz (Gömlek)</h4>
+                  <p className="text-sm text-slate-600 mt-1">Genellikle kitapların kapakları üzerine geçirilen baskılı koruma kapakçığı.</p>
+                </div>
+                
+                <div className="border-l-4 border-amber-400 pl-4">
+                  <h4 className="font-semibold text-slate-900 text-sm">Gofre</h4>
+                  <p className="text-sm text-slate-600 mt-1">Kalın kağıt veya karton üzerine içten veya dıştan olmak üzere yapılan baskı kabartma.</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* Bottom Statement */}
+      <section className="relative bg-slate-50 py-16">
         <div className="mx-auto max-w-4xl px-6 text-center">
           <div className="rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-slate-50 p-8 shadow-sm">
             <p className="text-lg leading-relaxed text-slate-700">
-              <span className="font-semibold text-amber-600">Ciltleme ve kapak işlerinde</span>{" "}
-              endüstriyel kaliteyi premium bitişlerle buluşturuyoruz. Her projede{" "}
-              <span className="font-semibold text-slate-900">kusursuz sonuçlar</span>{" "}
-              için detaylı çalışıyoruz.
+              <span className="font-semibold text-amber-600">Eğri kapak, karışık formalar veya hatalı kesimler değil,</span>{" "}
+              kusursuz bitmiş ürünler için detaylı kalite kontrolü uyguluyoruz.
+              Mücellit işçiliğinde son derece ilerlemiş teknoloji ile{" "}
+              <span className="font-semibold text-slate-900">geleneksel sanatı</span>{" "}
+              birleştiriyoruz.
             </p>
           </div>
         </div>

@@ -1,26 +1,26 @@
-import { Printer, Palette, Zap, Award } from "lucide-react";
+import { Printer, History, Zap, BookOpen } from "lucide-react";
 import print from '../assets/images/services/print.jpg';
 
 const PRINTING_POINTS = [
   {
-    icon: Printer,
-    title: "Ofset Baskı Hattı",
-    description: "Yüksek tirajlı işler için 4-8 renk ofset makinelerimizde renk tutarlılığı, lak ve kesim süreçlerini tek akışta yönetiyoruz. ISO renk standartlarıyla doğrulanmış üretim."
+    icon: History,
+    title: "Ofset Baskı Tarihi",
+    description: "1904 yılında Amerikalı Ira W. Rubel tarafından bulunan ofset baskı, günümüz teknolojisinde de kullanılmaya devam eden yüzeysel kaplama yöntemidir."
   },
   {
-    icon: Palette,
-    title: "Dijital & Kişiselleştirme",
-    description: "Düşük tirajlı, değişken verili veya acil teslimatlar için dijital baskı hatları kullanıyoruz. Kişiselleştirilmiş katalog, broşür ve kitap baskıları kısa sürede tamamlanır."
+    icon: Printer,
+    title: "CTP Teknolojisi ile Hız",
+    description: "Computer to Plate teknolojisi ile doğrudan bilgisayardan baskı alınabiliyor. Film ve montaj işlemlerine gerek kalmadan hızlı üretim sağlıyoruz."
+  },
+  {
+    icon: BookOpen,
+    title: "Geniş Kullanım Alanı",
+    description: "Kitap kapakları, dergiler ve her türlü kağıt gramajına uygulanabilen ofset baskı ile çok yönlü çözümler sunuyoruz."
   },
   {
     icon: Zap,
-    title: "Hız ve Verimlilik",
-    description: "Optimize edilmiş üretim süreçlerimizle hızlı teslimat sağlarken kaliteden ödün vermiyoruz."
-  },
-  {
-    icon: Award,
-    title: "Renk Doğruluğu",
-    description: "ISO standartlarında renk yönetimi ile her baskıda tutarlı ve profesyonel sonuçlar."
+    title: "Kalıplama Teknolojisi",
+    description: "Alüminyum kalıplar ve ışık kontrolü ile mürekkep tutma alanlarını hassas şekilde belirleyerek mükemmel baskı kalitesi elde ediyoruz."
   }
 ];
 
@@ -44,19 +44,18 @@ function Printing() {
               </div>
 
               <h1 className="mt-6 text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl leading-tight">
-                Hız ve kalite{" "}
+                Ofset baskı{" "}
                 <span className="bg-gradient-to-r from-amber-600 to-amber-500 bg-clip-text text-transparent">
-                  birlikte
-                </span>{" "}
-                ilerler
+                  ve özellikleri
+                </span>
               </h1>
 
               <p className="mt-6 text-lg leading-relaxed text-slate-600">
-                Ofset ve dijital baskı teknolojilerimizle, renk doğruluğu yüksek, net ve profesyonel sonuçlar sunuyoruz.
+                Amerikalı Ira W. Rubel tarafından 1904 yılında bulunmuş olan ofset baskı, günümüz teknolojisinde de kullanılmaya devam eden bir baskı çeşididir. Yüzeysel kaplamalarda kullanılan bu baskı çeşidi genellikle kitap ve dergilerin kapaklarında kullanılır.
               </p>
 
               <p className="mt-4 text-base leading-relaxed text-slate-600">
-                Yüksek hacimli üretimlerde dahi baskı kalitesini koruyarak markanızın görsel gücünü en iyi şekilde yansıtıyoruz.
+                Ofset kelimesi İngilizce OFF ve SET kelimelerinin birleşiminden dilimize geçmiştir. Anlamı mürekkebin kauçuk vasıtası ile kağıda geçirilmesidir. Her türlü kağıt ve gramaja uygulanabildiği için oldukça sık kullanılan bir çalışma olarak baskı tarihinde yerini sürekli korumaktadır.
               </p>
             </div>
 
@@ -65,7 +64,7 @@ function Printing() {
               <div className="group overflow-hidden rounded-3xl border border-slate-200 shadow-xl">
                 <img
                   src={print}
-                  alt="Ofset ve dijital baskı teknolojileri"
+                  alt="Ofset baskı teknolojisi ve özellikleri"
                   className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                   loading="lazy"
                   decoding="async"
@@ -114,15 +113,98 @@ function Printing() {
         </div>
       </section>
 
-      {/* Bottom Statement */}
+      {/* Detailed Information Section */}
       <section className="relative bg-white py-16">
+        <div className="mx-auto max-w-6xl px-6">
+          <div className="grid gap-8 lg:grid-cols-2">
+            
+            {/* Left Column - Ofset Baskı Nasıl Yapılır */}
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-2xl font-bold text-slate-900 mb-4">
+                  Ofset Baskı Nasıl Yapılır?
+                </h2>
+                <p className="text-base leading-relaxed text-slate-600">
+                  Bilgisayarlarda tasarım yapacak olan tasarımcılar her zaman için bu tasarımları en etkili bir biçimde kağıda dökmek isterler. Yapılan tasarımın bir metalin üzerine alınması ile baskıya geçecek olan ofset baskı, günümüzde baskı teknolojisinde kullanılan en etkili yöntemdir.
+                </p>
+                <p className="text-base leading-relaxed text-slate-600 mt-4">
+                  Bu sebeple baskıcıların ofset baskı ve özellikleri konusuna hakim olmaları ve bu baskıları en iyi şekilde almaları gerekir. Yapılacak olan tasarımların en etkili bir biçimde aktarılacak olması tasarım ve baskı konusunu ilgilendirdiği için, bu konuda çalışan kişilerin kesinlikle konularında uzman olmaları gerekir.
+                </p>
+              </div>
+
+              <div className="rounded-2xl border border-amber-200 bg-amber-50/50 p-6">
+                <h3 className="text-lg font-bold text-slate-900 mb-3">CTP Teknolojisinin Avantajı</h3>
+                <p className="text-base leading-relaxed text-slate-700">
+                  Günümüzde ofset baskı yapmanın en büyük avantajı <span className="font-semibold text-amber-700">zaman kaybı yaşanmadan baskı alınabiliyor olmasıdır.</span> CTP teknolojisi ile doğrudan bilgisayardan baskı alınabiliyor olmasından dolayı eskisi gibi film ve montaj işlemlerine gerek kalmadan bu işlemlerin yapılabiliyor olması zaman kaybını engeller.
+                </p>
+              </div>
+
+              <div className="rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-slate-50 p-6">
+                <h3 className="text-lg font-bold text-slate-900 mb-3">Kalıplama Teknolojisi</h3>
+                <p className="text-sm leading-relaxed text-slate-600">
+                  Ofset baskı ve özellikleri konusunu araştıran bir kişi ilk olarak CTP teknolojisi ile karşılaşır. Bu teknoloji kalıplama teknolojisidir. Yapılan çalışmanın kalıba aktarılması ile gerçekleşen çalışmalarda daima en iyi sonuçlar elde edilir.
+                </p>
+                <p className="text-sm leading-relaxed text-slate-600 mt-3">
+                  Film kullanılan sistem ve alüminyum kalıplar olan baskı işlemlerinde ışığı geçiren ve geçirmeyen alanlar vardır. Baskı işlemlerinde mürekkep tutulmaması gereken alanlar şeffaf olur ve ışığa maruz kalırlar. Alüminyum kalıpta bu alanlar çürüyerek banyoda atılırlar.
+                </p>
+              </div>
+            </div>
+
+            {/* Right Column - Kullanım Alanları */}
+            <div className="space-y-6">
+              <div className="rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-slate-50 p-8">
+                <h3 className="text-xl font-bold text-slate-900 mb-6">Ofset Baskı Hangi Alanlarda Kullanılır?</h3>
+                
+                <div className="space-y-4">
+                  <div className="border-l-4 border-amber-400 pl-4">
+                    <h4 className="font-semibold text-slate-900 text-sm">Kitap Kapakları</h4>
+                    <p className="text-sm text-slate-600 mt-1">Günümüzde ofset baskı genellikle kitap kapaklarında kullanılır. Yapılacak olan tasarımlar bir metal üzerine aktarılarak kitap kapaklarına aktarılabilir.</p>
+                  </div>
+                  
+                  <div className="border-l-4 border-amber-400 pl-4">
+                    <h4 className="font-semibold text-slate-900 text-sm">Dergi ve Yayınlar</h4>
+                    <p className="text-sm text-slate-600 mt-1">Yüzeysel kaplamalarda kullanılan bu baskı çeşidi dergilerin kapaklarında ve iç sayfalarında yaygın olarak tercih edilir.</p>
+                  </div>
+                  
+                  <div className="border-l-4 border-amber-400 pl-4">
+                    <h4 className="font-semibold text-slate-900 text-sm">Her Türlü Kağıt ve Gramaj</h4>
+                    <p className="text-sm text-slate-600 mt-1">Ofset baskı her türlü kağıt ve gramaja uygulanabildiği için oldukça sık kullanılan bir çalışma olarak günümüzde baskı tarihinde yerini sürekli olarak korur.</p>
+                  </div>
+                  
+                  <div className="border-l-4 border-amber-400 pl-4">
+                    <h4 className="font-semibold text-slate-900 text-sm">Hızlı ve Seri Üretim</h4>
+                    <p className="text-sm text-slate-600 mt-1">Teknolojinin gelişmesi ile ofset baskı ve özellikleri konusundan yararlanan tasarımcı ve baskıcılar direkt olarak bilgisayarda bulunan çalışmayı kağıda aktarabilirler. Daha hızlı yapılacak olan baskılar seri bir şekilde yapılabilir.</p>
+                  </div>
+                  
+                  <div className="border-l-4 border-amber-400 pl-4">
+                    <h4 className="font-semibold text-slate-900 text-sm">Net Sonuçlar</h4>
+                    <p className="text-sm text-slate-600 mt-1">Çalışmaların bir arada yürütüldüğü ve tasarımcı ile baskıcının neredeyse beraber çalıştığı ortamlarda, daha net sonuçlar elde edilebilir.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-slate-200 bg-slate-900 p-6">
+                <p className="text-base leading-relaxed text-slate-100">
+                  <span className="font-semibold text-amber-400">Daha az zaman harcanarak</span>{" "}
+                  yapılabilecek olan bu baskılar, ofset baskı ve özellikleri konusuna hakim olan tasarımcılar ve baskıcılar tarafından daha etkin bir şekilde kullanılabilir.
+                </p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* Bottom Statement */}
+      <section className="relative bg-slate-50 py-16">
         <div className="mx-auto max-w-4xl px-6 text-center">
           <div className="rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-slate-50 p-8 shadow-sm">
             <p className="text-lg leading-relaxed text-slate-700">
-              <span className="font-semibold text-amber-600">Ofset ve dijital hatlarımızla</span>{" "}
-              tiraj, hız ve kalite dengesini işinize özel kuruyoruz. Her projede{" "}
-              <span className="font-semibold text-slate-900">mükemmel sonuçlar</span>{" "}
-              için çalışıyoruz.
+              <span className="font-semibold text-amber-600">Yapılan çalışmanın bilgisayar ekranından direkt olarak kağıda aktarılabiliyor olması</span>{" "}
+              ayrı bir avantaj sağlar. Eski teknolojiye göre daha hızlı yapılabilen bu çalışmalar,
+              günümüzde oldukça fazla kullanılan{" "}
+              <span className="font-semibold text-slate-900">baskı çalışmaları</span>{" "}
+              olmaya devam etmektedir.
             </p>
           </div>
         </div>

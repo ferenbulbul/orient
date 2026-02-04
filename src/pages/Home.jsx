@@ -89,7 +89,7 @@ const QUALITY_FEATURES = [
   {
     icon: Award,
     title: "Müşteri Memnuniyeti",
-    description: "%98 müşteri memnuniyet oranı ile güvenilir hizmet"
+    description: "%100 müşteri memnuniyet oranı ile güvenilir hizmet"
   },
   {
     icon: Zap,

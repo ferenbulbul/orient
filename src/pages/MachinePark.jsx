@@ -17,6 +17,49 @@ import machine from "../assets/images/machine/machine.jpg";
 
 const MACHINE_GROUPS = [
   {
+    id: "prepress",
+    title: "Baskı Öncesi",
+    images: [
+      {
+        src: parkur1,
+        alt: "CTP baskı öncesi hazırlık",
+        caption: "Kodak Magnus CTP",
+      },
+      { src: parkur2, alt: "Renk yönetimi sistemi", caption: "Renk Yönetimi" },
+      {
+        src: parkur3,
+        alt: "Proof çıktı sistemleri",
+        caption: "Proof Sistemleri",
+      },
+    ],
+    description:
+      "Renk yönetimi, kalıp hazırlığı ve prova süreçlerinde yüksek hassasiyet.",
+    stats: { capacity: "Termal CTP/40 Kalıp", machines: "3", accuracy: "Dijital Prova %98" },
+    items: [
+      {
+
+        unit: "BASKI ÖNCESİ",
+        name: "Kodak Magnus 800 CTP",
+        modelYear: 2020,
+        feature: "40 Kalıp / Saat",
+      },
+      {
+
+        unit: "BASKI ÖNCESİ",
+        name: "Xerox Versant 280",
+        modelYear: 2024,
+        feature: "%98 Baskı Renk Doğruluğu",
+      },
+      {
+
+        unit: "BASKI ÖNCESİ",
+        name: "Kyocera Printer",
+        modelYear: 2021,
+        feature: "Ozalit / Prova",
+      },
+    ],
+  },
+  {
     id: "ofset",
     title: "Ofset Baskı",
     // Her grup için birden fazla görsel
@@ -39,31 +82,31 @@ const MACHINE_GROUPS = [
     ],
     description:
       "Yüksek tirajlı ve renk hassasiyeti gerektiren işler için modern ofset baskı altyapımız.",
-    stats: { capacity: "45M/yıl", machines: "4", colors: "8" },
+    stats: { capacity: "45 Milyon/Tabaka", machines: "4 Ofset/Tabaka", colors: "Toplam 16 Ünite" },
     items: [
       {
-        date: "01.01.2022",
+
         unit: "OFSET",
         name: "Komori Lithrone S40 8 Renk",
         modelYear: 2005,
         feature: "70x100 - 8 Renk Perfektör",
       },
       {
-        date: "07.01.2025",
+
         unit: "OFSET",
         name: "Komori Lithrone S40 5 Renk",
         modelYear: 2005,
         feature: "70x100 - 5 Renk",
       },
       {
-        date: "07.01.2025",
+
         unit: "OFSET",
         name: "Heidelberg SM 102P 2 Renk",
         modelYear: 1997,
         feature: "70x100 - 2 Renk Perfektör",
       },
       {
-        date: "06.01.2017",
+
         unit: "OFSET",
         name: "Roland Rekord 2 Renk",
         modelYear: 1987,
@@ -72,133 +115,117 @@ const MACHINE_GROUPS = [
     ],
   },
   {
-    id: "prepress",
-    title: "Baskı Öncesi",
-    images: [
-      {
-        src: parkur1,
-        alt: "CTP baskı öncesi hazırlık",
-        caption: "Kodak Magnus CTP",
-      },
-      { src: parkur2, alt: "Renk yönetimi sistemi", caption: "Renk Yönetimi" },
-      {
-        src: parkur3,
-        alt: "Proof çıktı sistemleri",
-        caption: "Proof Sistemleri",
-      },
-    ],
-    description:
-      "Renk yönetimi, kalıp hazırlığı ve prova süreçlerinde yüksek hassasiyet.",
-    stats: { capacity: "40/saat", machines: "3", accuracy: "98%" },
-    items: [
-      {
-        date: "06.01.2017",
-        unit: "BASKI ÖNCESİ",
-        name: "Kodak Magnus 800 CTP",
-        modelYear: 2012,
-        feature: "40 Kalıp / Saat",
-      },
-      {
-        date: "10.01.2024",
-        unit: "BASKI ÖNCESİ",
-        name: "Xerox Versant 280",
-        modelYear: 2024,
-        feature: "%98 Baskı Renk Doğruluğu",
-      },
-      {
-        date: "05.01.2023",
-        unit: "BASKI ÖNCESİ",
-        name: "Kyocera Printer",
-        modelYear: 2021,
-        feature: "Ozalit / Prova",
-      },
-    ],
-  },
-  {
     id: "bindery",
     title: "Mücellit",
     images: [
-      {
-        src: parkur3,
-        alt: "Müller Martini ciltleme makinesi",
-        caption: "Müller Martini Acora",
-      },
+      {src: parkur3, alt: "Müller Martini ciltleme makinesi",caption: "Müller Martini Acora",},
       { src: machine, alt: "Tel dikiş makinesi", caption: "Tel Dikiş Sistemi" },
       { src: parkur1, alt: "Kesim ve paketleme", caption: "Kesim & Paketleme" },
     ],
     description:
       "Katlama, dikiş, ciltleme ve paketleme süreçlerinde yüksek üretim kapasitesi.",
-    stats: { capacity: "8K/saat", machines: "4", stations: "18" },
+    stats: { capacity: "Günlük 100 Bin Kitap/Dergi", machines: "14", stations: "18" },
     items: [
       {
-        date: "10.01.2023",
         unit: "MÜCELLİT",
         name: "Müller Martini Acora 5",
         modelYear: 2002,
         feature: "5000 Kitap/Saat - 18 İstasyon",
       },
       {
-        date: "10.01.2024",
+
         unit: "MÜCELLİT",
-        name: "Müller Martini Presto Tel Dikiş",
+        name: "MÜLLER MARTİNİ PRESTO TEL DİKİŞ",
         modelYear: 2003,
         feature: "8000 Dergi/Saat - 6 İstasyon",
       },
       {
-        date: "01.01.2017",
+
         unit: "MÜCELLİT",
-        name: "Köşe Kesim (Radüs) Makinesi",
-        modelYear: 2017,
+        name: "HEİDELBERG KIRMA TARAMALI",
+        modelYear: 2008,
+        feature: "70X100",
+      },
+      {
+
+        unit: "MÜCELLİT",
+        name: "HEİDELBERG STALH KIRMA ",
+        modelYear: 2000,
+        feature: "70X100",
+      },
+      {
+
+        unit: "MÜCELLİT",
+        name: "MBO ÇANTA KIRMA",
+        modelYear: 2004,
+        feature: "70X100",
+      },
+      {
+
+        unit: "MÜCELLİT",
+        name: "MBO  KIRMA",
+        modelYear: 2006,
+        feature: "70X100",
+      },
+      {
+
+        unit: "MÜCELLİT",
+        name: "SMYTH İPLİK DİKİŞ",
+        modelYear: 1995,
         feature: "-",
       },
       {
-        date: "06.01.2017",
+
         unit: "MÜCELLİT",
         name: "Eurocutter Giyotin",
         modelYear: 1992,
         feature: "-",
       },
-    ],
-  },
-  {
-    id: "logistics",
-    title: "Sevkiyat",
-    images: [
-      { src: machine, alt: "Sevkiyat araçları", caption: "Filo Araçları" },
-      { src: parkur1, alt: "Forklift yükleme", caption: "Depo Operasyonları" },
       {
-        src: parkur2,
-        alt: "Paketleme ve sevkiyat",
-        caption: "Paketleme Birimi",
-      },
-    ],
-    description:
-      "Üretimi tamamlanan ürünlerin güvenli ve hızlı şekilde sevkiyatı.",
-    stats: { capacity: "5 gün", vehicles: "3", coverage: "TR" },
-    items: [
-      {
-        date: "06.01.2017",
-        unit: "SEVKİYAT",
-        name: "Iveco Daily",
-        modelYear: 2016,
+
+        unit: "MÜCELLİT",
+        name: "ATLANTA PALET SARMA MAKİNASI",
+        modelYear: 2023,
         feature: "-",
       },
       {
-        date: "06.01.2017",
-        unit: "SEVKİYAT",
-        name: "Renault Kangoo",
-        modelYear: 2012,
+
+        unit: "MÜCELLİT",
+        name: "SHRİNG MAKİNASI OTOTMOTİK",
+        modelYear: 2000,
         feature: "-",
       },
       {
-        date: "01.01.2025",
-        unit: "SEVKİYAT",
-        name: "Still Forklift",
+
+        unit: "MÜCELLİT",
+        name: "STREÇ SHRİNG MAKİNASI",
+        modelYear: 2010,
+        feature: "-",
+      },
+      {
+
+        unit: "MÜCELLİT",
+        name: "KONVEYÖR BANDROL MAKİNASI ",
         modelYear: 2015,
         feature: "-",
       },
+      {
+
+        unit: "MÜCELLİT",
+        name: "KÖŞE KESİM ( RADÜS) MAKİNASI",
+        modelYear: 2017,
+        feature: "-",
+      },
+      {
+
+        unit: "MÜCELLİT",
+        name: "BANDROL MAKİNASI",
+        modelYear: 2017,
+        feature: "-",
+      },
     ],
   },
+  
 ];
 
 // Scroll animation hook
@@ -473,10 +500,6 @@ function MachinePark() {
                     className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
                   >
                     <div className="flex items-center justify-between text-xs text-slate-500">
-                      <div className="flex items-center gap-1">
-                        <Calendar className="h-3.5 w-3.5 text-amber-400" />
-                        <span>{item.date}</span>
-                      </div>
 
                       <span className="rounded-full bg-amber-100 px-2.5 py-1 text-[10px] font-semibold text-amber-700">
                         {item.unit}
@@ -512,7 +535,6 @@ function MachinePark() {
                 {/* Table Header */}
                 <div className="bg-gradient-to-r from-slate-50 to-slate-100 px-6 py-4">
                   <div className="grid grid-cols-12 gap-4 text-xs font-bold uppercase tracking-[0.3em] text-amber-600">
-                    <span className="col-span-2">Tarih</span>
                     <span className="col-span-2">Birim</span>
                     <span className="col-span-4">Ürün İsmi</span>
                     <span className="col-span-2">Model Yılı</span>
@@ -527,10 +549,6 @@ function MachinePark() {
                       key={i}
                       className="group grid grid-cols-12 gap-4 items-center px-6 py-4 text-sm transition-colors hover:bg-amber-50/50"
                     >
-                      <div className="col-span-2 flex items-center gap-2 text-slate-600">
-                        <Calendar className="h-4 w-4 text-amber-400" />
-                        <span>{item.date}</span>
-                      </div>
                       <div className="col-span-2">
                         <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700">
                           <ChevronRight className="h-3 w-3" />
