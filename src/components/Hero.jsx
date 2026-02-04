@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import hero1 from "../assets/hero1.jpg";
+import hero1 from "../assets/hero1.webp";
 
 const stats = [
   { label: "Teslim edilen proje", value: "1200+" },
@@ -32,8 +32,11 @@ function Hero({ onOpenQuoteModal = () => {} }) {
       >
         <img
           src={hero1}
-          alt="Euromat Print Matbaa üretim hattı"
+          alt="Euromat Print ofset ve dijital baskı üretim hattı"
           className="h-full w-full object-cover"
+          loading="eager"
+          fetchpriority="high"
+          decoding="async"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/30 to-slate-950/90" />
       </div>
@@ -64,12 +67,11 @@ function Hero({ onOpenQuoteModal = () => {} }) {
             </button>
 
             <a
-             href="#product-band"
+              href="#product-band"
               className="inline-flex items-center justify-center rounded-full backdrop-blur border border-white/40 px-10 py-3 text-base font-semibold text-white shadow-lg shadow-black/20 transition hover:-translate-y-0.5 hover:bg-white/10active:translate-y-0 active:shadow-black/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
             >
               Neler Üretiyoruz
             </a>
-            
           </div>
 
           <div className="mt-12 flex flex-wrap items-center gap-4 text-xs uppercase tracking-[0.4em] text-slate-200">
