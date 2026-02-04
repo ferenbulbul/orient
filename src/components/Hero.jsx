@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import hero1 from "../assets/hero1.webp";
+
 
 const stats = [
   { label: "Teslim edilen proje", value: "1200+" },
@@ -31,7 +31,13 @@ function Hero({ onOpenQuoteModal = () => {} }) {
         }}
       >
         <img
-          src={hero1}
+          src="/assets/hero-1600.webp"
+          srcSet="
+            /assets/hero-800.webp 800w,
+            /assets/hero-1200.webp 1200w,
+            /assets/hero-1600.webp 1600w
+             "
+          sizes="100vw"
           alt="Euromat Print ofset ve dijital baskı üretim hattı"
           className="h-full w-full object-cover"
           loading="eager"
