@@ -9,11 +9,25 @@ import {
   ChevronRight,
   Image as ImageIcon,
   ZoomIn,
+  X,
 } from "lucide-react";
-import parkur1 from "../assets/images/machine/parkur1.jpg";
-import parkur2 from "../assets/images/machine/parkur2.jpg";
-import parkur3 from "../assets/images/machine/parkur3.jpg";
-import machine from "../assets/images/machine/machine.jpg";
+import { useLanguage } from "../context/LanguageContext";
+
+import bonce1 from "../assets/images/machine/böBaskıöncesigrafik.jpg";
+import bonce2 from "../assets/images/machine/böCTPbaskıöncesi.jpg";
+import bonce3 from "../assets/images/machine/böGrafik.jpg";
+
+import heidelberg from "../assets/images/machine/bHeidelberg1.jpg";
+import komori5 from "../assets/images/machine/bkomori5renk1.jpg";
+import komori52 from "../assets/images/machine/bkomori5renk2.jpg";
+import komori83 from "../assets/images/machine/bkomori8renk3.jpg";
+import roland from "../assets/images/machine/bRoland.jpg";
+
+import mücellit from "../assets/images/machine/bsMücellit1.jpg";
+import mücellit2 from "../assets/images/machine/bsMücellit2.jpg";
+import mücellit3 from "../assets/images/machine/bsMücellit3.jpg";
+import mücellit4 from "../assets/images/machine/bsMücellit4.jpg";
+import bSPaletsarma from "../assets/images/machine/bSPaletsarma.jpg";
 
 const MACHINE_GROUPS = [
   {
@@ -21,37 +35,39 @@ const MACHINE_GROUPS = [
     title: "Baskı Öncesi",
     images: [
       {
-        src: parkur1,
+        src: bonce2,
         alt: "CTP baskı öncesi hazırlık",
         caption: "Kodak Magnus CTP",
       },
-      { src: parkur2, alt: "Renk yönetimi sistemi", caption: "Renk Yönetimi" },
+
+      { src: bonce1, alt: "Renk yönetimi sistemi", caption: "Renk Yönetimi" },
       {
-        src: parkur3,
+        src: bonce3,
         alt: "Proof çıktı sistemleri",
         caption: "Proof Sistemleri",
       },
     ],
     description:
       "Renk yönetimi, kalıp hazırlığı ve prova süreçlerinde yüksek hassasiyet.",
-    stats: { capacity: "Termal CTP/40 Kalıp", machines: "3", accuracy: "Dijital Prova %98" },
+    stats: {
+      capacity: "Termal CTP/40 Kalıp",
+      machines: "3",
+      accuracy: "Dijital Prova %98",
+    },
     items: [
       {
-
         unit: "BASKI ÖNCESİ",
         name: "Kodak Magnus 800 CTP",
         modelYear: 2020,
         feature: "40 Kalıp / Saat",
       },
       {
-
         unit: "BASKI ÖNCESİ",
         name: "Xerox Versant 280",
         modelYear: 2024,
         feature: "%98 Baskı Renk Doğruluğu",
       },
       {
-
         unit: "BASKI ÖNCESİ",
         name: "Kyocera Printer",
         modelYear: 2021,
@@ -65,48 +81,58 @@ const MACHINE_GROUPS = [
     // Her grup için birden fazla görsel
     images: [
       {
-        src: parkur2,
+        src: heidelberg,
         alt: "Komori Lithrone ofset baskı makinesi",
         caption: "Komori Lithrone S40",
       },
       {
-        src: parkur3,
+        src: komori5,
         alt: "Heidelberg ofset makinesi",
         caption: "Heidelberg SM 102P",
       },
       {
-        src: machine,
+        src: komori52,
+        alt: "Ofset baskı detay görsel",
+        caption: "Üretim Hattı",
+      },
+      {
+        src: komori83,
+        alt: "Ofset baskı detay görsel",
+        caption: "Üretim Hattı",
+      },
+      {
+        src: roland,
         alt: "Ofset baskı detay görsel",
         caption: "Üretim Hattı",
       },
     ],
     description:
       "Yüksek tirajlı ve renk hassasiyeti gerektiren işler için modern ofset baskı altyapımız.",
-    stats: { capacity: "45 Milyon/Tabaka", machines: "4 Ofset/Tabaka", colors: "Toplam 16 Ünite" },
+    stats: {
+      capacity: "45 Milyon/Tabaka",
+      machines: "4 Ofset/Tabaka",
+      colors: "Toplam 16 Ünite",
+    },
     items: [
       {
-
         unit: "OFSET",
         name: "Komori Lithrone S40 8 Renk",
         modelYear: 2005,
         feature: "70x100 - 8 Renk Perfektör",
       },
       {
-
         unit: "OFSET",
         name: "Komori Lithrone S40 5 Renk",
         modelYear: 2005,
         feature: "70x100 - 5 Renk",
       },
       {
-
         unit: "OFSET",
         name: "Heidelberg SM 102P 2 Renk",
         modelYear: 1997,
         feature: "70x100 - 2 Renk Perfektör",
       },
       {
-
         unit: "OFSET",
         name: "Roland Rekord 2 Renk",
         modelYear: 1987,
@@ -118,13 +144,39 @@ const MACHINE_GROUPS = [
     id: "bindery",
     title: "Mücellit",
     images: [
-      {src: parkur3, alt: "Müller Martini ciltleme makinesi",caption: "Müller Martini Acora",},
-      { src: machine, alt: "Tel dikiş makinesi", caption: "Tel Dikiş Sistemi" },
-      { src: parkur1, alt: "Kesim ve paketleme", caption: "Kesim & Paketleme" },
+      {
+        src: mücellit,
+        alt: "Müller Martini ciltleme makinesi",
+        caption: "Müller Martini Acora",
+      },
+      {
+        src: mücellit2,
+        alt: "Tel dikiş makinesi",
+        caption: "Tel Dikiş Sistemi",
+      },
+      {
+        src: mücellit3,
+        alt: "Kesim ve paketleme",
+        caption: "Kesim & Paketleme",
+      },
+      {
+        src: mücellit4,
+        alt: "Kesim ve paketleme",
+        caption: "Kesim & Paketleme",
+      },
+      {
+        src: bSPaletsarma,
+        alt: "Kesim ve paketleme",
+        caption: "Kesim & Paketleme",
+      },
     ],
     description:
       "Katlama, dikiş, ciltleme ve paketleme süreçlerinde yüksek üretim kapasitesi.",
-    stats: { capacity: "Günlük 100 Bin Kitap/Dergi", machines: "14", stations: "18" },
+    stats: {
+      capacity: "Günlük 100 Bin Kitap/Dergi",
+      machines: "14",
+      stations: "18",
+    },
     items: [
       {
         unit: "MÜCELLİT",
@@ -133,91 +185,78 @@ const MACHINE_GROUPS = [
         feature: "5000 Kitap/Saat - 18 İstasyon",
       },
       {
-
         unit: "MÜCELLİT",
         name: "MÜLLER MARTİNİ PRESTO TEL DİKİŞ",
         modelYear: 2003,
         feature: "8000 Dergi/Saat - 6 İstasyon",
       },
       {
-
         unit: "MÜCELLİT",
         name: "HEİDELBERG KIRMA TARAMALI",
         modelYear: 2008,
         feature: "70X100",
       },
       {
-
         unit: "MÜCELLİT",
         name: "HEİDELBERG STALH KIRMA ",
         modelYear: 2000,
         feature: "70X100",
       },
       {
-
         unit: "MÜCELLİT",
         name: "MBO ÇANTA KIRMA",
         modelYear: 2004,
         feature: "70X100",
       },
       {
-
         unit: "MÜCELLİT",
         name: "MBO  KIRMA",
         modelYear: 2006,
         feature: "70X100",
       },
       {
-
         unit: "MÜCELLİT",
         name: "SMYTH İPLİK DİKİŞ",
         modelYear: 1995,
         feature: "-",
       },
       {
-
         unit: "MÜCELLİT",
         name: "Eurocutter Giyotin",
         modelYear: 1992,
         feature: "-",
       },
       {
-
         unit: "MÜCELLİT",
         name: "ATLANTA PALET SARMA MAKİNASI",
         modelYear: 2023,
         feature: "-",
       },
       {
-
         unit: "MÜCELLİT",
-        name: "SHRİNG MAKİNASI OTOTMOTİK",
+        name: "SHRİNG MAKİNASI OTOMATİK",
         modelYear: 2000,
         feature: "-",
       },
       {
-
         unit: "MÜCELLİT",
         name: "STREÇ SHRİNG MAKİNASI",
         modelYear: 2010,
         feature: "-",
       },
       {
-
         unit: "MÜCELLİT",
         name: "KONVEYÖR BANDROL MAKİNASI ",
         modelYear: 2015,
         feature: "-",
       },
       {
-
         unit: "MÜCELLİT",
         name: "KÖŞE KESİM ( RADÜS) MAKİNASI",
         modelYear: 2017,
         feature: "-",
       },
       {
-
         unit: "MÜCELLİT",
         name: "BANDROL MAKİNASI",
         modelYear: 2017,
@@ -225,7 +264,6 @@ const MACHINE_GROUPS = [
       },
     ],
   },
-  
 ];
 
 // Scroll animation hook
@@ -255,8 +293,112 @@ function useScrollAnimation() {
 }
 
 function MachinePark() {
+  const { isEN } = useLanguage();
   const visibleSections = useScrollAnimation();
   const [activeImage, setActiveImage] = useState({});
+  const [lightboxImage, setLightboxImage] = useState(null);
+  const translateUnit = (unit) => {
+    if (!isEN) return unit;
+    return unit
+      .replace("BASKI ÖNCESİ", "PREPRESS")
+      .replace("MÜCELLİT", "BINDERY")
+      .replace("OFSET", "OFFSET");
+  };
+
+  const translateFeature = (feature) => {
+    if (!isEN) return feature;
+    return feature
+      .replace("%98 Baskı Renk Doğruluğu", "98% Print Color Accuracy")
+      .replace("Kitap/Saat", "Books/Hour")
+      .replace("Dergi/Saat", "Magazines/Hour")
+      .replace("Kalıp / Saat", "Plates / Hour")
+      .replace("İstasyon", "Stations")
+      .replace("Renk Perfektör", "Color Perfector")
+      .replace("Renk", "Color")
+      .replace("Ozalit / Prova", "Blueprint / Proof");
+  };
+
+  const translateMachineName = (name) => {
+    if (!isEN) return name;
+    return name
+      .replace("HEİDELBERG KIRMA TARAMALI", "HEIDELBERG FOLDING SCANNER")
+      .replace("SHRİNG MAKİNASI OTOMATİK", "SHRINK MACHINE AUTOMATIC")
+      .replace("SHRİNG", "SHRINK")
+      .replace("BASKI ÖNCESİ", "PREPRESS")
+      .replace("MÜCELLİT", "BINDERY")
+      .replace("TEL DİKİŞ", "WIRE STITCH")
+      .replace("İPLİK DİKİŞ", "THREAD STITCH")
+      .replace("KIRMA", "FOLDING")
+      .replace("MAKİNASI", "MACHINE")
+      .replace("KÖŞE KESİM", "CORNER CUT")
+      .replace("PALET SARMA", "PALLET WRAPPING")
+      .replace("BANDROL", "BANDEROLE")
+      .replace("Giyotin", "Guillotine")
+      .replace("STALH", "STAHL")
+      .replace("OTOMATİK", "AUTOMATIC")
+      .replace(/(\d+)\sRenk/g, "$1 Color");
+  };
+
+  const translateImageText = (text) => {
+    if (!isEN) return text;
+    return text
+      .replace("CTP baskı öncesi hazırlık", "CTP prepress preparation")
+      .replace("Renk yönetimi sistemi", "Color management system")
+      .replace("Proof çıktı sistemleri", "Proof output systems")
+      .replace("Komori Lithrone ofset baskı makinesi", "Komori Lithrone offset printing press")
+      .replace("Heidelberg ofset makinesi", "Heidelberg offset printing press")
+      .replace(/Ofset baskı detay görsel/gi, "Offset production line detail")
+      .replace("Müller Martini ciltleme makinesi", "Muller Martini binding machine")
+      .replace("Tel dikiş makinesi", "Wire stitch machine")
+      .replace("Kesim ve paketleme", "Cutting and packaging")
+      .replace("Renk Yönetimi", "Color Management")
+      .replace("Proof Sistemleri", "Proof Systems")
+      .replace("Üretim Hattı", "Production Line")
+      .replace("Tel Dikiş Sistemi", "Wire Stitch System")
+      .replace("Kesim & Paketleme", "Cutting & Packaging");
+  };
+
+  const translateStatValue = (value) => {
+    if (!isEN) return value;
+    return value
+      .replace("Termal CTP/40 Kalıp", "Thermal CTP/40 Plates")
+      .replace("Dijital Prova %98", "Digital Proof 98%")
+      .replace("45 Milyon/Tabaka", "45 Million/Sheets")
+      .replace("4 Ofset/Tabaka", "4 Offset/Sheet")
+      .replace("Toplam 16 Ünite", "Total 16 Units")
+      .replace("Günlük 100 Bin Kitap/Dergi", "Daily 100K Books/Magazines");
+  };
+  const localizedGroupText = {
+    prepress: {
+      title: isEN ? "Prepress" : "Baskı Öncesi",
+      description: isEN
+        ? "High precision in color management, plate preparation, and proofing."
+        : "Renk yönetimi, kalıp hazırlığı ve prova süreçlerinde yüksek hassasiyet.",
+    },
+    ofset: {
+      title: isEN ? "Offset Printing" : "Ofset Baskı",
+      description: isEN
+        ? "Modern offset infrastructure for high-volume jobs requiring color precision."
+        : "Yüksek tirajlı ve renk hassasiyeti gerektiren işler için modern ofset baskı altyapımız.",
+    },
+    bindery: {
+      title: isEN ? "Bindery" : "Mücellit",
+      description: isEN
+        ? "High production capacity in folding, stitching, binding, and packaging processes."
+        : "Katlama, dikiş, ciltleme ve paketleme süreçlerinde yüksek üretim kapasitesi.",
+    },
+  };
+
+  useEffect(() => {
+    const onKeyDown = (event) => {
+      if (event.key === "Escape") {
+        setLightboxImage(null);
+      }
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, []);
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -272,33 +414,34 @@ function MachinePark() {
           <div className="inline-flex items-center gap-2 rounded-full border border-amber-400/30 bg-amber-400/10 px-4 py-2 backdrop-blur-sm">
             <Settings className="h-4 w-4 text-amber-400" />
             <span className="text-xs font-semibold uppercase tracking-[0.3em] text-amber-400">
-              Teknoloji & Altyapı
+              {isEN ? "Technology & Infrastructure" : "Teknoloji & Altyapı"}
             </span>
           </div>
 
           <h1 className="mt-8 text-5xl font-bold tracking-tight text-white sm:text-6xl lg:text-7xl">
-            Makine{" "}
+            {isEN ? "Machine " : "Makine "}
             <span className="bg-gradient-to-r from-amber-400 to-amber-200 bg-clip-text text-transparent">
-              Parkurumuz
+              {isEN ? "Park" : "Parkurumuz"}
             </span>
           </h1>
 
           <p className="mx-auto mt-6 max-w-2xl text-lg text-slate-300 leading-relaxed">
-            Modern teknoloji ile donatılmış üretim hatlarımız, yüksek kalite
-            standartlarında kesintisiz üretim kapasitesi sunar.
+            {isEN
+              ? "Our production lines equipped with modern technology deliver uninterrupted capacity with high quality standards."
+              : "Modern teknoloji ile donatılmış üretim hatlarımız, yüksek kalite standartlarında kesintisiz üretim kapasitesi sunar."}
           </p>
 
           {/* Quick Stats */}
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {[
-              { label: "Toplam Makine", value: "14+", icon: Settings },
+              { label: isEN ? "Total Machines" : "Toplam Makine", value: "14+", icon: Settings },
               {
-                label: "Üretim Kapasitesi",
-                value: "45M/yıl",
+                label: isEN ? "Production Capacity" : "Üretim Kapasitesi",
+                value: isEN ? "45M/year" : "45M/yıl",
                 icon: TrendingUp,
               },
-              { label: "Kalite Standart", value: "ISO 9001", icon: Award },
-              { label: "Teknoloji Yatırımı", value: "2024", icon: Sparkles },
+              { label: isEN ? "Quality Standards" : "Kalite Standart", value: "ISO 9001", icon: Award },
+              { label: isEN ? "Technology Investment" : "Teknoloji Yatırımı", value: "2024", icon: Sparkles },
             ].map((stat, idx) => {
               const IconComponent = stat.icon;
               return (
@@ -365,16 +508,16 @@ function MachinePark() {
                 <div className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-100 to-amber-50 px-4 py-2 shadow-sm">
                   <Package className="h-4 w-4 text-amber-600" />
                   <span className="text-xs font-semibold uppercase tracking-[0.3em] text-amber-700">
-                    Makine Parkuru
+                    {isEN ? "Machine Park" : "Makine Parkuru"}
                   </span>
                 </div>
 
                 <h2 className="mt-6 text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
-                  {group.title}
+                  {localizedGroupText[group.id]?.title ?? group.title}
                 </h2>
 
                 <p className="mt-4 max-w-3xl text-lg text-slate-600">
-                  {group.description}
+                  {localizedGroupText[group.id]?.description ?? group.description}
                 </p>
               </div>
 
@@ -390,16 +533,27 @@ function MachinePark() {
                 {/* LEFT: Main Image Gallery - 2 columns */}
                 <div className="lg:col-span-2 space-y-6">
                   {/* Main Large Image */}
-                  <div className="group relative h-[450px] overflow-hidden rounded-3xl border border-slate-200 bg-slate-100 shadow-xl">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setLightboxImage({
+                        src: group.images[currentImage].src,
+                        alt: translateImageText(group.images[currentImage].alt),
+                        caption: translateImageText(group.images[currentImage].caption),
+                      })
+                    }
+                    className="group relative h-[450px] w-full overflow-hidden rounded-3xl border border-slate-200 bg-slate-100 shadow-xl cursor-zoom-in"
+                    aria-label={isEN ? `Enlarge image: ${translateImageText(group.images[currentImage].caption)}` : `${group.images[currentImage].caption} görselini büyüt`}
+                  >
                     <img
                       src={group.images[currentImage].src}
-                      alt={group.images[currentImage].alt}
+                      alt={translateImageText(group.images[currentImage].alt)}
                       className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/30 to-transparent" />
 
                     {/* Image Caption */}
-                    <div className="absolute bottom-6 left-6 right-6">
+                    {/* <div className="absolute bottom-6 left-6 right-6">
                       <div className="rounded-2xl border border-white/20 bg-white/10 p-4 backdrop-blur-md">
                         <div className="flex items-center gap-2 text-white">
                           <ImageIcon className="h-5 w-5 text-amber-400" />
@@ -408,13 +562,13 @@ function MachinePark() {
                           </span>
                         </div>
                       </div>
-                    </div>
+                    </div> */}
 
                     {/* Zoom Icon */}
                     <div className="absolute top-6 right-6 rounded-full bg-white/10 p-3 backdrop-blur-sm opacity-0 transition-opacity group-hover:opacity-100">
                       <ZoomIn className="h-5 w-5 text-white" />
                     </div>
-                  </div>
+                  </button>
 
                   {/* Thumbnail Gallery */}
                   <div className="grid grid-cols-3 gap-4">
@@ -435,7 +589,7 @@ function MachinePark() {
                       >
                         <img
                           src={image.src}
-                          alt={image.alt}
+                          alt={translateImageText(image.alt)}
                           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                         />
                         <div
@@ -469,23 +623,23 @@ function MachinePark() {
                       <div className="relative">
                         <p className="text-xs font-semibold uppercase tracking-[0.3em] text-amber-600">
                           {key === "capacity"
-                            ? "Kapasite"
+                            ? isEN ? "Capacity" : "Kapasite"
                             : key === "machines"
-                              ? "Makine Sayısı"
+                              ? isEN ? "Machine Count" : "Makine Sayısı"
                               : key === "vehicles"
-                                ? "Araç Sayısı"
+                                ? isEN ? "Vehicle Count" : "Araç Sayısı"
                                 : key === "colors"
-                                  ? "Renk"
+                                  ? isEN ? "Colors" : "Renk"
                                   : key === "accuracy"
-                                    ? "Doğruluk"
+                                    ? isEN ? "Accuracy" : "Doğruluk"
                                     : key === "stations"
-                                      ? "İstasyon"
+                                      ? isEN ? "Stations" : "İstasyon"
                                       : key === "coverage"
-                                        ? "Kapsam"
+                                        ? isEN ? "Coverage" : "Kapsam"
                                         : key}
                         </p>
                         <p className="mt-2 text-3xl font-bold text-slate-900">
-                          {value}
+                          {translateStatValue(value)}
                         </p>
                       </div>
                     </div>
@@ -500,14 +654,13 @@ function MachinePark() {
                     className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
                   >
                     <div className="flex items-center justify-between text-xs text-slate-500">
-
                       <span className="rounded-full bg-amber-100 px-2.5 py-1 text-[10px] font-semibold text-amber-700">
-                        {item.unit}
+                        {translateUnit(item.unit)}
                       </span>
                     </div>
 
                     <h4 className="mt-2 text-sm font-semibold text-slate-900">
-                      {item.name}
+                      {translateMachineName(item.name)}
                     </h4>
 
                     <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
@@ -516,7 +669,7 @@ function MachinePark() {
                         {item.modelYear}
                       </div>
                       <div className="rounded-lg bg-slate-100 px-2 py-1">
-                        {item.feature}
+                        {translateFeature(item.feature)}
                       </div>
                     </div>
                   </div>
@@ -535,10 +688,10 @@ function MachinePark() {
                 {/* Table Header */}
                 <div className="bg-gradient-to-r from-slate-50 to-slate-100 px-6 py-4">
                   <div className="grid grid-cols-12 gap-4 text-xs font-bold uppercase tracking-[0.3em] text-amber-600">
-                    <span className="col-span-2">Birim</span>
-                    <span className="col-span-4">Ürün İsmi</span>
-                    <span className="col-span-2">Model Yılı</span>
-                    <span className="col-span-2">Özellik</span>
+                    <span className="col-span-2">{isEN ? "Unit" : "Birim"}</span>
+                    <span className="col-span-4">{isEN ? "Machine Name" : "Ürün İsmi"}</span>
+                    <span className="col-span-2">{isEN ? "Model Year" : "Model Yılı"}</span>
+                    <span className="col-span-2">{isEN ? "Feature" : "Özellik"}</span>
                   </div>
                 </div>
 
@@ -552,11 +705,11 @@ function MachinePark() {
                       <div className="col-span-2">
                         <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700">
                           <ChevronRight className="h-3 w-3" />
-                          {item.unit}
+                          {translateUnit(item.unit)}
                         </span>
                       </div>
                       <span className="col-span-4 font-semibold text-slate-900">
-                        {item.name}
+                        {translateMachineName(item.name)}
                       </span>
                       <div className="col-span-2">
                         <span className="inline-flex items-center gap-1.5 rounded-md bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-700">
@@ -564,7 +717,7 @@ function MachinePark() {
                         </span>
                       </div>
                       <span className="col-span-2 text-slate-600">
-                        {item.feature}
+                        {translateFeature(item.feature)}
                       </span>
                     </div>
                   ))}
@@ -592,23 +745,51 @@ function MachinePark() {
 
         <div className="relative z-10 mx-auto max-w-4xl px-6 text-center">
           <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
-            Teknoloji ile{" "}
+            {isEN ? "Production powered by " : "Teknoloji ile"}{" "}
             <span className="bg-gradient-to-r from-amber-400 to-amber-200 bg-clip-text text-transparent">
-              güçlü üretim
+              {isEN ? "technology" : "güçlü üretim"}
             </span>
           </h2>
 
           <p className="mt-4 text-lg text-slate-300">
-            Modern makine parkurumuz ile projelerinizi zamanında ve kusursuz
-            teslim ediyoruz.
+            {isEN
+              ? "With our modern machine park, we deliver your projects on time and flawlessly."
+              : "Modern makine parkurumuz ile projelerinizi zamanında ve kusursuz teslim ediyoruz."}
           </p>
 
           <div className="mt-8 flex items-center justify-center gap-2 text-sm text-slate-400">
             <Award className="h-5 w-5 text-amber-400" />
-            <span>ISO 9001:2015 Sertifikalı Üretim</span>
+            <span>{isEN ? "ISO 9001:2015 Certified Production" : "ISO 9001:2015 Sertifikalı Üretim"}</span>
           </div>
         </div>
       </section>
+
+      {lightboxImage && (
+        <div
+          className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/90 p-4"
+          onClick={() => setLightboxImage(null)}
+        >
+          <button
+            type="button"
+            className="absolute right-4 top-4 rounded-full border border-white/20 bg-white/10 p-2 text-white backdrop-blur-sm hover:bg-white/20"
+            onClick={() => setLightboxImage(null)}
+            aria-label={isEN ? "Close enlarged image" : "Büyütülmüş görseli kapat"}
+          >
+            <X className="h-5 w-5" />
+          </button>
+
+          <div
+            className="max-h-[92vh] max-w-[92vw] overflow-hidden rounded-2xl border border-white/10 shadow-2xl"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <img
+              src={lightboxImage.src}
+              alt={lightboxImage.alt}
+              className="max-h-[92vh] w-auto max-w-[92vw] object-contain"
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import { Zap, Award, Shield, Leaf, CheckCircle2 } from "lucide-react";
 import about from '../assets/images/services/about.jpg';
+import { useLanguage } from "../context/LanguageContext";
 
 const MISSION_PILLARS = [
   {
@@ -27,6 +28,23 @@ const COMMITMENTS = [
 ];
 
 function Mission() {
+  const { isEN } = useLanguage();
+  const pillars = isEN
+    ? [
+        { icon: Zap, title: "Speed", description: "By meeting deadlines with our modern machine park" },
+        { icon: Award, title: "Quality", description: "By applying our design precision at every stage" },
+        { icon: Shield, title: "Trust", description: "By managing every process transparently in our integrated facility" },
+      ]
+    : MISSION_PILLARS;
+  const commitments = isEN
+    ? [
+        "High-standard and cost-efficient solutions",
+        "Environmentally responsible production in FSC standards",
+        "Most efficient use of paper and labor",
+        "Sustainable future vision",
+      ]
+    : COMMITMENTS;
+
   return (
     <div className="bg-slate-50">
       {/* Hero Section */}
@@ -41,25 +59,26 @@ function Mission() {
               <div className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-100 to-amber-50 px-4 py-2 shadow-sm">
                 <Award className="h-4 w-4 text-amber-600" />
                 <span className="text-xs font-semibold uppercase tracking-[0.3em] text-amber-700">
-                  Misyonumuz
+                  {isEN ? "Our Mission" : "Misyonumuz"}
                 </span>
               </div>
 
               <h1 className="mt-6 text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl leading-tight">
-                Değer katan{" "}
+                {isEN ? "Value-adding " : "Değer katan"}{" "}
                 <span className="bg-gradient-to-r from-amber-600 to-amber-500 bg-clip-text text-transparent">
-                  baskı çözümleri
+                  {isEN ? "printing solutions" : "baskı çözümleri"}
                 </span>
               </h1>
 
               <p className="mt-6 text-lg leading-relaxed text-slate-600">
-                Yayıncılık ve kurumsal iş dünyasındaki paydaşlarımıza, yüksek 
-                standartlarda ve ekonomik çözümler sunmak.
+                {isEN
+                  ? "To provide our publishing and corporate stakeholders with high-standard and cost-efficient solutions."
+                  : "Yayıncılık ve kurumsal iş dünyasındaki paydaşlarımıza, yüksek standartlarda ve ekonomik çözümler sunmak."}
               </p>
 
               {/* Mission Pillars */}
               <div className="mt-8 space-y-4">
-                {MISSION_PILLARS.map((pillar, idx) => {
+                {pillars.map((pillar, idx) => {
                   const IconComponent = pillar.icon;
                   return (
                     <div 
@@ -86,7 +105,7 @@ function Mission() {
               <div className="group overflow-hidden rounded-3xl border border-slate-200 shadow-xl">
                 <img
                   src={about}
-                  alt="Sürdürülebilir ve entegre baskı üretim anlayışı"
+                  alt={isEN ? "Sustainable and integrated printing approach" : "Sürdürülebilir ve entegre baskı üretim anlayışı"}
                   className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                   loading="lazy"
                   decoding="async"
@@ -112,14 +131,18 @@ function Mission() {
                 <Leaf className="h-7 w-7 text-white" strokeWidth={2} />
               </div>
               
-              <h2 className="mt-6 text-2xl font-bold text-slate-900">
-                Sürdürülebilir Üretim
+                <h2 className="mt-6 text-2xl font-bold text-slate-900">
+                {isEN ? "Sustainable Production" : "Sürdürülebilir Üretim"}
               </h2>
               
               <p className="mt-4 text-base leading-relaxed text-slate-600">
-                Çevreye duyarlı <span className="font-semibold text-slate-900">(FSC standartlarında)</span> üretim 
-                anlayışımızla, kağıdı ve emeği en verimli şekilde kullanarak sürdürülebilir 
-                bir gelecek inşa etmek temel görevimizdir.
+                {isEN
+                  ? "With our environmentally responsible production approach "
+                  : "Çevreye duyarlı "}
+                <span className="font-semibold text-slate-900">{isEN ? "(in FSC standards)" : "(FSC standartlarında)"}</span>
+                {isEN
+                  ? ", our core mission is to build a sustainable future by using paper and labor in the most efficient way."
+                  : " üretim anlayışımızla, kağıdı ve emeği en verimli şekilde kullanarak sürdürülebilir bir gelecek inşa etmek temel görevimizdir."}
               </p>
 
               <div className="mt-6 h-1 w-16 rounded-full bg-gradient-to-r from-green-400 to-green-300" />
@@ -127,10 +150,10 @@ function Mission() {
 
             {/* Right: Commitments */}
             <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
-              <h3 className="text-xl font-bold text-slate-900">Taahhütlerimiz</h3>
+              <h3 className="text-xl font-bold text-slate-900">{isEN ? "Our Commitments" : "Taahhütlerimiz"}</h3>
               
               <div className="mt-6 space-y-3">
-                {COMMITMENTS.map((commitment, idx) => (
+                {commitments.map((commitment, idx) => (
                   <div key={idx} className="flex items-start gap-3">
                     <CheckCircle2 className="h-5 w-5 flex-shrink-0 text-amber-500" strokeWidth={2} />
                     <span className="text-sm leading-relaxed text-slate-600">
@@ -150,10 +173,10 @@ function Mission() {
         <div className="mx-auto max-w-4xl px-6 text-center">
           <div className="rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-slate-50 p-8 shadow-sm">
             <p className="text-lg leading-relaxed text-slate-700">
-              <span className="font-semibold text-amber-600">Paydaşlarımıza</span>{" "}
-              hız, kalite ve güven ilkeleriyle hizmet vererek,{" "}
-              <span className="font-semibold text-slate-900">ekonomik ve sürdürülebilir</span>{" "}
-              çözümler sunuyoruz.
+              <span className="font-semibold text-amber-600">{isEN ? "For our stakeholders," : "Paydaşlarımıza"}</span>{" "}
+              {isEN ? "by serving with speed, quality, and trust, we deliver " : "hız, kalite ve güven ilkeleriyle hizmet vererek, "}
+              <span className="font-semibold text-slate-900">{isEN ? "economical and sustainable" : "ekonomik ve sürdürülebilir"}</span>{" "}
+              {isEN ? "solutions." : "çözümler sunuyoruz."}
             </p>
           </div>
         </div>

@@ -1,28 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import logo from '../assets/logo.svg'
-
-const NAV_LINKS = [
-  { id: 'home', label: 'Anasayfa', path: '/' },
-  { id: 'corporate', label: 'Kurumsal', type: 'dropdown' },
-  { id: 'services', label: 'Hizmetlerimiz', type: 'dropdown' },
-  { id: 'parkur', label: 'Parkurumuz', path: '/parkurumuz' },
-  { id: 'contact', label: 'İletişim', path: '/iletisim' },
-]
-
-const CORPORATE_DROPDOWN = [
-  { id: 'about', label: 'Hakkımızda', path: '/kurumsal/hakkimizda' },
-  { id: 'vision', label: 'Vizyon', path: '/kurumsal/vizyon' },
-  { id: 'mission', label: 'Misyon', path: '/kurumsal/misyon' },
-]
-
-const SERVICE_DROPDOWN = [
-  { id: 'prepress', label: 'Baskı Öncesi', path: '/hizmetlerimiz/baski-oncesi' },
-  { id: 'press', label: 'Baskı', path: '/hizmetlerimiz/baski' },
-  { id: 'postpress', label: 'Baskı Sonrası', path: '/hizmetlerimiz/baski-sonrasi' },
-]
+import { useLanguage } from '../context/LanguageContext'
 
 function Navbar({ activeSection = 'home', onNavigate, topOffsetClass = 'top-10' }) {
+  const { isEN } = useLanguage()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [hasScrolled, setHasScrolled] = useState(false)
   const [hoverMenu, setHoverMenu] = useState(null)
@@ -31,6 +13,25 @@ function Navbar({ activeSection = 'home', onNavigate, topOffsetClass = 'top-10' 
   const navigate = useNavigate()
   const hoverTimers = useRef({ open: null, close: null })
   const currentPath = location.pathname
+  const NAV_LINKS = [
+    { id: 'home', label: isEN ? 'Home' : 'Anasayfa', path: '/' },
+    { id: 'corporate', label: isEN ? 'Corporate' : 'Kurumsal', type: 'dropdown' },
+    { id: 'services', label: isEN ? 'Services' : 'Hizmetlerimiz', type: 'dropdown' },
+    { id: 'parkur', label: isEN ? 'Machine Park' : 'Parkurumuz', path: '/parkurumuz' },
+    { id: 'contact', label: isEN ? 'Contact' : 'İletişim', path: '/iletisim' },
+  ]
+
+  const CORPORATE_DROPDOWN = [
+    { id: 'about', label: isEN ? 'About Us' : 'Hakkımızda', path: '/kurumsal/hakkimizda' },
+    { id: 'vision', label: isEN ? 'Vision' : 'Vizyon', path: '/kurumsal/vizyon' },
+    { id: 'mission', label: isEN ? 'Mission' : 'Misyon', path: '/kurumsal/misyon' },
+  ]
+
+  const SERVICE_DROPDOWN = [
+    { id: 'prepress', label: isEN ? 'Prepress' : 'Baskı Öncesi', path: '/hizmetlerimiz/baski-oncesi' },
+    { id: 'press', label: isEN ? 'Printing' : 'Baskı', path: '/hizmetlerimiz/baski' },
+    { id: 'postpress', label: isEN ? 'Postpress' : 'Baskı Sonrası', path: '/hizmetlerimiz/baski-sonrasi' },
+  ]
 
   useEffect(() => {
     const handleScroll = () => {
@@ -227,9 +228,9 @@ function Navbar({ activeSection = 'home', onNavigate, topOffsetClass = 'top-10' 
             shouldUseLightTheme ? 'border-slate-300 text-slate-900' : 'border-white/60 text-white'
           }`}
           onClick={() => setIsMenuOpen((prev) => !prev)}
-          aria-label="Menüyü Aç/Kapat"
+          aria-label={isEN ? 'Toggle menu' : 'Menüyü Aç/Kapat'}
         >
-          Menü
+          {isEN ? 'Menu' : 'Menü'}
           <svg
             className="h-5 w-5"
             viewBox="0 0 24 24"

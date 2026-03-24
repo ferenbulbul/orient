@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import Hero from "../components/Hero";
 import ProductShowcase from "../components/ProductShowcase";
+import { useLanguage } from "../context/LanguageContext";
 
 const CAPABILITIES = [
   {
@@ -125,6 +126,32 @@ function useScrollAnimation() {
 }
 
 function Home({ onOpenQuoteModal }) {
+  const { isEN } = useLanguage();
+  const capabilities = isEN
+    ? [
+        { icon: Package, title: "High Capacity", metric: "45M", unit: "prints/year", description: "Industrial-scale production power" },
+        { icon: Clock, title: "Fast Delivery", metric: "3", unit: "days avg.", description: "Planned and on-time delivery" },
+        { icon: Award, title: "Proven Experience", metric: "1200+", unit: "projects", description: "Successfully completed jobs" },
+        { icon: Zap, title: "Quality Assurance", metric: "ISO 9001", unit: "certified", description: "International standard" },
+      ]
+    : CAPABILITIES;
+  const processSteps = isEN
+    ? [
+        { number: "01", title: "Consulting & Analysis", description: "We analyze your requirements in detail and define the most suitable production method.", icon: Target },
+        { number: "02", title: "Design & Preparation", description: "Our design team prepares print-ready files and provides color proofs.", icon: Layers },
+        { number: "03", title: "Production & Control", description: "Production is done according to ISO 9001 standards with quality checks at every stage.", icon: Zap },
+        { number: "04", title: "Delivery & Support", description: "Your work is delivered on time with post-delivery support.", icon: CheckCircle2 },
+      ]
+    : PROCESS_STEPS;
+  const qualityFeatures = isEN
+    ? [
+        { icon: Shield, title: "ISO 9001:2015 Certified", description: "Continuous improvement with international quality standards" },
+        { icon: Users, title: "Experienced Team", description: "Professional team with 20+ years of sector experience" },
+        { icon: Award, title: "Client Satisfaction", description: "Reliable service with 100% customer satisfaction approach" },
+        { icon: Zap, title: "Fast Production", description: "Competitive lead times with modern technology" },
+      ]
+    : QUALITY_FEATURES;
+
   const visibleSections = useScrollAnimation();
 
   return (
@@ -138,7 +165,7 @@ function Home({ onOpenQuoteModal }) {
         
         <div className="relative z-10 mx-auto max-w-6xl px-6">
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {CAPABILITIES.map((item, idx) => {
+            {capabilities.map((item, idx) => {
               const IconComponent = item.icon;
               return (
                 <div 
@@ -201,33 +228,39 @@ function Home({ onOpenQuoteModal }) {
               }`}
             >
               <div className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-100 to-amber-50 px-4 py-2 shadow-sm">
-                <Sparkles className="h-4 w-4 text-amber-600" />
-                <span className="text-xs font-semibold uppercase tracking-[0.3em] text-amber-700">
-                  Uçtan Uca Çözüm
-                </span>
+                  <Sparkles className="h-4 w-4 text-amber-600" />
+                  <span className="text-xs font-semibold uppercase tracking-[0.3em] text-amber-700">
+                  {isEN ? "End-to-End Solution" : "Uçtan Uca Çözüm"}
+                  </span>
               </div>
 
               <h2 className="mt-6 text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl leading-tight">
-                Tasarımdan teslimata,
+                {isEN ? "From design to delivery," : "Tasarımdan teslimata,"}
                 <br />
                 <span className="bg-gradient-to-r from-amber-600 to-amber-500 bg-clip-text text-transparent">
-                  tek ekip
+                  {isEN ? "single-team" : "tek ekip"}
                 </span>{" "}
-                yönetimi
+                {isEN ? "execution" : "yönetimi"}
               </h2>
 
               <p className="mt-6 text-lg leading-relaxed text-slate-600">
-                Grafik tasarım, baskı öncesi hazırlık, ofset ve dijital baskı, mücellit işlemleri... 
-                Tüm üretim aşamalarını tek çatı altında yöneterek zaman kaybını önlüyor, 
-                kalite standartlarını garanti altına alıyoruz.
+                {isEN
+                  ? "Graphic design, prepress, offset and digital printing, bindery operations... We manage all production stages under one roof to prevent time loss and secure quality standards."
+                  : "Grafik tasarım, baskı öncesi hazırlık, ofset ve dijital baskı, mücellit işlemleri... Tüm üretim aşamalarını tek çatı altında yöneterek zaman kaybını önlüyor, kalite standartlarını garanti altına alıyoruz."}
               </p>
 
               <div className="mt-8 space-y-4">
-                {[
-                  "ISO 9001 sertifikalı kalite yönetimi",
-                  "Gerçek zamanlı üretim takibi",
-                  "Özel müşteri temsilcisi desteği"
-                ].map((item, idx) => (
+                {(isEN
+                  ? [
+                      "ISO 9001 certified quality management",
+                      "Real-time production tracking",
+                      "Dedicated account representative support",
+                    ]
+                  : [
+                      "ISO 9001 sertifikalı kalite yönetimi",
+                      "Gerçek zamanlı üretim takibi",
+                      "Özel müşteri temsilcisi desteği",
+                    ]).map((item, idx) => (
                   <div 
                     key={idx} 
                     className="flex items-start gap-3 group"
@@ -250,7 +283,7 @@ function Home({ onOpenQuoteModal }) {
                 onClick={onOpenQuoteModal}
                 className="group mt-10 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-400 via-amber-300 to-amber-200 px-8 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-amber-400/30 transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-amber-400/40"
               >
-                Ücretsiz Teklif Alın
+                {isEN ? "Get Free Quote" : "Ücretsiz Teklif Alın"}
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </button>
             </div>
@@ -263,7 +296,28 @@ function Home({ onOpenQuoteModal }) {
                   : 'opacity-0 translate-x-12'
               }`}
             >
-              {[
+              {(isEN
+                ? [
+                    {
+                      title: "Prepress",
+                      subtitle: "Graphic Design & CTP",
+                      features: ["Color management", "Proof outputs", "File optimization"],
+                      color: "from-amber-50 to-orange-50"
+                    },
+                    {
+                      title: "Printing",
+                      subtitle: "Offset & Digital",
+                      features: ["High run capacity", "Personalization", "Fast production"],
+                      color: "from-blue-50 to-cyan-50"
+                    },
+                    {
+                      title: "Postpress",
+                      subtitle: "Bindery & Finishing",
+                      features: ["Lamination", "UV varnish", "Cut & fold"],
+                      color: "from-purple-50 to-pink-50"
+                    }
+                  ]
+                : [
                 {
                   title: "Baskı Öncesi",
                   subtitle: "Grafik Tasarım & CTP",
@@ -282,7 +336,7 @@ function Home({ onOpenQuoteModal }) {
                   features: ["Laminasyon", "UV lak", "Kesim & katla"],
                   color: "from-purple-50 to-pink-50"
                 }
-              ].map((service, idx) => (
+              ]).map((service, idx) => (
                 <div 
                   key={idx}
                   className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-500 hover:border-amber-300 hover:shadow-xl hover:-translate-y-1"
@@ -353,23 +407,23 @@ function Home({ onOpenQuoteModal }) {
             <div className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-100 to-amber-50 px-4 py-2 shadow-sm">
               <Shield className="h-4 w-4 text-amber-600" />
               <span className="text-xs font-semibold uppercase tracking-[0.3em] text-amber-700">
-                Kalite Taahhüdümüz
+                {isEN ? "Our Quality Commitment" : "Kalite Taahhüdümüz"}
               </span>
             </div>
 
             <h2 className="mt-6 text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
-              Neden{" "}
+              {isEN ? "Why " : "Neden "}
               <span className="bg-gradient-to-r from-amber-600 to-amber-500 bg-clip-text text-transparent">
                 Euromat Print?
               </span>
             </h2>
             <p className="mt-4 text-lg text-slate-600 max-w-2xl mx-auto">
-              Güvenilir, hızlı ve entegre üretim süreçlerimizle işinizi bir adım öne taşıyoruz
+              {isEN ? "We move your business forward with reliable, fast, and integrated production processes." : "Güvenilir, hızlı ve entegre üretim süreçlerimizle işinizi bir adım öne taşıyoruz"}
             </p>
           </div>
 
           <div className="mt-16 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            {QUALITY_FEATURES.map((feature, idx) => {
+            {qualityFeatures.map((feature, idx) => {
               const IconComponent = feature.icon;
               return (
                 <div 
@@ -426,23 +480,24 @@ function Home({ onOpenQuoteModal }) {
             <div className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-4 py-2">
               <TrendingUp className="h-4 w-4 text-slate-600" />
               <span className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-700">
-                Çalışma Sürecimiz
+                {isEN ? "Our Workflow" : "Çalışma Sürecimiz"}
               </span>
             </div>
 
             <h2 className="mt-6 text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
-              4 adımda{" "}
+              {isEN ? "In 4 steps," : "4 adımda"}
+              {" "}
               <span className="bg-gradient-to-r from-amber-600 to-amber-500 bg-clip-text text-transparent">
-                mükemmel sonuç
+                {isEN ? "excellent results" : "mükemmel sonuç"}
               </span>
             </h2>
             <p className="mt-4 text-lg text-slate-600 max-w-2xl mx-auto">
-              Şeffaf, hızlı ve güvenilir bir süreç için optimize edilmiş iş akışımız
+              {isEN ? "Our optimized workflow for a transparent, fast, and reliable process." : "Şeffaf, hızlı ve güvenilir bir süreç için optimize edilmiş iş akışımız"}
             </p>
           </div>
 
           <div className="mt-20 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
-            {PROCESS_STEPS.map((step, idx) => {
+            {processSteps.map((step, idx) => {
               const IconComponent = step.icon;
               const isVisible = visibleSections.has('process-section');
               return (
@@ -458,7 +513,7 @@ function Home({ onOpenQuoteModal }) {
                   }}
                 >
                   {/* Connection Line */}
-                  {idx < PROCESS_STEPS.length - 1 && (
+                  {idx < processSteps.length - 1 && (
                     <div className="absolute top-12 left-full hidden h-0.5 w-full -translate-x-1/2 bg-gradient-to-r from-amber-200 via-amber-300 to-slate-200 lg:block" 
                          style={{ zIndex: 0 }} />
                   )}
@@ -504,21 +559,21 @@ function Home({ onOpenQuoteModal }) {
           <div className="inline-flex items-center gap-2 rounded-full border border-amber-400/30 bg-amber-400/10 px-4 py-2 backdrop-blur-sm">
             <Sparkles className="h-4 w-4 text-amber-400" />
             <span className="text-xs font-semibold uppercase tracking-[0.3em] text-amber-400">
-              Hemen Başlayın
+              {isEN ? "Start Now" : "Hemen Başlayın"}
             </span>
           </div>
 
           <h2 className="mt-8 text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl">
-            Projenizi{" "}
+            {isEN ? "Let’s bring your project " : "Projenizi"}{" "}
             <span className="bg-gradient-to-r from-amber-400 to-amber-200 bg-clip-text text-transparent">
-              hayata geçirelim
+              {isEN ? "to life" : "hayata geçirelim"}
             </span>
           </h2>
           
           <p className="mt-6 text-lg text-slate-300 leading-relaxed">
-            Uzman ekibimiz size özel üretim planı hazırlar ve
+            {isEN ? "Our expert team prepares a tailored production plan and delivers" : "Uzman ekibimiz size özel üretim planı hazırlar ve"}
             <br className="hidden sm:block" />
-            en uygun çözümü 24 saat içinde sunar.
+            {isEN ? "the best solution within 24 hours." : "en uygun çözümü 24 saat içinde sunar."}
           </p>
 
           <div className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row">
@@ -526,7 +581,7 @@ function Home({ onOpenQuoteModal }) {
               onClick={onOpenQuoteModal}
               className="group inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-400 via-amber-300 to-amber-200 px-10 py-4 text-base font-semibold text-slate-950 shadow-xl shadow-amber-400/40 transition-all hover:-translate-y-1 hover:shadow-2xl hover:shadow-amber-400/50"
             >
-              Ücretsiz Teklif Alın
+              {isEN ? "Get Free Quote" : "Ücretsiz Teklif Alın"}
               <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
             </button>
 
@@ -534,7 +589,7 @@ function Home({ onOpenQuoteModal }) {
               to="/iletisim"
               className="group inline-flex items-center gap-2 rounded-full border border-white/30 px-10 py-4 text-base font-semibold text-white backdrop-blur transition-all hover:-translate-y-1 hover:bg-white/10 hover:border-white/50"
             >
-              İletişime Geçin
+              {isEN ? "Contact Us" : "İletişime Geçin"}
               <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
             </Link>
           </div>
@@ -545,21 +600,21 @@ function Home({ onOpenQuoteModal }) {
                 <div className="absolute inset-0 bg-amber-400/20 blur-sm rounded-full" />
                 <CheckCircle2 className="relative h-5 w-5 text-amber-400 transition-transform group-hover:scale-110" />
               </div>
-              <span className="group-hover:text-slate-300 transition-colors">24 saat içinde geri dönüş</span>
+              <span className="group-hover:text-slate-300 transition-colors">{isEN ? "Response within 24 hours" : "24 saat içinde geri dönüş"}</span>
             </div>
             <div className="flex items-center gap-2 group">
               <div className="relative">
                 <div className="absolute inset-0 bg-amber-400/20 blur-sm rounded-full" />
                 <CheckCircle2 className="relative h-5 w-5 text-amber-400 transition-transform group-hover:scale-110" />
               </div>
-              <span className="group-hover:text-slate-300 transition-colors">Ücretsiz danışmanlık</span>
+              <span className="group-hover:text-slate-300 transition-colors">{isEN ? "Free consultancy" : "Ücretsiz danışmanlık"}</span>
             </div>
             <div className="flex items-center gap-2 group">
               <div className="relative">
                 <div className="absolute inset-0 bg-amber-400/20 blur-sm rounded-full" />
                 <CheckCircle2 className="relative h-5 w-5 text-amber-400 transition-transform group-hover:scale-110" />
               </div>
-              <span className="group-hover:text-slate-300 transition-colors">ISO 9001 kalite garantisi</span>
+              <span className="group-hover:text-slate-300 transition-colors">{isEN ? "ISO 9001 quality assurance" : "ISO 9001 kalite garantisi"}</span>
             </div>
           </div>
         </div>

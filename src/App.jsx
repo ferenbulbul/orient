@@ -12,7 +12,6 @@ import Hero from "./components/Hero";
 import ScrollToTop from "./components/ScrollToTop";
 import TopBar from "./components/TopBar";
 import QuoteModal from "./components/QuoteModal";
-import { BRAND_LOGOS } from "./data/brands";
 import About from "./pages/About";
 import Vision from "./pages/Vision";
 import Mission from "./pages/Mission";

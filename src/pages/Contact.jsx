@@ -6,35 +6,39 @@ import {
   Navigation,
   Building2,
 } from "lucide-react";
-
-const CONTACT_INFO = [
-  {
-    icon: MapPin,
-    label: "Adres",
-    value: "İkitelli OSB Mah. Giyim Sanatkarları Sitesi, 5A-6A Blok, Depo Katı No: 315, Başakşehir / İstanbul / Türkiye",
-    subValue: "Başakşehir / İstanbul",
-  },
-  {
-    icon: Phone,
-    label: "Telefon",
-    value: "+90 541 725 20 06",
-    href: "tel:+2126585",
-  },
-  {
-    icon: Mail,
-    label: "E-posta",
-    value: "info@euromatprint.com",
-    href: "mailto:info@euromatprint.com",
-  },
-  {
-    icon: Clock,
-    label: "Çalışma Saatleri",
-    value: "Hafta içi 09:00 – 19:00",
-    subValue: "Cumartesi randevu ile açığız",
-  },
-];
+import { useLanguage } from "../context/LanguageContext";
 
 function Contact({ onOpenQuoteModal }) {
+  const { isEN } = useLanguage();
+  const CONTACT_INFO = [
+    {
+      icon: MapPin,
+      label: isEN ? "Address" : "Adres",
+      value: isEN
+        ? "Ikitelli OSB Mah. Giyim Sanatkarlari 5A-6A Blok No: 315 - 304, 34490 Basaksehir / Istanbul"
+        : "İkitelli OSB Mah. Giyim Sanatkarları 5A-6A Blok No: 315 - 304, 34490 Başakşehir / İstanbul",
+      subValue: isEN ? "Basaksehir / Istanbul" : "Başakşehir / İstanbul",
+    },
+    {
+      icon: Phone,
+      label: isEN ? "Phone" : "Telefon",
+      value: "+90 212 549 65 85",
+      href: "tel:+902125496585",
+    },
+    {
+      icon: Mail,
+      label: isEN ? "E-mail" : "E-posta",
+      value: "info@euromatprint.com",
+      href: "mailto:info@euromatprint.com",
+    },
+    {
+      icon: Clock,
+      label: isEN ? "Working Hours" : "Çalışma Saatleri",
+      value: isEN ? "Weekdays 08:30 - 18:30" : "Hafta içi 08:30 – 18:30",
+      subValue: isEN ? "Saturday by appointment" : "Cumartesi randevu ile açığız",
+    },
+  ];
+
   return (
     <div className="bg-slate-50">
       {/* Hero Section */}
@@ -46,21 +50,21 @@ function Contact({ onOpenQuoteModal }) {
             <div className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-100 to-amber-50 px-4 py-2 shadow-sm">
               <Navigation className="h-4 w-4 text-amber-600" />
               <span className="text-xs font-semibold uppercase tracking-[0.3em] text-amber-700">
-                İletişime Geçin
+                {isEN ? "Get In Touch" : "İletişime Geçin"}
               </span>
             </div>
 
             <h1 className="mt-6 text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl leading-tight">
-              Ofisimizi ziyaret edin{" "}
+              {isEN ? "Visit our office" : "Ofisimizi ziyaret edin"}{" "}
               <span className="bg-gradient-to-r from-amber-600 to-amber-500 bg-clip-text text-transparent">
-                ya da hemen arayın
+                {isEN ? "or call us now" : "ya da hemen arayın"}
               </span>
             </h1>
 
             <p className="mt-6 text-lg leading-relaxed text-slate-600 max-w-3xl mx-auto">
-              Baskı süreçlerinizi planlamak için randevu alabilir veya
-              dosyalarınızı dijital olarak iletebilirsiniz. Ekibimiz hafta içi
-              09:00-19:00 saatleri arasında aktiftir.
+              {isEN
+                ? "Book an appointment to plan your print projects or share your files digitally. Our team is available on weekdays between 09:00 and 19:00."
+                : "Baskı süreçlerinizi planlamak için randevu alabilir veya dosyalarınızı dijital olarak iletebilirsiniz. Ekibimiz hafta içi 09:00-19:00 saatleri arasında aktiftir."}
             </p>
           </div>
         </div>
@@ -82,10 +86,10 @@ function Contact({ onOpenQuoteModal }) {
                   </div>
                   <div>
                     <p className="text-sm font-semibold uppercase tracking-wide text-amber-600">
-                      Genel Merkez
+                      {isEN ? "Head Office" : "Genel Merkez"}
                     </p>
                     <h2 className="mt-1 text-2xl font-bold text-slate-900">
-                      Euromat Print
+                      EUROMAT BASIM YAYIN AMBALAJ SAN.VE TİC ANONİM ŞİRKETİ
                     </h2>
                   </div>
                 </div>
@@ -101,22 +105,22 @@ function Contact({ onOpenQuoteModal }) {
               {/* Quick Actions */}
               <div className="rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-slate-50 p-6 shadow-sm">
                 <p className="text-sm font-semibold text-slate-900">
-                  Hızlı İletişim
+                  {isEN ? "Quick Contact" : "Hızlı İletişim"}
                 </p>
                 <div className="mt-4 flex flex-wrap gap-3">
                   <a
-                    href="tel:+902160000000"
+                    href="tel:+902125496585"
                     className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-400 to-amber-300 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-amber-400/30 transition-all hover:shadow-xl hover:scale-105"
                   >
                     <Phone className="h-4 w-4" />
-                    Hemen Ara
+                    {isEN ? "Call Now" : "Hemen Ara"}
                   </a>
                   <button
                     onClick={onOpenQuoteModal}
                     className="inline-flex items-center gap-2 rounded-xl border-2 border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-900 transition-all hover:border-amber-300 hover:bg-amber-50"
                   >
                     <Mail className="h-4 w-4" />
-                    E-posta Gönder
+                    {isEN ? "Send E-mail" : "E-posta Gönder"}
                   </button>
                 </div>
               </div>
@@ -126,7 +130,11 @@ function Contact({ onOpenQuoteModal }) {
             <div className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl">
               <div className="absolute inset-0 z-10 bg-gradient-to-t from-slate-900/20 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100 pointer-events-none" />
               <iframe
-                title="Euromat Print Konumu"
+                title={
+                  isEN
+                    ? "EUROMAT BASIM YAYIN AMBALAJ SAN.VE TİC ANONİM ŞİRKETİ Location"
+                    : "EUROMAT BASIM YAYIN AMBALAJ SAN.VE TİC ANONİM ŞİRKETİ Konumu"
+                }
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3007.018147902284!2d28.807119!3d41.071635!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14cab0f4f3a3f5df%3A0x0!2s2715.%20Sk.%2C%20İkitelli%20OSB%2C%2034100%20Başakşehir%2Fİstanbul!5e0!3m2!1str!2str!4v1700000000000"
                 
                 className="h-full min-h-[500px] w-full"
@@ -142,10 +150,10 @@ function Contact({ onOpenQuoteModal }) {
                   </div>
                   <div>
                     <p className="text-sm font-bold text-slate-900">
-                      İkitelli OSB
+                      {isEN ? "Ikitelli OIZ" : "İkitelli OSB"}
                     </p>
                     <p className="text-xs text-slate-600">
-                      1,700 m² Üretim Tesisi
+                      {isEN ? "1,700 m² Production Facility" : "1,700 m² Üretim Tesisi"}
                     </p>
                   </div>
                 </div>
@@ -161,13 +169,13 @@ function Contact({ onOpenQuoteModal }) {
           <div className="rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-slate-50 p-8 shadow-sm">
             <p className="text-lg leading-relaxed text-slate-700">
               <span className="font-semibold text-amber-600">
-                Projeleriniz için
+                {isEN ? "For your projects" : "Projeleriniz için"}
               </span>{" "}
-              en uygun çözümü birlikte belirleyelim.{" "}
+              {isEN ? "let us define the best solution together." : "en uygun çözümü birlikte belirleyelim."}{" "}
               <span className="font-semibold text-slate-900">
-                Ücretsiz danışmanlık
+                {isEN ? "Free consultation" : "Ücretsiz danışmanlık"}
               </span>{" "}
-              için bizimle iletişime geçin.
+              {isEN ? "contact us now." : "için bizimle iletişime geçin."}
             </p>
           </div>
         </div>

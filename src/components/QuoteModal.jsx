@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { sendQuoteRequest } from '../lib/email'
+import { useLanguage } from '../context/LanguageContext'
 
 const INITIAL_FORM = {
   productType: 'Kitap',
@@ -60,6 +61,7 @@ const BINDINGS = [
 ]
 
 function QuoteModal({ isOpen, onClose }) {
+  const { isEN } = useLanguage()
   const [form, setForm] = useState(INITIAL_FORM)
   const [sending, setSending] = useState(false)
   const [status, setStatus] = useState(null)
@@ -85,6 +87,11 @@ function QuoteModal({ isOpen, onClose }) {
 
   const targetElement = useMemo(() => document.body, [])
   if (!isOpen) return null
+  const products = isEN ? ['Book', 'Catalog', 'Calendar', 'Planner', 'Paper Bag', 'Magazine'] : PRODUCTS
+  const innerPapers = isEN ? ['Woodfree', 'Ivory', 'Gloss Coated', 'Matte Coated', 'Book Paper', 'Chamois'] : INNER_PAPERS
+  const coverPapers = isEN ? ['Bristol', 'Gloss Coated', 'Matte Coated', 'Chrome Cardboard'] : COVER_PAPERS
+  const laminations = isEN ? ['Matte Lamination', 'Gloss Lamination', 'Emboss Varnish', 'Spot Varnish'] : LAMINATIONS
+  const bindings = isEN ? ['Perfect Binding', 'Wire Stitch', 'Thread + Perfect', 'Hard Cover'] : BINDINGS
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -108,11 +115,11 @@ function QuoteModal({ isOpen, onClose }) {
 
     try {
       await sendQuoteRequest(form)
-      setStatus({ type: 'success', message: 'Talebiniz başarıyla alındı.' })
+      setStatus({ type: 'success', message: isEN ? 'Your request has been received successfully.' : 'Talebiniz başarıyla alındı.' })
       setForm(INITIAL_FORM)
       setTimeout(onClose, 1200)
     } catch {
-      setStatus({ type: 'error', message: 'Gönderim başarısız.' })
+      setStatus({ type: 'error', message: isEN ? 'Submission failed.' : 'Gönderim başarısız.' })
     } finally {
       setSending(false)
     }
@@ -130,10 +137,10 @@ function QuoteModal({ isOpen, onClose }) {
         {/* Header */}
         <div className="mb-8">
           <p className="text-xs uppercase tracking-[0.4em] text-rose-600">
-            Teklif Formu
+            {isEN ? 'Quote Form' : 'Teklif Formu'}
           </p>
           <h2 className="mt-2 text-3xl font-semibold text-slate-900">
-            Hızlı Teklif Al
+            {isEN ? 'Get a Quick Quote' : 'Hızlı Teklif Al'}
           </h2>
         </div>
 
@@ -141,7 +148,7 @@ function QuoteModal({ isOpen, onClose }) {
           {/* BASIC INFO */}
           <div className="grid gap-5 sm:grid-cols-2">
             <label className="flex flex-col gap-2 text-sm font-semibold">
-              Ürün *
+              {isEN ? 'Product *' : 'Ürün *'}
               <select
                 name="productType"
                 value={form.productType}
@@ -149,14 +156,14 @@ function QuoteModal({ isOpen, onClose }) {
                 required
                 className="rounded-xl border px-4 py-3"
               >
-                {PRODUCTS.map((p) => (
+                {products.map((p) => (
                   <option key={p}>{p}</option>
                 ))}
               </select>
             </label>
 
             <label className="flex flex-col gap-2 text-sm font-semibold">
-              Ürün Adedi *
+              {isEN ? 'Quantity *' : 'Ürün Adedi *'}
               <input
                 type="number"
                 name="quantity"
@@ -168,7 +175,7 @@ function QuoteModal({ isOpen, onClose }) {
             </label>
 
             <label className="flex flex-col gap-2 text-sm font-semibold">
-              Sayfa Sayısı *
+              {isEN ? 'Page Count *' : 'Sayfa Sayısı *'}
               <input
                 type="number"
                 name="pageCount"
@@ -180,7 +187,7 @@ function QuoteModal({ isOpen, onClose }) {
             </label>
 
             <label className="flex flex-col gap-2 text-sm font-semibold">
-              Ölçü (mm) *
+              {isEN ? 'Size (mm) *' : 'Ölçü (mm) *'}
               <input
                 type="text"
                 name="size"
@@ -196,7 +203,7 @@ function QuoteModal({ isOpen, onClose }) {
           {/* PAPERS */}
           <div className="grid gap-5 sm:grid-cols-2">
             <label className="flex flex-col gap-2 text-sm font-semibold">
-              İç Kağıt *
+              {isEN ? 'Inner Paper *' : 'İç Kağıt *'}
               <select
                 name="innerPaper"
                 value={form.innerPaper}
@@ -204,15 +211,15 @@ function QuoteModal({ isOpen, onClose }) {
                 required
                 className="rounded-xl border px-4 py-3"
               >
-                <option value="">Seçiniz</option>
-                {INNER_PAPERS.map((p) => (
+                <option value="">{isEN ? 'Select' : 'Seçiniz'}</option>
+                {innerPapers.map((p) => (
                   <option key={p}>{p}</option>
                 ))}
               </select>
             </label>
 
             <label className="flex flex-col gap-2 text-sm font-semibold">
-              Kapak Kağıdı *
+              {isEN ? 'Cover Paper *' : 'Kapak Kağıdı *'}
               <select
                 name="coverPaper"
                 value={form.coverPaper}
@@ -220,8 +227,8 @@ function QuoteModal({ isOpen, onClose }) {
                 required
                 className="rounded-xl border px-4 py-3"
               >
-                <option value="">Seçiniz</option>
-                {COVER_PAPERS.map((p) => (
+                <option value="">{isEN ? 'Select' : 'Seçiniz'}</option>
+                {coverPapers.map((p) => (
                   <option key={p}>{p}</option>
                 ))}
               </select>
@@ -231,18 +238,18 @@ function QuoteModal({ isOpen, onClose }) {
           {/* COLORS */}
           <div className="grid gap-6 sm:grid-cols-2">
             <div>
-              <p className="mb-2 text-sm font-semibold">İç Renk</p>
+              <p className="mb-2 text-sm font-semibold">{isEN ? 'Inner Colors' : 'İç Renk'}</p>
               <div className="grid gap-3 sm:grid-cols-2">
                 <input
                   name="innerColorFront"
-                  placeholder="Ön"
+                  placeholder={isEN ? "Front" : "Ön"}
                   value={form.innerColorFront}
                   onChange={handleChange}
                   className="rounded-xl border px-4 py-3"
                 />
                 <input
                   name="innerColorBack"
-                  placeholder="Arka"
+                  placeholder={isEN ? "Back" : "Arka"}
                   value={form.innerColorBack}
                   onChange={handleChange}
                   className="rounded-xl border px-4 py-3"
@@ -251,18 +258,18 @@ function QuoteModal({ isOpen, onClose }) {
             </div>
 
             <div>
-              <p className="mb-2 text-sm font-semibold">Kapak Renk</p>
+              <p className="mb-2 text-sm font-semibold">{isEN ? 'Cover Colors' : 'Kapak Renk'}</p>
               <div className="grid gap-3 sm:grid-cols-2">
                 <input
                   name="coverColorFront"
-                  placeholder="Ön"
+                  placeholder={isEN ? "Front" : "Ön"}
                   value={form.coverColorFront}
                   onChange={handleChange}
                   className="rounded-xl border px-4 py-3"
                 />
                 <input
                   name="coverColorBack"
-                  placeholder="Arka"
+                  placeholder={isEN ? "Back" : "Arka"}
                   value={form.coverColorBack}
                   onChange={handleChange}
                   className="rounded-xl border px-4 py-3"
@@ -273,9 +280,9 @@ function QuoteModal({ isOpen, onClose }) {
 
           {/* LAMINATION */}
           <div>
-            <p className="mb-3 text-sm font-semibold">Kaplama / Laminasyon</p>
+            <p className="mb-3 text-sm font-semibold">{isEN ? 'Coating / Lamination' : 'Kaplama / Laminasyon'}</p>
             <div className="flex flex-wrap gap-3">
-              {LAMINATIONS.map((l) => (
+              {laminations.map((l) => (
                 <label key={l} className="flex items-center gap-2 text-sm">
                   <input
                     type="checkbox"
@@ -290,9 +297,9 @@ function QuoteModal({ isOpen, onClose }) {
 
           {/* BINDING */}
           <div>
-            <p className="mb-3 text-sm font-semibold">Cilt *</p>
+            <p className="mb-3 text-sm font-semibold">{isEN ? 'Binding *' : 'Cilt *'}</p>
             <div className="flex flex-wrap gap-3">
-              {BINDINGS.map((b) => (
+              {bindings.map((b) => (
                 <label key={b} className="flex items-center gap-2 text-sm">
                   <input
                     type="radio"
@@ -311,7 +318,7 @@ function QuoteModal({ isOpen, onClose }) {
           {/* NOTES */}
           <textarea
             name="notes"
-            placeholder="İşinize dair ek bilgiler veriniz."
+            placeholder={isEN ? "Provide additional details about your project." : "İşinize dair ek bilgiler veriniz."}
             value={form.notes}
             onChange={handleChange}
             rows={4}
@@ -322,14 +329,14 @@ function QuoteModal({ isOpen, onClose }) {
           <div className="grid gap-5 sm:grid-cols-2">
             <input
               name="company"
-              placeholder="Firma"
+              placeholder={isEN ? "Company" : "Firma"}
               value={form.company}
               onChange={handleChange}
               className="rounded-xl border px-4 py-3"
             />
             <input
               name="name"
-              placeholder="Ad Soyad *"
+              placeholder={isEN ? "Full Name *" : "Ad Soyad *"}
               value={form.name}
               onChange={handleChange}
               required
@@ -338,7 +345,7 @@ function QuoteModal({ isOpen, onClose }) {
             <input
               type="email"
               name="email"
-              placeholder="E-posta *"
+              placeholder={isEN ? "E-mail *" : "E-posta *"}
               value={form.email}
               onChange={handleChange}
               required
@@ -347,7 +354,7 @@ function QuoteModal({ isOpen, onClose }) {
             <input
               type="tel"
               name="phone"
-              placeholder="Telefon *"
+              placeholder={isEN ? "Phone *" : "Telefon *"}
               value={form.phone}
               onChange={handleChange}
               required
@@ -374,7 +381,7 @@ function QuoteModal({ isOpen, onClose }) {
               disabled={sending}
               className="flex-1 rounded-xl bg-rose-600 px-6 py-3 font-semibold text-white hover:bg-rose-500 disabled:opacity-60"
             >
-              {sending ? 'Gönderiliyor…' : 'Teklif Talebi Gönder'}
+              {sending ? (isEN ? 'Sending…' : 'Gönderiliyor…') : (isEN ? 'Send Quote Request' : 'Teklif Talebi Gönder')}
             </button>
 
             <button
@@ -382,7 +389,7 @@ function QuoteModal({ isOpen, onClose }) {
               onClick={onClose}
               className="rounded-xl border px-6 py-3 font-semibold text-slate-700"
             >
-              İptal
+              {isEN ? 'Cancel' : 'İptal'}
             </button>
           </div>
         </form>

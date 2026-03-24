@@ -1,5 +1,6 @@
 
-import { ArrowRight, Sparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
+import { useLanguage } from "../context/LanguageContext";
 import book from "../assets/images/category/book.jpg";
 import calender from "../assets/images/category/calender.jpg";
 import agenda from "../assets/images/category/agenda.jpg";
@@ -58,9 +59,22 @@ const products = [
   },
 ];
 
-const marqueeItems = [...products, ...products];
-
 function ProductShowcase() {
+  const { isEN } = useLanguage();
+  const localizedProducts = products.map((product) => {
+    const map = {
+      Kitap: { title: "Book", description: "Hardcover and paperback" },
+      Katalog: { title: "Catalog", description: "Product and service promotion" },
+      Takvim: { title: "Calendar", description: "Corporate and promotional" },
+      Ajanda: { title: "Planner", description: "Leather and fabric cover" },
+      "Karton Çanta": { title: "Paper Bag", description: "Premium and economical" },
+      Dergi: { title: "Magazine", description: "Periodical publications" },
+    };
+    if (!isEN || !map[product.title]) return product;
+    return { ...product, ...map[product.title] };
+  });
+  const marqueeItems = [...localizedProducts, ...localizedProducts];
+
   return (
     <section
       id="product-band"
@@ -80,20 +94,21 @@ function ProductShowcase() {
           <div className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-100 to-amber-50 px-4 py-2 shadow-sm">
             <Sparkles className="h-4 w-4 text-amber-600" />
             <span className="text-xs font-semibold uppercase tracking-[0.3em] text-amber-700">
-              Ürün Portföyümüz
+              {isEN ? "Our Product Portfolio" : "Ürün Portföyümüz"}
             </span>
           </div>
 
           <h2 className="mt-6 text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
-            Neler{" "}
+            {isEN ? "What do we " : "Neler "}
             <span className="bg-gradient-to-r from-amber-600 to-amber-500 bg-clip-text text-transparent">
-              üretiyoruz?
+              {isEN ? "produce?" : "üretiyoruz?"}
             </span>
           </h2>
           
           <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-slate-600">
-            Ofset ve dijital parkurlarımızda kitap, katalog, ajanda ve
-            promosyon ürünlerini kurumsal standartlarda üretiyoruz.
+            {isEN
+              ? "We produce books, catalogs, planners, and promotional products at corporate quality standards in our offset and digital lines."
+              : "Ofset ve dijital parkurlarımızda kitap, katalog, ajanda ve promosyon ürünlerini kurumsal standartlarda üretiyoruz."}
           </p>
         </div>
       </div>

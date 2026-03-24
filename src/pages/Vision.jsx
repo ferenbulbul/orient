@@ -1,5 +1,6 @@
 import { Target, TrendingUp, Globe, Lightbulb } from "lucide-react";
 import about from '../assets/images/services/about.jpg';
+import { useLanguage } from "../context/LanguageContext";
 
 const VISION_POINTS = [
   {
@@ -25,6 +26,16 @@ const VISION_POINTS = [
 ];
 
 function Vision() {
+  const { isEN } = useLanguage();
+  const points = isEN
+    ? [
+        { icon: Target, title: "Technological Leadership", description: "World-class machine park and continuous innovation" },
+        { icon: TrendingUp, title: "Sustainable Production", description: "Environmentally friendly and efficient production processes" },
+        { icon: Globe, title: "Regional Leadership", description: "The preferred printing hub of Turkey and the region" },
+        { icon: Lightbulb, title: "Aesthetics & Speed", description: "Combining design aesthetics with industrial production power" },
+      ]
+    : VISION_POINTS;
+
   return (
     <div className="bg-slate-50">
       {/* Hero Section */}
@@ -39,28 +50,28 @@ function Vision() {
               <div className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-100 to-amber-50 px-4 py-2 shadow-sm">
                 <Target className="h-4 w-4 text-amber-600" />
                 <span className="text-xs font-semibold uppercase tracking-[0.3em] text-amber-700">
-                  Vizyonumuz
+                  {isEN ? "Our Vision" : "Vizyonumuz"}
                 </span>
               </div>
 
               <h1 className="mt-6 text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl leading-tight">
-                Geleceğin baskı{" "}
+                {isEN ? "Shaping the printing " : "Geleceğin baskı"}{" "}
                 <span className="bg-gradient-to-r from-amber-600 to-amber-500 bg-clip-text text-transparent">
-                  standartlarını
+                  {isEN ? "standards of the future" : "standartlarını"}
                 </span>{" "}
-                belirliyoruz
+                {isEN ? "" : "belirliyoruz"}
               </h1>
 
               <p className="mt-6 text-lg leading-relaxed text-slate-600">
-                Teknolojik yatırımlarımız ve sürdürülebilir üretim anlayışımızla,
-                Türkiye'nin ve bölgenin en çok tercih edilen entegre basım merkezi
-                olmak.
+                {isEN
+                  ? "To become the most preferred integrated printing center in Turkey and the region through technological investments and sustainable production."
+                  : "Teknolojik yatırımlarımız ve sürdürülebilir üretim anlayışımızla, Türkiye'nin ve bölgenin en çok tercih edilen entegre basım merkezi olmak."}
               </p>
 
               <p className="mt-4 text-base leading-relaxed text-slate-600">
-                Grafik tasarımın estetiğini, endüstriyel üretimin hızıyla
-                harmanlayarak; dijitalleşen dünyada basılı materyalin gücünü ve
-                kalitesini en üst seviyeye taşımak.
+                {isEN
+                  ? "Blending design aesthetics with industrial speed to elevate the power and quality of printed materials in a digital world."
+                  : "Grafik tasarımın estetiğini, endüstriyel üretimin hızıyla harmanlayarak; dijitalleşen dünyada basılı materyalin gücünü ve kalitesini en üst seviyeye taşımak."}
               </p>
             </div>
 
@@ -69,7 +80,7 @@ function Vision() {
               <div className="group overflow-hidden rounded-3xl border border-slate-200 shadow-xl">
                 <img
                   src={about}
-                  alt="Baskı üretiminde teknoloji ve kalite odağı"
+                  alt={isEN ? "Technology and quality focus in print production" : "Baskı üretiminde teknoloji ve kalite odağı"}
                   className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                   loading="lazy"
                   decoding="async"
@@ -88,7 +99,7 @@ function Vision() {
         
         <div className="relative z-10 mx-auto max-w-6xl px-6">
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {VISION_POINTS.map((point, idx) => {
+            {points.map((point, idx) => {
               const IconComponent = point.icon;
               return (
                 <div 
@@ -123,11 +134,12 @@ function Vision() {
         <div className="mx-auto max-w-4xl px-6 text-center">
           <div className="rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-slate-50 p-8 shadow-sm">
             <p className="text-lg leading-relaxed text-slate-700">
-              <span className="font-semibold text-amber-600">Dijitalleşen dünyada</span>{" "}
-              basılı materyalin gücünü ve kalitesini en üst seviyeye taşıyarak,
-              sektörde fark yaratan bir{" "}
-              <span className="font-semibold text-slate-900">basım merkezi</span>{" "}
-              olmayı hedefliyoruz.
+              <span className="font-semibold text-amber-600">{isEN ? "In a digital world," : "Dijitalleşen dünyada"}</span>{" "}
+              {isEN
+                ? "we aim to maximize the quality and impact of printed materials and become a "
+                : "basılı materyalin gücünü ve kalitesini en üst seviyeye taşıyarak, sektörde fark yaratan bir "}
+              <span className="font-semibold text-slate-900">{isEN ? "printing center" : "basım merkezi"}</span>{" "}
+              {isEN ? "that stands out in the industry." : "olmayı hedefliyoruz."}
             </p>
           </div>
         </div>
