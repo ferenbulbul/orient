@@ -1,5 +1,5 @@
 import { Printer, History, Zap, BookOpen } from "lucide-react";
-import print from "../assets/images/machine/bkomori8renk3.jpg";
+import print from "../assets/images/machine/bKomori8renk3.jpg";
 import { useLanguage } from "../context/LanguageContext";
 
 const PRINTING_POINTS = [
