@@ -20,7 +20,7 @@ import bonce3 from "../assets/images/machine/böGrafik.jpg";
 import heidelberg from "../assets/images/machine/bHeidelberg1.jpg";
 import komori5 from "../assets/images/machine/bkomori5renk1.jpg";
 import komori52 from "../assets/images/machine/bkomori5renk2.jpg";
-import komori83 from "../assets/images/machine/bkomori8renk3.jpg";
+import komori83 from "../assets/images/machine/bKomori8renk3.jpg";
 import roland from "../assets/images/machine/bRoland.jpg";
 
 import mücellit from "../assets/images/machine/bsMücellit1.jpg";
