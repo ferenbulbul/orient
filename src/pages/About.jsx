@@ -188,25 +188,30 @@ function About() {
         <div className="absolute top-10 left-1/4 h-80 w-80 rounded-full bg-amber-100/30 blur-3xl" />
         <div className="absolute bottom-0 right-1/3 h-96 w-96 rounded-full bg-slate-200/60 blur-3xl" />
         <div className="relative z-10 mx-auto max-w-6xl px-6">
-          <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
-            <div>
-              <div className="overflow-hidden rounded-3xl border border-slate-200 shadow-lg">
+          <div className="grid gap-10 lg:grid-cols-[320px_minmax(0,1fr)] lg:items-start">
+            <div className="mx-auto w-full max-w-[300px] lg:mx-0">
+              <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white p-3 shadow-xl">
                 <img
                   src={founderProfile}
                   alt={isEN ? "Mehmet Polat profile photo" : "Mehmet Polat profil görseli"}
-                  className="h-full w-full object-cover"
+                  className="aspect-[3/4] w-full rounded-2xl object-cover object-top"
                   loading="lazy"
                   decoding="async"
                 />
+                <div className="mt-4 rounded-2xl bg-gradient-to-r from-slate-900 to-slate-800 px-4 py-3 text-white">
+                  <p className="text-sm font-semibold tracking-wide text-amber-300">EUROMAT PRINT</p>
+                  <h2 className="mt-1 text-lg font-bold leading-tight">
+                    {isEN ? "Mehmet Polat" : "Mehmet Polat"}
+                  </h2>
+                  <p className="mt-1 text-sm text-slate-200">
+                    {isEN ? "Founder & Printing Operations Manager" : "Kurucu & Matbaa İşletmecisi"}
+                  </p>
+                </div>
               </div>
             </div>
 
-            <div className="space-y-6">
-              <h2 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-                {isEN ? "Mehmet Polat | Founder & Printing Operations Manager" : "Mehmet Polat | Kurucu & Matbaa İşletmecisi"}
-              </h2>
-
-              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6">
+            <div className="space-y-5">
+              <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
                 <h3 className="text-lg font-bold text-slate-900">{isEN ? "Professional Background" : "Profesyonel Arkaplan"}</h3>
                 <ul className="mt-4 space-y-3 text-slate-700">
                   <li className="flex items-start gap-3">
@@ -219,17 +224,17 @@ function About() {
                   </li>
                   <li className="flex items-start gap-3">
                     <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-amber-500" />
-                    <span>{isEN ? "Entrepreneurship: Turned 15 years of sector experience into industrial scale by founding Euromat Print Inc. in 2017." : "Girişimcilik: Sektördeki 15 yıllık mutfak tecrübesini, 2017 yılında kendi şirketi olan Euromat Print A.Ş.&apos;yi kurarak endüstriyel boyuta taşımıştır."}</span>
+                    <span>{isEN ? "Entrepreneurship: Turned 15 years of sector experience into industrial scale by founding Euromat Print Inc. in 2017." : "Girişimcilik: Sektördeki 15 yıllık mutfak tecrübesini, 2017 yılında kendi şirketi olan Euromat Print A.Ş.'yi kurarak endüstriyel boyuta taşımıştır."}</span>
                   </li>
                 </ul>
               </div>
 
-              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6">
+              <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
                 <h3 className="text-lg font-bold text-slate-900">{isEN ? "Business Vision" : "İşletme Vizyonu"}</h3>
                 <ul className="mt-4 space-y-3 text-slate-700">
                   <li className="flex items-start gap-3">
                     <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-amber-500" />
-                    <span>{isEN ? "Strategic Growth: Expanded production from 1,100 m² to a fully integrated 1,700 m² facility in 2025." : "Stratejik Büyüme: Başakşehir İkitelli OSB&apos;de 1.100 m² ile başladığı üretim serüvenini, 2025 yılında 1.700 m²&apos;lik tam entegre tesise dönüştürmüştür."}</span>
+                    <span>{isEN ? "Strategic Growth: Expanded production from 1,100 m² to a fully integrated 1,700 m² facility in 2025." : "Stratejik Büyüme: Başakşehir İkitelli OSB'de 1.100 m² ile başladığı üretim serüvenini, 2025 yılında 1.700 m²'lik tam entegre tesise dönüştürmüştür."}</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-amber-500" />

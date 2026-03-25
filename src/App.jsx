@@ -8,7 +8,6 @@ import {
 } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
-import Hero from "./components/Hero";
 import ScrollToTop from "./components/ScrollToTop";
 import TopBar from "./components/TopBar";
 import QuoteModal from "./components/QuoteModal";

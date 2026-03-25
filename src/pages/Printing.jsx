@@ -1,4 +1,5 @@
-import { Printer, History, Zap, BookOpen } from "lucide-react";
+import { Printer, History, Zap, BookOpen, ZoomIn, X } from "lucide-react";
+import { useState } from "react";
 import print from "../assets/images/machine/bKomori8renk3.jpg";
 import { useLanguage } from "../context/LanguageContext";
 
@@ -27,6 +28,7 @@ const PRINTING_POINTS = [
 
 function Printing() {
   const { isEN } = useLanguage();
+  const [lightboxOpen, setLightboxOpen] = useState(false);
   const points = isEN
     ? [
         { icon: History, title: "History of Offset Printing", description: "Offset printing, invented by Ira W. Rubel in 1904, remains a core surface-printing method today." },
@@ -76,7 +78,12 @@ function Printing() {
 
             {/* Right: Image */}
             <div className="relative">
-              <div className="group overflow-hidden rounded-3xl border border-slate-200 shadow-xl">
+              <button
+                type="button"
+                onClick={() => setLightboxOpen(true)}
+                className="group relative block h-[360px] w-full overflow-hidden rounded-3xl border border-slate-200 shadow-xl sm:h-[420px] lg:h-[460px]"
+                aria-label={isEN ? "Enlarge image" : "Gorseli buyut"}
+              >
                 <img
                   src={print}
                   alt={isEN ? "Offset printing technology and features" : "Ofset baskı teknolojisi ve özellikleri"}
@@ -85,7 +92,10 @@ function Printing() {
                   decoding="async"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-              </div>
+                <div className="absolute right-4 top-4 rounded-full bg-white/85 p-2 text-slate-900 shadow-md">
+                  <ZoomIn className="h-4 w-4" />
+                </div>
+              </button>
             </div>
 
           </div>
@@ -237,6 +247,27 @@ function Printing() {
           </div>
         </div>
       </section>
+      {lightboxOpen && (
+        <div
+          className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/90 p-4"
+          onClick={() => setLightboxOpen(false)}
+        >
+          <button
+            type="button"
+            className="absolute right-4 top-4 rounded-full border border-white/20 bg-white/10 p-2 text-white backdrop-blur-sm hover:bg-white/20"
+            onClick={() => setLightboxOpen(false)}
+            aria-label={isEN ? "Close enlarged image" : "Buyutulmus gorseli kapat"}
+          >
+            <X className="h-5 w-5" />
+          </button>
+          <img
+            src={print}
+            alt={isEN ? "Offset printing technology and features" : "Ofset baskı teknolojisi ve özellikleri"}
+            className="max-h-[92vh] w-auto max-w-[92vw] rounded-2xl object-contain"
+            onClick={(event) => event.stopPropagation()}
+          />
+        </div>
+      )}
     </div>
   );
 }
