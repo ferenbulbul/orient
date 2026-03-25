@@ -434,7 +434,7 @@ function MachinePark() {
           {/* Quick Stats */}
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {[
-              { label: isEN ? "Total Machines" : "Toplam Makine", value: "14+", icon: Settings },
+              { label: isEN ? "Total Machines" : "Toplam Makine", value: "20+", icon: Settings },
               {
                 label: isEN ? "Production Capacity" : "Üretim Kapasitesi",
                 value: isEN ? "45M/year" : "45M/yıl",
