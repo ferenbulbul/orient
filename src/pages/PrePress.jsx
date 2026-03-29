@@ -1,6 +1,6 @@
 import { FileText, Monitor, Image, Settings, ZoomIn, X } from "lucide-react";
 import { useState } from "react";
-import prepressImage from "../assets/images/machine/böCTPbaskıöncesi.jpg";
+import prepressImage from "../assets/images/machine/bo3.jpg";
 import { useLanguage } from "../context/LanguageContext";
 
 const PREPRESS_POINTS = [

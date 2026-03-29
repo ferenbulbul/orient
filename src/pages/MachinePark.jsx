@@ -13,10 +13,10 @@ import {
 } from "lucide-react";
 import { useLanguage } from "../context/LanguageContext";
 
-import bonce1 from "../assets/images/machine/böBaskıöncesigrafik.jpg";
-import bonce2 from "../assets/images/machine/böCTPbaskıöncesi.jpg";
-import bonce3 from "../assets/images/machine/böGrafik.jpg";
-
+import bonce1 from "../assets/images/machine/bo1.jpg";
+import bonce2 from "../assets/images/machine/bo2.jpg";
+import bonce3 from "../assets/images/machine/bo3.jpg";
+ 
 import heidelberg from "../assets/images/machine/bHeidelberg1.jpg";
 import komori5 from "../assets/images/machine/bkomori5renk1.jpg";
 import komori52 from "../assets/images/machine/bkomori5renk2.jpg";

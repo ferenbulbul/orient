@@ -16,7 +16,6 @@ import Vision from "./pages/Vision";
 import Mission from "./pages/Mission";
 import Contact from "./pages/Contact";
 import MachinePark from "./pages/MachinePark";
-import ProductCategory from "./pages/ProductCategory";
 import PrePress from "./pages/PrePress";
 import Printing from "./pages/Printing";
 import Binding from "./pages/Binding";
@@ -129,7 +128,6 @@ function App() {
           />
 
           <Route path="/parkurumuz" element={<MachinePark />} />
-          <Route path="/urunler/:slug" element={<ProductCategory />} />
           <Route
             path="*"
             element={<HomePage onOpenQuoteModal={openQuoteModal} />}
