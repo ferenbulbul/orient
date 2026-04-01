@@ -4,7 +4,6 @@ import {
   Route,
   useLocation,
   useNavigate,
-  Link,
 } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -20,6 +19,12 @@ import PrePress from "./pages/PrePress";
 import Printing from "./pages/Printing";
 import Binding from "./pages/Binding";
 import HomePage from "./pages/Home";
+import Login from "./pages/Login";
+import ProtectedRoute from "./components/dashboard/ProtectedRoute";
+import DashboardRouter from "./pages/dashboard/DashboardRouter";
+import JobDetail from "./pages/dashboard/JobDetail";
+import JobCreate from "./pages/dashboard/JobCreate";
+import UserManagement from "./pages/dashboard/UserManagement";
 import "./App.css";
 
 
@@ -30,6 +35,10 @@ const SECTION_TARGETS = {
   products: "#product-band",
 };
 
+// Routes where the public site shell (TopBar/Navbar/Footer) should be hidden
+const isDashboardRoute = (pathname) =>
+  pathname.startsWith("/panel") || pathname === "/giris";
+
 
 function App() {
   const [activeSection, setActiveSection] = useState("home");
@@ -39,6 +48,8 @@ function App() {
   const [showTopBar, setShowTopBar] = useState(true);
   const location = useLocation();
   const navigate = useNavigate();
+
+  const hideSiteShell = isDashboardRoute(location.pathname);
 
   useEffect(() => {
     if (location.pathname === "/" && pendingSection) {
@@ -102,16 +113,23 @@ function App() {
   const openQuoteModal = () => setIsQuoteModalOpen(true);
 
   return (
-    <div className="app-shell">
+    <div className={hideSiteShell ? "" : "app-shell"}>
       <ScrollToTop />
-      <TopBar onRequestQuote={openQuoteModal} isVisible={showTopBar} />
-      <Navbar
-        activeSection={location.pathname === "/" ? activeSection : null}
-        onNavigate={handleNavigate}
-        topOffsetClass={showTopBar ? "top-0 sm:top-10" : "top-0"}
-      />
-      <main className="content-area">
+
+      {!hideSiteShell && (
+        <>
+          <TopBar onRequestQuote={openQuoteModal} isVisible={showTopBar} />
+          <Navbar
+            activeSection={location.pathname === "/" ? activeSection : null}
+            onNavigate={handleNavigate}
+            topOffsetClass={showTopBar ? "top-0 sm:top-10" : "top-0"}
+          />
+        </>
+      )}
+
+      <main className={hideSiteShell ? "" : "content-area"}>
         <Routes>
+          {/* Public routes */}
           <Route
             path="/"
             element={<HomePage onOpenQuoteModal={openQuoteModal} />}
@@ -126,15 +144,55 @@ function App() {
             path="/iletisim"
             element={<Contact onOpenQuoteModal={openQuoteModal} />}
           />
-
           <Route path="/parkurumuz" element={<MachinePark />} />
+
+          {/* Auth */}
+          <Route path="/giris" element={<Login />} />
+
+          {/* Dashboard routes */}
+          <Route
+            path="/panel"
+            element={
+              <ProtectedRoute>
+                <DashboardRouter />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/panel/is/:jobId"
+            element={
+              <ProtectedRoute>
+                <JobDetail />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/panel/yeni-is"
+            element={
+              <ProtectedRoute allowedRoles={["personel", "admin"]}>
+                <JobCreate />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/panel/kullanicilar"
+            element={
+              <ProtectedRoute allowedRoles={["admin"]}>
+                <UserManagement />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Fallback */}
           <Route
             path="*"
             element={<HomePage onOpenQuoteModal={openQuoteModal} />}
           />
         </Routes>
       </main>
-      <Footer />
+
+      {!hideSiteShell && <Footer />}
+
       <QuoteModal
         isOpen={isQuoteModalOpen}
         onClose={() => setIsQuoteModalOpen(false)}

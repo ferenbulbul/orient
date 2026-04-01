@@ -23,10 +23,10 @@ import komori52 from "../assets/images/machine/bkomori5renk2.jpg";
 import komori83 from "../assets/images/machine/bKomori8renk3.jpg";
 import roland from "../assets/images/machine/bRoland.jpg";
 
-import mücellit from "../assets/images/machine/bsMücellit1.jpg";
-import mücellit2 from "../assets/images/machine/bsMücellit2.jpg";
-import mücellit3 from "../assets/images/machine/bsMücellit3.jpg";
-import mücellit4 from "../assets/images/machine/bsMücellit4.jpg";
+import mucellit from "../assets/images/machine/bsMucellit1.jpg";
+import mucellit2 from "../assets/images/machine/bsMucellit2.jpg";
+import mucellit3 from "../assets/images/machine/bsMucellit3.jpg";
+import mucellit4 from "../assets/images/machine/bsMucellit4.jpg";
 import bSPaletsarma from "../assets/images/machine/bSPaletsarma.jpg";
 
 const MACHINE_GROUPS = [
@@ -145,22 +145,22 @@ const MACHINE_GROUPS = [
     title: "Mücellit",
     images: [
       {
-        src: mücellit,
+        src: mucellit,
         alt: "Müller Martini ciltleme makinesi",
         caption: "Müller Martini Acora",
       },
       {
-        src: mücellit2,
+        src: mucellit2,
         alt: "Tel dikiş makinesi",
         caption: "Tel Dikiş Sistemi",
       },
       {
-        src: mücellit3,
+        src: mucellit3,
         alt: "Kesim ve paketleme",
         caption: "Kesim & Paketleme",
       },
       {
-        src: mücellit4,
+        src: mucellit4,
         alt: "Kesim ve paketleme",
         caption: "Kesim & Paketleme",
       },

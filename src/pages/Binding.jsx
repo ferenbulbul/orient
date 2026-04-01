@@ -1,6 +1,6 @@
 import { BookOpen, Scissors, Layers, Package, ZoomIn, X } from "lucide-react";
 import { useState } from "react";
-import binding from "../assets/images/machine/bsMücellit2.jpg";
+import binding from "../assets/images/machine/bsMucellit2.jpg";
 import { useLanguage } from "../context/LanguageContext";
 
 const BINDING_POINTS = [

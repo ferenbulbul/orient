@@ -1,33 +1,66 @@
-import emailjs from 'emailjs-com'
+import { supabase } from './supabase'
+
+// Tüm emailler Resend üzerinden (Supabase Edge Function)
+
+const sendEmail = async (type, data) => {
+  try {
+    const { data: result, error } = await supabase.functions.invoke('send-email', {
+      body: {
+        type,
+        data: { ...data, login_url: `${window.location.origin}/giris` },
+      },
+    })
+    if (error) throw error
+    return true
+  } catch (err) {
+    console.warn(`Email gönderilemedi (${type}):`, err)
+    return false
+  }
+}
 
 export const sendQuoteRequest = (form) => {
-  return emailjs.send(
-    'service_r38clbw',
-    'template_bv6z27k',
-    {
-      productType: form.productType,
-      quantity: form.quantity,
-      pageCount: form.pageCount,
-      size: form.size,
+  return sendEmail('quote_request', {
+    productType: form.productType,
+    quantity: form.quantity,
+    pageCount: form.pageCount,
+    size: form.size,
+    innerPaper: form.innerPaper,
+    coverPaper: form.coverPaper,
+    innerColorFront: form.innerColorFront,
+    innerColorBack: form.innerColorBack,
+    coverColorFront: form.coverColorFront,
+    coverColorBack: form.coverColorBack,
+    laminations: form.laminations.join(', '),
+    binding: form.binding,
+    company: form.company,
+    name: form.name,
+    email: form.email,
+    phone: form.phone,
+    notes: form.notes || '-',
+  })
+}
 
-      innerPaper: form.innerPaper,
-      coverPaper: form.coverPaper,
+export const sendWelcomeEmail = ({ email, name, password }) => {
+  return sendEmail('welcome', { email, name, password })
+}
 
-      innerColorFront: form.innerColorFront,
-      innerColorBack: form.innerColorBack,
-      coverColorFront: form.coverColorFront,
-      coverColorBack: form.coverColorBack,
+export const sendStepEmail = ({ email, name, jobNo, jobName, stepName, phaseName, progress }) => {
+  return sendEmail('step_update', {
+    email,
+    name,
+    job_no: jobNo,
+    job_name: jobName,
+    step_name: stepName,
+    phase_name: phaseName,
+    progress,
+  })
+}
 
-      laminations: form.laminations.join(', '), // 🔥 KRİTİK
-      binding: form.binding,
-
-      company: form.company,
-      name: form.name,
-      email: form.email,
-      phone: form.phone,
-
-      notes: form.notes || '-', // boşsa patlamasın
-    },
-    '7MMTs53h7vjWCtIiT'
-  )
+export const sendJobCompletedEmail = ({ email, name, jobNo, jobName }) => {
+  return sendEmail('job_completed', {
+    email,
+    name,
+    job_no: jobNo,
+    job_name: jobName,
+  })
 }

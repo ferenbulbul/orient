@@ -2,9 +2,11 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import logo from '../assets/logo.svg'
 import { useLanguage } from '../context/LanguageContext'
+import { useAuth } from '../context/AuthContext'
 
 function Navbar({ activeSection = 'home', onNavigate, topOffsetClass = 'top-10' }) {
   const { isEN } = useLanguage()
+  const { isAuthenticated } = useAuth()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [hasScrolled, setHasScrolled] = useState(false)
   const [hoverMenu, setHoverMenu] = useState(null)
@@ -220,6 +222,16 @@ function Navbar({ activeSection = 'home', onNavigate, topOffsetClass = 'top-10' 
               </button>
             )
           })}
+
+          <button
+            type="button"
+            onClick={() => navigate(isAuthenticated ? '/panel' : '/giris')}
+            className="ml-2 rounded-full bg-rose-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-rose-600/20 transition-all duration-300 hover:bg-rose-700"
+          >
+            {isAuthenticated
+              ? isEN ? 'Panel' : 'Panel'
+              : isEN ? 'Sign In' : 'Giriş Yap'}
+          </button>
         </nav>
 
         <button
@@ -311,6 +323,19 @@ function Navbar({ activeSection = 'home', onNavigate, topOffsetClass = 'top-10' 
                 </button>
               )
             })}
+
+            <button
+              type="button"
+              onClick={() => {
+                navigate(isAuthenticated ? '/panel' : '/giris')
+                closeMenus()
+              }}
+              className="mt-2 rounded-2xl bg-rose-600 px-4 py-3 text-center text-base font-semibold text-white transition hover:bg-rose-700"
+            >
+              {isAuthenticated
+                ? isEN ? 'Panel' : 'Panel'
+                : isEN ? 'Sign In' : 'Giriş Yap'}
+            </button>
           </nav>
         </div>
       )}
