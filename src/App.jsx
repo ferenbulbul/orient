@@ -25,6 +25,7 @@ import DashboardRouter from "./pages/dashboard/DashboardRouter";
 import JobDetail from "./pages/dashboard/JobDetail";
 import JobCreate from "./pages/dashboard/JobCreate";
 import UserManagement from "./pages/dashboard/UserManagement";
+import ReportsPage from "./pages/dashboard/ReportsPage";
 import "./App.css";
 
 
@@ -171,6 +172,14 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={["personel", "admin"]}>
                 <JobCreate />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/panel/raporlar"
+            element={
+              <ProtectedRoute allowedRoles={["admin", "moderator"]}>
+                <ReportsPage />
               </ProtectedRoute>
             }
           />

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../context/AuthContext'
 import { useLanguage } from '../../context/LanguageContext'
+import { formatNumber } from '../../lib/formatters'
 import DashboardLayout from '../../components/dashboard/DashboardLayout'
 import CustomerSelect from '../../components/dashboard/CustomerSelect'
 
@@ -14,6 +15,7 @@ export default function JobCreate() {
     is_emri_no: '',
     is_adi: '',
     adet: 1,
+    adetDisplay: '1',
     musteri_id: null,
     notes: '',
   })
@@ -22,6 +24,17 @@ export default function JobCreate() {
 
   const handleChange = (field, value) => {
     setForm((prev) => ({ ...prev, [field]: value }))
+  }
+
+  const handleAdetChange = (value) => {
+    // Sadece rakam kabul et
+    const raw = value.replace(/\D/g, '')
+    const num = raw ? parseInt(raw, 10) : 0
+    setForm((prev) => ({
+      ...prev,
+      adet: num || 1,
+      adetDisplay: raw ? formatNumber(num) : '',
+    }))
   }
 
   const handleSubmit = async (e) => {
@@ -145,10 +158,11 @@ export default function JobCreate() {
                 {isEN ? 'Quantity' : 'Adet'}
               </label>
               <input
-                type="number"
-                min={1}
-                value={form.adet}
-                onChange={(e) => handleChange('adet', parseInt(e.target.value) || 1)}
+                type="text"
+                inputMode="numeric"
+                value={form.adetDisplay}
+                onChange={(e) => handleAdetChange(e.target.value)}
+                placeholder="1.000"
                 className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-slate-400 focus:ring-2 focus:ring-slate-200"
               />
             </div>

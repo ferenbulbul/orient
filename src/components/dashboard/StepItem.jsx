@@ -3,11 +3,15 @@ import { useLanguage } from '../../context/LanguageContext'
 export default function StepItem({
   step,
   canEdit = false,
+  canUntoggle = false,
   isLocked = false,
   onToggle,
 }) {
   const { isEN } = useLanguage()
   const isCompleted = step.durum === 'tamamlandi'
+
+  // Tıklanabilirlik: edit yetkisi var + kilitli değil + (tamamlanmamış VEYA geri alma yetkisi var)
+  const isClickable = canEdit && !isLocked && (!isCompleted || canUntoggle)
 
   const completedAt = step.completed_at
     ? new Date(step.completed_at).toLocaleDateString('tr-TR', {
@@ -25,7 +29,7 @@ export default function StepItem({
       } ${isCompleted ? 'bg-green-50' : 'bg-white'}`}
     >
       {/* Checkbox / Icon */}
-      {canEdit && !isLocked ? (
+      {isClickable ? (
         <button
           type="button"
           onClick={() => onToggle?.(step)}

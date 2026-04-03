@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { useLanguage } from '../../context/LanguageContext'
+import { formatNumber, formatPrice } from '../../lib/formatters'
 import DashboardLayout from '../../components/dashboard/DashboardLayout'
-import JobCard from '../../components/dashboard/JobCard'
+import StatusBadge from '../../components/dashboard/StatusBadge'
 
 const DURUM_OPTIONS = [
   { value: '', label: { tr: 'Tümü', en: 'All' } },
@@ -13,6 +14,15 @@ const DURUM_OPTIONS = [
   { value: 'lojistik', label: { tr: 'Lojistik', en: 'Logistics' } },
   { value: 'tamamlandi', label: { tr: 'Tamamlandı', en: 'Completed' } },
 ]
+
+// Durum sıralama: tamamlandı en sonda
+const DURUM_ORDER = {
+  baski_oncesi: 0,
+  baskida: 1,
+  mucellit: 2,
+  lojistik: 3,
+  tamamlandi: 4,
+}
 
 export default function AdminDashboard() {
   const { isEN } = useLanguage()
@@ -40,14 +50,16 @@ export default function AdminDashboard() {
     fetchJobs()
   }, [])
 
-  const filtered = jobs.filter((job) => {
-    const matchSearch =
-      !search ||
-      job.is_emri_no.toLowerCase().includes(search.toLowerCase()) ||
-      job.is_adi.toLowerCase().includes(search.toLowerCase())
-    const matchDurum = !durumFilter || job.durum === durumFilter
-    return matchSearch && matchDurum
-  })
+  const filtered = jobs
+    .filter((job) => {
+      const matchSearch =
+        !search ||
+        job.is_emri_no.toLowerCase().includes(search.toLowerCase()) ||
+        job.is_adi.toLowerCase().includes(search.toLowerCase())
+      const matchDurum = !durumFilter || job.durum === durumFilter
+      return matchSearch && matchDurum
+    })
+    .sort((a, b) => (DURUM_ORDER[a.durum] ?? 99) - (DURUM_ORDER[b.durum] ?? 99))
 
   const stats = {
     total: jobs.length,
@@ -57,6 +69,19 @@ export default function AdminDashboard() {
     lojistik: jobs.filter((j) => j.durum === 'lojistik').length,
     tamamlandi: jobs.filter((j) => j.durum === 'tamamlandi').length,
   }
+
+  const handleStatClick = (filterValue) => {
+    setDurumFilter((prev) => (prev === filterValue ? '' : filterValue))
+  }
+
+  const statItems = [
+    { label: isEN ? 'Total' : 'Toplam', value: stats.total, color: 'bg-slate-900 text-white', activeRing: 'ring-slate-900', filter: '' },
+    { label: isEN ? 'Prepress' : 'Baskı Öncesi', value: stats.baskiOncesi, color: 'bg-blue-50 text-blue-700', activeRing: 'ring-blue-400', filter: 'baski_oncesi' },
+    { label: isEN ? 'Printing' : 'Baskıda', value: stats.baskida, color: 'bg-amber-50 text-amber-700', activeRing: 'ring-amber-400', filter: 'baskida' },
+    { label: isEN ? 'Bindery' : 'Mücellit', value: stats.mucellit, color: 'bg-purple-50 text-purple-700', activeRing: 'ring-purple-400', filter: 'mucellit' },
+    { label: isEN ? 'Logistics' : 'Lojistik', value: stats.lojistik, color: 'bg-orange-50 text-orange-700', activeRing: 'ring-orange-400', filter: 'lojistik' },
+    { label: isEN ? 'Done' : 'Tamamlandı', value: stats.tamamlandi, color: 'bg-green-50 text-green-700', activeRing: 'ring-green-400', filter: 'tamamlandi' },
+  ]
 
   return (
     <DashboardLayout>
@@ -95,24 +120,24 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* Stats */}
+        {/* Stats — clickable filters */}
         <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-6">
-          {[
-            { label: isEN ? 'Total' : 'Toplam', value: stats.total, color: 'bg-slate-900 text-white' },
-            { label: isEN ? 'Prepress' : 'Baskı Öncesi', value: stats.baskiOncesi, color: 'bg-blue-50 text-blue-700' },
-            { label: isEN ? 'Printing' : 'Baskıda', value: stats.baskida, color: 'bg-amber-50 text-amber-700' },
-            { label: isEN ? 'Bindery' : 'Mücellit', value: stats.mucellit, color: 'bg-purple-50 text-purple-700' },
-            { label: isEN ? 'Logistics' : 'Lojistik', value: stats.lojistik, color: 'bg-orange-50 text-orange-700' },
-            { label: isEN ? 'Done' : 'Tamamlandı', value: stats.tamamlandi, color: 'bg-green-50 text-green-700' },
-          ].map((stat) => (
-            <div
-              key={stat.label}
-              className={`rounded-2xl px-4 py-3 text-center ${stat.color}`}
-            >
-              <p className="text-2xl font-bold">{stat.value}</p>
-              <p className="text-xs font-medium opacity-80">{stat.label}</p>
-            </div>
-          ))}
+          {statItems.map((stat) => {
+            const isActive = durumFilter === stat.filter
+            return (
+              <button
+                key={stat.label}
+                type="button"
+                onClick={() => handleStatClick(stat.filter)}
+                className={`rounded-2xl px-4 py-3 text-center transition ${stat.color} ${
+                  isActive ? `ring-2 ${stat.activeRing} scale-[1.03]` : 'hover:scale-[1.02]'
+                }`}
+              >
+                <p className="text-2xl font-bold">{formatNumber(stat.value)}</p>
+                <p className="text-xs font-medium opacity-80">{stat.label}</p>
+              </button>
+            )
+          })}
         </div>
 
         {/* Filters */}
@@ -137,7 +162,7 @@ export default function AdminDashboard() {
           </select>
         </div>
 
-        {/* Job list */}
+        {/* Job table */}
         {loading ? (
           <div className="flex justify-center py-20">
             <div className="h-8 w-8 animate-spin rounded-full border-4 border-slate-300 border-t-slate-900" />
@@ -149,15 +174,88 @@ export default function AdminDashboard() {
             </p>
           </div>
         ) : (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {filtered.map((job) => (
-              <JobCard
-                key={job.id}
-                job={job}
-                showCustomer
-                onClick={() => navigate(`/panel/is/${job.id}`)}
-              />
-            ))}
+          <div className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
+            <div className="overflow-x-auto">
+              <table className="w-full table-fixed text-left text-sm">
+                <colgroup>
+                  <col className="w-[14.28%]" />
+                  <col className="w-[14.28%]" />
+                  <col className="w-[14.28%]" />
+                  <col className="w-[14.28%]" />
+                  <col className="w-[14.28%]" />
+                  <col className="w-[14.28%]" />
+                  <col className="w-[14.28%]" />
+                </colgroup>
+                <thead>
+                  <tr className="border-b border-slate-200 bg-slate-50">
+                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
+                      {isEN ? 'Job No' : 'İş Emri No'}
+                    </th>
+                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
+                      {isEN ? 'Job Name' : 'İş Adı'}
+                    </th>
+                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
+                      {isEN ? 'Customer' : 'Müşteri'}
+                    </th>
+                    <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">
+                      {isEN ? 'Qty' : 'Adet'}
+                    </th>
+                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
+                      {isEN ? 'Delivery' : 'Teslim'}
+                    </th>
+                    <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">
+                      {isEN ? 'Price' : 'Fiyat'}
+                    </th>
+                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
+                      {isEN ? 'Status' : 'Durum'}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {filtered.map((job) => {
+                    const customerName = job.musteri?.company_name || job.musteri?.full_name || '-'
+                    const teslim = job.teslim_tarihi
+                      ? new Date(job.teslim_tarihi).toLocaleDateString('tr-TR', {
+                          day: 'numeric',
+                          month: 'short',
+                        })
+                      : '-'
+
+                    return (
+                      <tr
+                        key={job.id}
+                        onClick={() => navigate(`/panel/is/${job.id}`)}
+                        className="cursor-pointer transition hover:bg-slate-50"
+                      >
+                        <td className="whitespace-nowrap px-4 py-3">
+                          <span className="rounded-md bg-slate-100 px-2 py-0.5 text-xs font-bold text-slate-600">
+                            {job.is_emri_no}
+                          </span>
+                        </td>
+                        <td className="truncate px-4 py-3 font-medium text-slate-900">
+                          {job.is_adi}
+                        </td>
+                        <td className="truncate px-4 py-3 text-slate-600">
+                          {customerName}
+                        </td>
+                        <td className="whitespace-nowrap px-4 py-3 text-right tabular-nums text-slate-700">
+                          {formatNumber(job.adet)}
+                        </td>
+                        <td className="whitespace-nowrap px-4 py-3 text-slate-600">
+                          {teslim}
+                        </td>
+                        <td className="whitespace-nowrap px-4 py-3 text-right tabular-nums font-medium text-slate-700">
+                          {job.fiyat != null ? formatPrice(job.fiyat) : '-'}
+                        </td>
+                        <td className="px-4 py-3">
+                          <StatusBadge durum={job.durum} isEN={isEN} />
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
       </div>

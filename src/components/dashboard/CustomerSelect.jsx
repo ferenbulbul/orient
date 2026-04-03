@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { supabase, createNewUser } from '../../lib/supabase'
 import { sendWelcomeEmail } from '../../lib/email'
 import { useLanguage } from '../../context/LanguageContext'
+import { formatPhone, phoneToRaw } from '../../lib/formatters'
 
 export default function CustomerSelect({ value, onChange }) {
   const { isEN } = useLanguage()
@@ -63,6 +64,10 @@ export default function CustomerSelect({ value, onChange }) {
     setIsOpen(false)
   }
 
+  const handlePhoneChange = (val) => {
+    setNewPhone(formatPhone(val))
+  }
+
   const handleCreateCustomer = async () => {
     const newErrors = {}
     if (!newName.trim()) {
@@ -86,13 +91,15 @@ export default function CustomerSelect({ value, onChange }) {
     setCreating(true)
     setErrors({})
 
+    const rawPhone = phoneToRaw(newPhone)
+
     try {
       const { userId } = await createNewUser({
         email: newEmail.trim(),
         password: newPassword,
         full_name: newName.trim(),
         company_name: newCompany.trim(),
-        phone: newPhone.trim(),
+        phone: rawPhone,
         role: 'musteri',
       })
 
@@ -107,7 +114,7 @@ export default function CustomerSelect({ value, onChange }) {
         id: userId,
         full_name: newName.trim(),
         company_name: newCompany.trim(),
-        phone: newPhone.trim(),
+        phone: rawPhone,
       }
       setCustomers((prev) => [...prev, newCustomer])
       onChange(userId)
@@ -305,12 +312,17 @@ export default function CustomerSelect({ value, onChange }) {
               <label className="mb-1 block text-xs font-medium text-slate-600">
                 {isEN ? 'Phone' : 'Telefon'}
               </label>
-              <input
-                type="tel"
-                value={newPhone}
-                onChange={(e) => setNewPhone(e.target.value)}
-                className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-slate-400"
-              />
+              <div className="flex items-center gap-2">
+                <span className="rounded-lg border border-slate-200 bg-slate-100 px-2 py-2 text-xs text-slate-500">+90</span>
+                <input
+                  type="tel"
+                  value={newPhone}
+                  onChange={(e) => handlePhoneChange(e.target.value)}
+                  placeholder="(5XX) XXX XX XX"
+                  maxLength={15}
+                  className="flex-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-slate-400"
+                />
+              </div>
             </div>
           </div>
 

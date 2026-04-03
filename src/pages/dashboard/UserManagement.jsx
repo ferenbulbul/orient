@@ -4,38 +4,14 @@ import { supabase, createNewUser } from '../../lib/supabase'
 import { sendWelcomeEmail } from '../../lib/email'
 import { useAuth } from '../../context/AuthContext'
 import { useLanguage } from '../../context/LanguageContext'
+import { formatPhone, phoneToRaw, rawToDisplay } from '../../lib/formatters'
 import DashboardLayout from '../../components/dashboard/DashboardLayout'
 
 const ROLE_COLORS = {
   musteri: 'bg-blue-100 text-blue-700',
   personel: 'bg-amber-100 text-amber-700',
   admin: 'bg-purple-100 text-purple-700',
-}
-
-// +90 5XX XXX XX XX formatı
-const formatPhone = (value) => {
-  const digits = value.replace(/\D/g, '')
-  // Başında 90 varsa kaldır
-  const num = digits.startsWith('90') ? digits.slice(2) : digits
-  const limited = num.slice(0, 10)
-
-  if (limited.length === 0) return ''
-  if (limited.length <= 3) return `(${limited}`
-  if (limited.length <= 6) return `(${limited.slice(0, 3)}) ${limited.slice(3)}`
-  if (limited.length <= 8) return `(${limited.slice(0, 3)}) ${limited.slice(3, 6)} ${limited.slice(6)}`
-  return `(${limited.slice(0, 3)}) ${limited.slice(3, 6)} ${limited.slice(6, 8)} ${limited.slice(8)}`
-}
-
-const phoneToRaw = (formatted) => {
-  const digits = formatted.replace(/\D/g, '')
-  return digits.length > 0 ? `+90${digits}` : ''
-}
-
-const rawToDisplay = (raw) => {
-  if (!raw) return ''
-  const digits = raw.replace(/\D/g, '')
-  const num = digits.startsWith('90') ? digits.slice(2) : digits
-  return formatPhone(num)
+  moderator: 'bg-teal-100 text-teal-700',
 }
 
 export default function UserManagement() {
@@ -80,8 +56,8 @@ export default function UserManagement() {
   const handleChange = (field, value) => {
     setForm((prev) => {
       const next = { ...prev, [field]: value }
-      // Personel seçilince firma otomatik EuromatPrint
-      if (field === 'role' && (value === 'personel' || value === 'admin')) {
+      // Personel/admin/moderator seçilince firma otomatik EuromatPrint
+      if (field === 'role' && (value === 'personel' || value === 'admin' || value === 'moderator')) {
         next.company_name = 'EuromatPrint'
       }
       if (field === 'role' && value === 'musteri' && prev.company_name === 'EuromatPrint') {
@@ -150,6 +126,7 @@ export default function UserManagement() {
     setEditingId(user.id)
     setEditForm({
       full_name: user.full_name || '',
+      email: user.email || '',
       company_name: user.company_name || '',
       phone: rawToDisplay(user.phone),
       role: user.role,
@@ -164,6 +141,21 @@ export default function UserManagement() {
   const saveEdit = async (userId) => {
     setSaving(true)
     const rawPhone = phoneToRaw(editForm.phone)
+
+    // Email değiştiyse RPC ile güncelle
+    const currentUser = users.find((u) => u.id === userId)
+    if (editForm.email && editForm.email.trim() !== currentUser?.email) {
+      const { error: emailErr } = await supabase.rpc('update_user_email', {
+        target_user_id: userId,
+        new_email: editForm.email.trim(),
+      })
+      if (emailErr) {
+        setError(emailErr.message || (isEN ? 'Failed to update email' : 'E-posta güncellenemedi'))
+        setSaving(false)
+        return
+      }
+    }
+
     const { error } = await supabase
       .from('profiles')
       .update({
@@ -178,11 +170,19 @@ export default function UserManagement() {
       setUsers((prev) =>
         prev.map((u) =>
           u.id === userId
-            ? { ...u, full_name: editForm.full_name.trim(), company_name: editForm.company_name.trim(), phone: rawPhone, role: editForm.role }
+            ? {
+                ...u,
+                full_name: editForm.full_name.trim(),
+                email: editForm.email?.trim() || u.email,
+                company_name: editForm.company_name.trim(),
+                phone: rawPhone,
+                role: editForm.role,
+              }
             : u
         )
       )
       setEditingId(null)
+      setError('')
     }
     setSaving(false)
   }
@@ -199,7 +199,7 @@ export default function UserManagement() {
     setDeletingId(null)
   }
 
-  const ROLE_TR = { musteri: 'Müşteri', personel: 'Personel', admin: 'Admin' }
+  const ROLE_TR = { musteri: 'Müşteri', personel: 'Personel', admin: 'Admin', moderator: 'Moderatör' }
 
   return (
     <DashboardLayout>
@@ -318,6 +318,7 @@ export default function UserManagement() {
                 >
                   <option value="musteri">{isEN ? 'Customer' : 'Müşteri'}</option>
                   <option value="personel">{isEN ? 'Staff' : 'Personel'}</option>
+                  <option value="moderator">{isEN ? 'Moderator' : 'Moderatör'}</option>
                   <option value="admin">Admin</option>
                 </select>
               </div>
@@ -396,6 +397,17 @@ export default function UserManagement() {
                       </div>
                       <div>
                         <label className="mb-1 block text-xs font-medium text-slate-500">
+                          {isEN ? 'Email' : 'E-posta'}
+                        </label>
+                        <input
+                          type="email"
+                          value={editForm.email}
+                          onChange={(e) => setEditForm((p) => ({ ...p, email: e.target.value }))}
+                          className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-slate-400"
+                        />
+                      </div>
+                      <div>
+                        <label className="mb-1 block text-xs font-medium text-slate-500">
                           {isEN ? 'Company' : 'Firma'}
                         </label>
                         <input
@@ -432,6 +444,7 @@ export default function UserManagement() {
                         >
                           <option value="musteri">{isEN ? 'Customer' : 'Müşteri'}</option>
                           <option value="personel">{isEN ? 'Staff' : 'Personel'}</option>
+                          <option value="moderator">{isEN ? 'Moderator' : 'Moderatör'}</option>
                           <option value="admin">Admin</option>
                         </select>
                       </div>
@@ -466,6 +479,7 @@ export default function UserManagement() {
                           </span>
                         </div>
                         <div className="mt-1 flex flex-wrap gap-x-4 gap-y-0.5 text-xs text-slate-500">
+                          {user.email && <span>{user.email}</span>}
                           {user.company_name && <span>{user.company_name}</span>}
                           {user.phone && <span>+90 {rawToDisplay(user.phone)}</span>}
                         </div>

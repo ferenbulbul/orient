@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { useLanguage } from '../../context/LanguageContext'
-import { formatNumber } from '../../lib/formatters'
+import { formatNumber, formatPrice } from '../../lib/formatters'
 import DashboardLayout from '../../components/dashboard/DashboardLayout'
 import JobCard from '../../components/dashboard/JobCard'
 
@@ -15,7 +15,7 @@ const DURUM_OPTIONS = [
   { value: 'tamamlandi', label: { tr: 'Tamamlandı', en: 'Completed' } },
 ]
 
-export default function StaffDashboard() {
+export default function ModeratorDashboard() {
   const { isEN } = useLanguage()
   const navigate = useNavigate()
   const [jobs, setJobs] = useState([])
@@ -63,25 +63,13 @@ export default function StaffDashboard() {
     <DashboardLayout>
       <div className="mx-auto max-w-6xl">
         {/* Header */}
-        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-slate-900">
-              {isEN ? 'All Jobs' : 'Tüm İşler'}
-            </h1>
-            <p className="mt-1 text-sm text-slate-500">
-              {isEN ? 'Manage and track all print jobs' : 'Tüm baskı işlerini yönetin'}
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={() => navigate('/panel/yeni-is')}
-            className="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-slate-900/20 transition hover:bg-slate-800"
-          >
-            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-            </svg>
-            {isEN ? 'New Job' : 'Yeni İş Emri'}
-          </button>
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold text-slate-900">
+            {isEN ? 'All Jobs' : 'Tüm İşler'}
+          </h1>
+          <p className="mt-1 text-sm text-slate-500">
+            {isEN ? 'View and track all print jobs' : 'Tüm baskı işlerini görüntüleyin'}
+          </p>
         </div>
 
         {/* Stats */}
@@ -144,6 +132,7 @@ export default function StaffDashboard() {
                 key={job.id}
                 job={job}
                 showCustomer
+                showPrice
                 onClick={() => navigate(`/panel/is/${job.id}`)}
               />
             ))}

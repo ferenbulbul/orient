@@ -17,7 +17,7 @@ const PHASE_COLORS = {
 
 const ALL_PHASES = [1, 2, 3, 4]
 
-export default function JobStepper({ steps = [], canEdit = false, onToggleStep }) {
+export default function JobStepper({ steps = [], canEdit = false, canUntoggle = false, onToggleStep }) {
   const { isEN } = useLanguage()
 
   // Group steps by phase
@@ -102,6 +102,7 @@ export default function JobStepper({ steps = [], canEdit = false, onToggleStep }
                   key={step.id}
                   step={step}
                   canEdit={canEdit}
+                  canUntoggle={canUntoggle}
                   isLocked={!unlocked}
                   onToggle={onToggleStep}
                 />

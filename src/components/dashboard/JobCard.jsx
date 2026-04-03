@@ -1,7 +1,8 @@
 import { useLanguage } from '../../context/LanguageContext'
+import { formatNumber } from '../../lib/formatters'
 import StatusBadge from './StatusBadge'
 
-export default function JobCard({ job, showCustomer = false, onClick }) {
+export default function JobCard({ job, showCustomer = false, showPrice = false, onClick }) {
   const { isEN } = useLanguage()
   const steps = job.job_steps || []
   const completedSteps = steps.filter((s) => s.durum === 'tamamlandi').length
@@ -40,12 +41,17 @@ export default function JobCard({ job, showCustomer = false, onClick }) {
 
       {/* Meta */}
       <div className="mb-4 flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-500">
-        <span>{isEN ? 'Qty' : 'Adet'}: {job.adet}</span>
+        <span>{isEN ? 'Qty' : 'Adet'}: {formatNumber(job.adet)}</span>
         {teslimTarihi && (
           <span>{isEN ? 'Due' : 'Teslim'}: {teslimTarihi}</span>
         )}
         {showCustomer && customerName && (
           <span>{customerName}</span>
+        )}
+        {showPrice && job.fiyat != null && (
+          <span className="font-medium text-slate-700">
+            {formatNumber(job.fiyat)} TL
+          </span>
         )}
       </div>
 

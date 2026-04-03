@@ -108,7 +108,11 @@ export function AuthProvider({ children }) {
       isCustomer: role === 'musteri',
       isStaff: role === 'personel',
       isAdmin: role === 'admin',
+      isModerator: role === 'moderator',
       isStaffOrAdmin: role === 'personel' || role === 'admin',
+      canViewAllJobs: role === 'personel' || role === 'admin' || role === 'moderator',
+      canEditJobs: role === 'personel' || role === 'admin',
+      canViewPrice: role === 'admin' || role === 'moderator',
     }
   }, [session, profile, loading])
 
