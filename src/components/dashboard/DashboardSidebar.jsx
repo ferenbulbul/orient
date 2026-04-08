@@ -1,6 +1,8 @@
+import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { useLanguage } from '../../context/LanguageContext'
+import { getEmailEnabled, setEmailEnabled } from '../../lib/settings'
 import logo from '../../assets/logo.svg'
 
 const NAV_ITEMS = {
@@ -57,6 +59,24 @@ export default function DashboardSidebar({ isOpen, onClose }) {
   const location = useLocation()
   const navigate = useNavigate()
   const items = NAV_ITEMS[role] || NAV_ITEMS.musteri
+  const isAdmin = role === 'admin'
+
+  const [emailOn, setEmailOn] = useState(true)
+  const [emailLoading, setEmailLoading] = useState(false)
+
+  useEffect(() => {
+    if (isAdmin) {
+      getEmailEnabled().then(setEmailOn)
+    }
+  }, [isAdmin])
+
+  const toggleEmail = async () => {
+    setEmailLoading(true)
+    const next = !emailOn
+    const ok = await setEmailEnabled(next)
+    if (ok) setEmailOn(next)
+    setEmailLoading(false)
+  }
 
   const handleSignOut = async () => {
     await signOut()
@@ -137,6 +157,28 @@ export default function DashboardSidebar({ isOpen, onClose }) {
               {profile?.company_name ? ` · ${profile.company_name}` : ''}
             </p>
           </div>
+          {isAdmin && (
+            <button
+              type="button"
+              onClick={toggleEmail}
+              disabled={emailLoading}
+              className={`mb-2 flex w-full items-center justify-between rounded-xl px-4 py-3 text-sm font-medium transition ${
+                emailOn
+                  ? 'bg-green-50 text-green-700'
+                  : 'bg-slate-100 text-slate-500'
+              }`}
+            >
+              <span className="flex items-center gap-2">
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                </svg>
+                {isEN ? 'Customer Emails' : 'Müşteri Mailleri'}
+              </span>
+              <span className={`relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors ${emailOn ? 'bg-green-500' : 'bg-slate-300'}`}>
+                <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow transition-transform ${emailOn ? 'translate-x-[18px]' : 'translate-x-[3px]'}`} />
+              </span>
+            </button>
+          )}
           <button
             type="button"
             onClick={handleSignOut}

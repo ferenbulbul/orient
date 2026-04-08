@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { useLanguage } from '../../context/LanguageContext'
 import { formatNumber, formatPrice } from '../../lib/formatters'
 import DashboardLayout from '../../components/dashboard/DashboardLayout'
-import StatusBadge from '../../components/dashboard/StatusBadge'
+import JobsTable, { isOverdue } from '../../components/dashboard/JobsTable'
 
 const DURUM_OPTIONS = [
   { value: '', label: { tr: 'Tümü', en: 'All' } },
@@ -13,9 +13,9 @@ const DURUM_OPTIONS = [
   { value: 'mucellit', label: { tr: 'Mücellit', en: 'Bindery' } },
   { value: 'lojistik', label: { tr: 'Lojistik', en: 'Logistics' } },
   { value: 'tamamlandi', label: { tr: 'Tamamlandı', en: 'Completed' } },
+  { value: '__overdue', label: { tr: 'Gecikmiş', en: 'Overdue' } },
 ]
 
-// Durum sıralama: tamamlandı en sonda
 const DURUM_ORDER = {
   baski_oncesi: 0,
   baskida: 1,
@@ -31,6 +31,8 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [durumFilter, setDurumFilter] = useState('')
+  const [musteriFilter, setMusteriFilter] = useState('')
+  const [page, setPage] = useState(1)
 
   useEffect(() => {
     const fetchJobs = async () => {
@@ -50,24 +52,45 @@ export default function AdminDashboard() {
     fetchJobs()
   }, [])
 
+  // Reset page on filter change
+  useEffect(() => { setPage(1) }, [durumFilter, musteriFilter, search])
+
+  const customers = useMemo(() => {
+    const map = {}
+    jobs.forEach((j) => {
+      const id = j.musteri_id
+      if (!id || map[id]) return
+      map[id] = { id, name: j.musteri?.company_name || j.musteri?.full_name || '-' }
+    })
+    return Object.values(map).sort((a, b) => a.name.localeCompare(b.name, 'tr'))
+  }, [jobs])
+
   const filtered = jobs
     .filter((job) => {
       const matchSearch =
         !search ||
         job.is_emri_no.toLowerCase().includes(search.toLowerCase()) ||
         job.is_adi.toLowerCase().includes(search.toLowerCase())
-      const matchDurum = !durumFilter || job.durum === durumFilter
-      return matchSearch && matchDurum
+      if (!matchSearch) return false
+
+      if (musteriFilter && job.musteri_id !== musteriFilter) return false
+
+      if (durumFilter === '__overdue') return isOverdue(job)
+      if (durumFilter === 'tamamlandi') return job.durum === 'tamamlandi'
+      if (durumFilter) return job.durum === durumFilter
+      // Default: exclude completed
+      return job.durum !== 'tamamlandi'
     })
     .sort((a, b) => (DURUM_ORDER[a.durum] ?? 99) - (DURUM_ORDER[b.durum] ?? 99))
 
   const stats = {
-    total: jobs.length,
+    total: jobs.filter((j) => j.durum !== 'tamamlandi').length,
     baskiOncesi: jobs.filter((j) => j.durum === 'baski_oncesi').length,
     baskida: jobs.filter((j) => j.durum === 'baskida').length,
     mucellit: jobs.filter((j) => j.durum === 'mucellit').length,
     lojistik: jobs.filter((j) => j.durum === 'lojistik').length,
     tamamlandi: jobs.filter((j) => j.durum === 'tamamlandi').length,
+    overdue: jobs.filter((j) => isOverdue(j)).length,
   }
 
   const handleStatClick = (filterValue) => {
@@ -75,17 +98,18 @@ export default function AdminDashboard() {
   }
 
   const statItems = [
-    { label: isEN ? 'Total' : 'Toplam', value: stats.total, color: 'bg-slate-900 text-white', activeRing: 'ring-slate-900', filter: '' },
+    { label: isEN ? 'Active' : 'Aktif', value: stats.total, color: 'bg-slate-900 text-white', activeRing: 'ring-slate-900', filter: '' },
     { label: isEN ? 'Prepress' : 'Baskı Öncesi', value: stats.baskiOncesi, color: 'bg-blue-50 text-blue-700', activeRing: 'ring-blue-400', filter: 'baski_oncesi' },
     { label: isEN ? 'Printing' : 'Baskıda', value: stats.baskida, color: 'bg-amber-50 text-amber-700', activeRing: 'ring-amber-400', filter: 'baskida' },
     { label: isEN ? 'Bindery' : 'Mücellit', value: stats.mucellit, color: 'bg-purple-50 text-purple-700', activeRing: 'ring-purple-400', filter: 'mucellit' },
     { label: isEN ? 'Logistics' : 'Lojistik', value: stats.lojistik, color: 'bg-orange-50 text-orange-700', activeRing: 'ring-orange-400', filter: 'lojistik' },
     { label: isEN ? 'Done' : 'Tamamlandı', value: stats.tamamlandi, color: 'bg-green-50 text-green-700', activeRing: 'ring-green-400', filter: 'tamamlandi' },
+    { label: isEN ? 'Overdue' : 'Gecikmiş', value: stats.overdue, color: 'bg-red-50 text-red-700', activeRing: 'ring-red-400', filter: '__overdue' },
   ]
 
   return (
     <DashboardLayout>
-      <div className="mx-auto max-w-6xl">
+      <div className="mx-auto max-w-7xl">
         {/* Header */}
         <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
@@ -121,7 +145,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Stats — clickable filters */}
-        <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-6">
+        <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-7">
           {statItems.map((stat) => {
             const isActive = durumFilter === stat.filter
             return (
@@ -150,6 +174,16 @@ export default function AdminDashboard() {
             className="flex-1 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-slate-400 focus:ring-2 focus:ring-slate-200"
           />
           <select
+            value={musteriFilter}
+            onChange={(e) => setMusteriFilter(e.target.value)}
+            className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-slate-400 focus:ring-2 focus:ring-slate-200"
+          >
+            <option value="">{isEN ? 'All Customers' : 'Tüm Müşteriler'}</option>
+            {customers.map((c) => (
+              <option key={c.id} value={c.id}>{c.name}</option>
+            ))}
+          </select>
+          <select
             value={durumFilter}
             onChange={(e) => setDurumFilter(e.target.value)}
             className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-slate-400 focus:ring-2 focus:ring-slate-200"
@@ -167,96 +201,15 @@ export default function AdminDashboard() {
           <div className="flex justify-center py-20">
             <div className="h-8 w-8 animate-spin rounded-full border-4 border-slate-300 border-t-slate-900" />
           </div>
-        ) : filtered.length === 0 ? (
-          <div className="rounded-2xl border border-slate-100 bg-white py-16 text-center shadow-sm">
-            <p className="text-sm text-slate-500">
-              {isEN ? 'No jobs found' : 'İş bulunamadı'}
-            </p>
-          </div>
         ) : (
-          <div className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
-            <div className="overflow-x-auto">
-              <table className="w-full table-fixed text-left text-sm">
-                <colgroup>
-                  <col className="w-[14.28%]" />
-                  <col className="w-[14.28%]" />
-                  <col className="w-[14.28%]" />
-                  <col className="w-[14.28%]" />
-                  <col className="w-[14.28%]" />
-                  <col className="w-[14.28%]" />
-                  <col className="w-[14.28%]" />
-                </colgroup>
-                <thead>
-                  <tr className="border-b border-slate-200 bg-slate-50">
-                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
-                      {isEN ? 'Job No' : 'İş Emri No'}
-                    </th>
-                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
-                      {isEN ? 'Job Name' : 'İş Adı'}
-                    </th>
-                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
-                      {isEN ? 'Customer' : 'Müşteri'}
-                    </th>
-                    <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">
-                      {isEN ? 'Qty' : 'Adet'}
-                    </th>
-                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
-                      {isEN ? 'Delivery' : 'Teslim'}
-                    </th>
-                    <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">
-                      {isEN ? 'Price' : 'Fiyat'}
-                    </th>
-                    <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
-                      {isEN ? 'Status' : 'Durum'}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {filtered.map((job) => {
-                    const customerName = job.musteri?.company_name || job.musteri?.full_name || '-'
-                    const teslim = job.teslim_tarihi
-                      ? new Date(job.teslim_tarihi).toLocaleDateString('tr-TR', {
-                          day: 'numeric',
-                          month: 'short',
-                        })
-                      : '-'
-
-                    return (
-                      <tr
-                        key={job.id}
-                        onClick={() => navigate(`/panel/is/${job.id}`)}
-                        className="cursor-pointer transition hover:bg-slate-50"
-                      >
-                        <td className="whitespace-nowrap px-4 py-3">
-                          <span className="rounded-md bg-slate-100 px-2 py-0.5 text-xs font-bold text-slate-600">
-                            {job.is_emri_no}
-                          </span>
-                        </td>
-                        <td className="truncate px-4 py-3 font-medium text-slate-900">
-                          {job.is_adi}
-                        </td>
-                        <td className="truncate px-4 py-3 text-slate-600">
-                          {customerName}
-                        </td>
-                        <td className="whitespace-nowrap px-4 py-3 text-right tabular-nums text-slate-700">
-                          {formatNumber(job.adet)}
-                        </td>
-                        <td className="whitespace-nowrap px-4 py-3 text-slate-600">
-                          {teslim}
-                        </td>
-                        <td className="whitespace-nowrap px-4 py-3 text-right tabular-nums font-medium text-slate-700">
-                          {job.fiyat != null ? formatPrice(job.fiyat) : '-'}
-                        </td>
-                        <td className="px-4 py-3">
-                          <StatusBadge durum={job.durum} isEN={isEN} />
-                        </td>
-                      </tr>
-                    )
-                  })}
-                </tbody>
-              </table>
-            </div>
-          </div>
+          <JobsTable
+            jobs={filtered}
+            page={page}
+            onPageChange={setPage}
+            showCustomer
+            showPrice
+            onJobClick={(id) => navigate(`/panel/is/${id}`)}
+          />
         )}
       </div>
     </DashboardLayout>
