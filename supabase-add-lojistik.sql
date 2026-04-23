@@ -24,6 +24,7 @@ BEGIN
     (NEW.id, 1, 'Baskı Öncesi', 3, 'Bandrol'),
     (NEW.id, 2, 'Baskı',        1, 'Kapak Baskı'),
     (NEW.id, 2, 'Baskı',        2, 'İç Baskı'),
+    (NEW.id, 2, 'Baskı',        3, 'Fason'),
     (NEW.id, 3, 'Mücellit',     1, 'Kırım'),
     (NEW.id, 3, 'Mücellit',     2, 'Cilt'),
     (NEW.id, 4, 'Lojistik',     1, 'Sevkiyat');

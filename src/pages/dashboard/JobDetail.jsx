@@ -9,6 +9,7 @@ import { formatNumber, formatPrice } from '../../lib/formatters'
 import DashboardLayout from '../../components/dashboard/DashboardLayout'
 import StatusBadge from '../../components/dashboard/StatusBadge'
 import JobStepper from '../../components/dashboard/JobStepper'
+import ShipmentForm from '../../components/dashboard/ShipmentForm'
 
 export default function JobDetail() {
   const { jobId } = useParams()
@@ -25,6 +26,14 @@ export default function JobDetail() {
   const [savingFiyat, setSavingFiyat] = useState(false)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [deleting, setDeleting] = useState(false)
+  const [editingName, setEditingName] = useState(false)
+  const [nameValue, setNameValue] = useState('')
+  const [savingName, setSavingName] = useState(false)
+  const [editingAdet, setEditingAdet] = useState(false)
+  const [adetValue, setAdetValue] = useState('')
+  const [savingAdet, setSavingAdet] = useState(false)
+  const [shipments, setShipments] = useState([])
+  const [showShipmentForm, setShowShipmentForm] = useState(false)
 
   const fetchJob = async () => {
     const { data, error } = await supabase
@@ -50,6 +59,14 @@ export default function JobDetail() {
       .order('step_order')
 
     setSteps(stepsData || [])
+
+    const { data: shipmentsData } = await supabase
+      .from('shipments')
+      .select('*')
+      .eq('job_id', jobId)
+      .order('created_at', { ascending: true })
+    setShipments(shipmentsData || [])
+
     setLoading(false)
   }
 
@@ -62,6 +79,8 @@ export default function JobDetail() {
   const isPhase1Complete = phase1Steps.length > 0 && phase1Steps.every((s) => s.durum === 'tamamlandi')
 
   const handleToggleStep = async (step) => {
+    // Sevkiyat adımı manuel toggle edilemez (shipment sistemi yönetir)
+    if (step.phase === 4 && step.step_name === 'Sevkiyat') return
     // Geri alma (tamamlandi → bekliyor) sadece admin yapabilir
     if (step.durum === 'tamamlandi' && !isAdmin) return
 
@@ -152,8 +171,139 @@ export default function JobDetail() {
     setSavingFiyat(false)
   }
 
+  const handleSaveAdet = async () => {
+    const num = parseInt(adetValue, 10)
+    if (!num || num <= 0 || num === job.adet) {
+      setEditingAdet(false)
+      return
+    }
+    setSavingAdet(true)
+    const { error } = await supabase
+      .from('jobs')
+      .update({ adet: num })
+      .eq('id', jobId)
+    if (!error) {
+      setJob((prev) => ({ ...prev, adet: num }))
+    }
+    setSavingAdet(false)
+    setEditingAdet(false)
+  }
+
+  const handleShipmentSuccess = async () => {
+    setShowShipmentForm(false)
+    await fetchJob()
+
+    // Sevkiyat tamamlandıysa email gönder
+    const { data: freshJob } = await supabase
+      .from('jobs')
+      .select('*, musteri:profiles!jobs_musteri_id_fkey(full_name, email)')
+      .eq('id', jobId)
+      .single()
+
+    if (freshJob?.durum === 'tamamlandi' && freshJob?.musteri?.email) {
+      const emailEnabled = await getEmailEnabled()
+      if (emailEnabled) {
+        sendJobCompletedEmail({
+          email: freshJob.musteri.email,
+          name: freshJob.musteri.full_name,
+          jobNo: freshJob.is_emri_no,
+          jobName: freshJob.is_adi,
+        })
+      }
+    }
+  }
+
+  const handleForceCompleteShipment = async () => {
+    // Sevkiyat adımını manuel olarak tamamla
+    const sevkiyatStep = steps.find((s) => s.phase === 4 && s.step_name === 'Sevkiyat')
+    if (!sevkiyatStep) return
+
+    const { error } = await supabase
+      .from('job_steps')
+      .update({
+        durum: 'tamamlandi',
+        completed_at: new Date().toISOString(),
+        completed_by: profile.id,
+      })
+      .eq('id', sevkiyatStep.id)
+
+    if (error) {
+      console.error('Force complete error:', error)
+      return
+    }
+
+    await fetchJob()
+
+    // Email kontrolü
+    const { data: freshJob } = await supabase
+      .from('jobs')
+      .select('*, musteri:profiles!jobs_musteri_id_fkey(full_name, email)')
+      .eq('id', jobId)
+      .single()
+
+    if (freshJob?.durum === 'tamamlandi' && freshJob?.musteri?.email) {
+      const emailEnabled = await getEmailEnabled()
+      if (emailEnabled) {
+        sendJobCompletedEmail({
+          email: freshJob.musteri.email,
+          name: freshJob.musteri.full_name,
+          jobNo: freshJob.is_emri_no,
+          jobName: freshJob.is_adi,
+        })
+      }
+    }
+  }
+
+  const handleDeleteShipment = async (shipment) => {
+    await supabase.storage.from('irsaliyeler').remove([shipment.irsaliye_path])
+    await supabase.from('shipments').delete().eq('id', shipment.id)
+    await fetchJob()
+  }
+
+  const handleSaveName = async () => {
+    const trimmed = nameValue.trim()
+    if (!trimmed || trimmed === job.is_adi) {
+      setEditingName(false)
+      return
+    }
+    setSavingName(true)
+    const { error } = await supabase
+      .from('jobs')
+      .update({ is_adi: trimmed })
+      .eq('id', jobId)
+    if (!error) {
+      setJob((prev) => ({ ...prev, is_adi: trimmed }))
+    }
+    setSavingName(false)
+    setEditingName(false)
+  }
+
   const handleDeleteJob = async () => {
     setDeleting(true)
+
+    // Önce storage'daki irsaliye dosyalarını sil
+    if (shipments.length > 0) {
+      const paths = shipments.map((s) => s.irsaliye_path)
+      await supabase.storage.from('irsaliyeler').remove(paths)
+    }
+
+    // Shipments sil
+    await supabase.from('shipments').delete().eq('job_id', jobId)
+
+    // Önce ilişkili adımları sil (foreign key constraint)
+    const { error: stepsError } = await supabase
+      .from('job_steps')
+      .delete()
+      .eq('job_id', jobId)
+
+    if (stepsError) {
+      console.error('Job steps delete error:', stepsError)
+      setDeleting(false)
+      setShowDeleteConfirm(false)
+      return
+    }
+
+    // Sonra işi sil
     const { error } = await supabase.from('jobs').delete().eq('id', jobId)
     if (error) {
       console.error('Job delete error:', error)
@@ -161,6 +311,7 @@ export default function JobDetail() {
       setShowDeleteConfirm(false)
       return
     }
+
     navigate('/panel', { replace: true })
   }
 
@@ -196,7 +347,49 @@ export default function JobDetail() {
               <span className="mb-2 inline-block rounded-lg bg-slate-100 px-3 py-1 text-xs font-bold text-slate-600">
                 {job.is_emri_no}
               </span>
-              <h1 className="text-xl font-bold text-slate-900">{job.is_adi}</h1>
+              {editingName ? (
+                <div className="flex items-center gap-2 mt-1">
+                  <input
+                    type="text"
+                    value={nameValue}
+                    onChange={(e) => setNameValue(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') handleSaveName()
+                      if (e.key === 'Escape') setEditingName(false)
+                    }}
+                    autoFocus
+                    className="rounded-lg border border-slate-300 px-3 py-1.5 text-lg font-bold text-slate-900 outline-none focus:border-slate-500"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleSaveName}
+                    disabled={savingName}
+                    className="rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-slate-800 disabled:opacity-50"
+                  >
+                    {savingName ? '...' : isEN ? 'Save' : 'Kaydet'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setEditingName(false)}
+                    className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-600 transition hover:bg-slate-50"
+                  >
+                    {isEN ? 'Cancel' : 'İptal'}
+                  </button>
+                </div>
+              ) : (
+                <h1
+                  className={`text-xl font-bold text-slate-900 ${canEditJobs ? 'cursor-pointer rounded-lg px-1 -mx-1 transition hover:bg-slate-100' : ''}`}
+                  onClick={() => {
+                    if (canEditJobs) {
+                      setNameValue(job.is_adi)
+                      setEditingName(true)
+                    }
+                  }}
+                  title={canEditJobs ? (isEN ? 'Click to edit' : 'Düzenlemek için tıklayın') : undefined}
+                >
+                  {job.is_adi}
+                </h1>
+              )}
             </div>
             <div className="flex items-center gap-2">
               <StatusBadge durum={job.durum} isEN={isEN} />
@@ -231,7 +424,50 @@ export default function JobDetail() {
               <p className="text-xs font-medium text-slate-500">
                 {isEN ? 'Quantity' : 'Adet'}
               </p>
-              <p className="text-sm font-semibold text-slate-900">{formatNumber(job.adet)}</p>
+              {editingAdet ? (
+                <div className="flex items-center gap-2">
+                  <input
+                    type="number"
+                    value={adetValue}
+                    onChange={(e) => setAdetValue(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') handleSaveAdet()
+                      if (e.key === 'Escape') setEditingAdet(false)
+                    }}
+                    autoFocus
+                    min="1"
+                    className="w-24 rounded-lg border border-slate-300 px-2 py-1 text-sm font-semibold text-slate-900 outline-none focus:border-slate-500"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleSaveAdet}
+                    disabled={savingAdet}
+                    className="rounded-lg bg-slate-900 px-2.5 py-1 text-xs font-medium text-white transition hover:bg-slate-800 disabled:opacity-50"
+                  >
+                    {savingAdet ? '...' : isEN ? 'Save' : 'Kaydet'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setEditingAdet(false)}
+                    className="rounded-lg border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-600 transition hover:bg-slate-50"
+                  >
+                    {isEN ? 'Cancel' : 'İptal'}
+                  </button>
+                </div>
+              ) : (
+                <p
+                  className={`text-sm font-semibold text-slate-900 ${canEditJobs ? 'cursor-pointer rounded-lg px-1 -mx-1 transition hover:bg-slate-100' : ''}`}
+                  onClick={() => {
+                    if (canEditJobs) {
+                      setAdetValue(String(job.adet))
+                      setEditingAdet(true)
+                    }
+                  }}
+                  title={canEditJobs ? (isEN ? 'Click to edit' : 'Düzenlemek için tıklayın') : undefined}
+                >
+                  {formatNumber(job.adet)}
+                </p>
+              )}
             </div>
             <div>
               <p className="text-xs font-medium text-slate-500">
@@ -358,9 +594,27 @@ export default function JobDetail() {
             canEdit={canEditJobs}
             canUntoggle={isAdmin}
             onToggleStep={handleToggleStep}
+            job={job}
+            shipments={shipments}
+            onAddShipment={() => setShowShipmentForm(true)}
+            onDeleteShipment={handleDeleteShipment}
+            onForceCompleteShipment={handleForceCompleteShipment}
           />
         </div>
       </div>
+
+      {/* Shipment form modal */}
+      {showShipmentForm && (
+        <ShipmentForm
+          jobId={jobId}
+          jobNo={job.is_emri_no}
+          musteriName={job.musteri?.company_name || job.musteri?.full_name || ''}
+          jobAdet={job.adet}
+          shippedSoFar={shipments.reduce((sum, s) => sum + s.adet, 0)}
+          onSuccess={handleShipmentSuccess}
+          onClose={() => setShowShipmentForm(false)}
+        />
+      )}
 
       {/* Delete confirmation modal */}
       {showDeleteConfirm && (

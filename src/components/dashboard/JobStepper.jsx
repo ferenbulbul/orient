@@ -1,5 +1,6 @@
 import { useLanguage } from '../../context/LanguageContext'
 import StepItem from './StepItem'
+import ShipmentList from './ShipmentList'
 
 const PHASE_LABELS = {
   1: { tr: 'Baskı Öncesi', en: 'Prepress' },
@@ -17,8 +18,20 @@ const PHASE_COLORS = {
 
 const ALL_PHASES = [1, 2, 3, 4]
 
-export default function JobStepper({ steps = [], canEdit = false, canUntoggle = false, onToggleStep }) {
+export default function JobStepper({
+  steps = [],
+  canEdit = false,
+  canUntoggle = false,
+  onToggleStep,
+  job,
+  shipments = [],
+  onAddShipment,
+  onDeleteShipment,
+  onForceCompleteShipment,
+}) {
   const { isEN } = useLanguage()
+
+  const totalShipped = shipments.reduce((sum, s) => sum + s.adet, 0)
 
   // Group steps by phase
   const phases = ALL_PHASES.map((phase) => {
@@ -97,17 +110,35 @@ export default function JobStepper({ steps = [], canEdit = false, canUntoggle = 
 
             {/* Steps */}
             <div className="flex flex-col gap-1 px-3 pb-3">
-              {phaseSteps.map((step) => (
-                <StepItem
-                  key={step.id}
-                  step={step}
-                  canEdit={canEdit}
-                  canUntoggle={canUntoggle}
-                  isLocked={!unlocked}
-                  onToggle={onToggleStep}
-                />
-              ))}
+              {phaseSteps.map((step) => {
+                const isShipmentStep = step.phase === 4 && step.step_name === 'Sevkiyat'
+
+                return (
+                  <StepItem
+                    key={step.id}
+                    step={step}
+                    canEdit={canEdit}
+                    canUntoggle={canUntoggle}
+                    isLocked={!unlocked}
+                    onToggle={onToggleStep}
+                    isShipmentStep={isShipmentStep}
+                    shipmentProgress={isShipmentStep ? { shipped: totalShipped, total: job?.adet || 0 } : null}
+                    onAddShipment={isShipmentStep ? onAddShipment : undefined}
+                    onForceComplete={isShipmentStep ? onForceCompleteShipment : undefined}
+                  />
+                )
+              })}
             </div>
+
+            {/* Shipment list for Phase 4 */}
+            {phase === 4 && shipments.length > 0 && (
+              <ShipmentList
+                shipments={shipments}
+                jobAdet={job?.adet || 0}
+                canDelete={canUntoggle}
+                onDelete={onDeleteShipment}
+              />
+            )}
           </div>
         )
       })}

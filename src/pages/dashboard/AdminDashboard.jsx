@@ -28,32 +28,93 @@ export default function AdminDashboard() {
   const { isEN } = useLanguage()
   const navigate = useNavigate()
   const [jobs, setJobs] = useState([])
+  const [completedCount, setCompletedCount] = useState(0)
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
+  const [debouncedSearch, setDebouncedSearch] = useState('')
   const [durumFilter, setDurumFilter] = useState('')
   const [musteriFilter, setMusteriFilter] = useState('')
   const [page, setPage] = useState(1)
 
-  useEffect(() => {
-    const fetchJobs = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('jobs')
-          .select('*, job_steps(*), musteri:profiles!jobs_musteri_id_fkey(full_name, company_name)')
-          .order('created_at', { ascending: false })
+  const [completedJobs, setCompletedJobs] = useState([])
+  const [completedTotal, setCompletedTotal] = useState(0)
+  const [completedLoading, setCompletedLoading] = useState(false)
 
-        if (!error) setJobs(data || [])
+  // Debounce search for server-side queries
+  useEffect(() => {
+    const t = setTimeout(() => setDebouncedSearch(search), 300)
+    return () => clearTimeout(t)
+  }, [search])
+
+  // Reset page on filter change
+  useEffect(() => { setPage(1) }, [durumFilter, musteriFilter, search])
+
+  // Fetch active jobs + completed count
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [jobsRes, countRes] = await Promise.all([
+          supabase
+            .from('jobs')
+            .select('*, job_steps(*), musteri:profiles!jobs_musteri_id_fkey(full_name, company_name)')
+            .neq('durum', 'tamamlandi')
+            .order('created_at', { ascending: false }),
+          supabase
+            .from('jobs')
+            .select('*', { count: 'exact', head: true })
+            .eq('durum', 'tamamlandi'),
+        ])
+        if (!jobsRes.error) setJobs(jobsRes.data || [])
+        setCompletedCount(countRes.count || 0)
       } catch (err) {
         console.error('Jobs fetch error:', err)
       } finally {
         setLoading(false)
       }
     }
-    fetchJobs()
+    fetchData()
   }, [])
 
-  // Reset page on filter change
-  useEffect(() => { setPage(1) }, [durumFilter, musteriFilter, search])
+  // Fetch completed jobs with server-side pagination + search
+  useEffect(() => {
+    if (durumFilter !== 'tamamlandi') {
+      setCompletedJobs([])
+      setCompletedTotal(0)
+      return
+    }
+
+    const fetchCompleted = async () => {
+      setCompletedLoading(true)
+      try {
+        let query = supabase
+          .from('jobs')
+          .select('*, job_steps(*), musteri:profiles!jobs_musteri_id_fkey(full_name, company_name)', { count: 'exact' })
+          .eq('durum', 'tamamlandi')
+          .order('created_at', { ascending: false })
+
+        if (debouncedSearch) {
+          query = query.or(`is_emri_no.ilike.%${debouncedSearch}%,is_adi.ilike.%${debouncedSearch}%`)
+        }
+        if (musteriFilter) {
+          query = query.eq('musteri_id', musteriFilter)
+        }
+
+        const from = (page - 1) * 50
+        query = query.range(from, from + 49)
+
+        const { data, count, error } = await query
+        if (!error) {
+          setCompletedJobs(data || [])
+          setCompletedTotal(count || 0)
+        }
+      } catch (err) {
+        console.error('Completed fetch error:', err)
+      } finally {
+        setCompletedLoading(false)
+      }
+    }
+    fetchCompleted()
+  }, [durumFilter, debouncedSearch, musteriFilter, page])
 
   const customers = useMemo(() => {
     const map = {}
@@ -65,31 +126,40 @@ export default function AdminDashboard() {
     return Object.values(map).sort((a, b) => a.name.localeCompare(b.name, 'tr'))
   }, [jobs])
 
-  const filtered = jobs
-    .filter((job) => {
-      const matchSearch =
-        !search ||
-        job.is_emri_no.toLowerCase().includes(search.toLowerCase()) ||
-        job.is_adi.toLowerCase().includes(search.toLowerCase())
-      if (!matchSearch) return false
+  const isCompletedMode = durumFilter === 'tamamlandi'
 
-      if (musteriFilter && job.musteri_id !== musteriFilter) return false
+  const filtered = isCompletedMode
+    ? []
+    : jobs
+        .filter((job) => {
+          if (search) {
+            const q = search.toLowerCase()
+            const match =
+              job.is_emri_no.toLowerCase().includes(q) ||
+              job.is_adi.toLowerCase().includes(q) ||
+              (job.musteri?.company_name || '').toLowerCase().includes(q) ||
+              (job.musteri?.full_name || '').toLowerCase().includes(q)
+            if (!match) return false
+          }
 
-      if (durumFilter === '__overdue') return isOverdue(job)
-      if (durumFilter === 'tamamlandi') return job.durum === 'tamamlandi'
-      if (durumFilter) return job.durum === durumFilter
-      // Default: exclude completed
-      return job.durum !== 'tamamlandi'
-    })
-    .sort((a, b) => (DURUM_ORDER[a.durum] ?? 99) - (DURUM_ORDER[b.durum] ?? 99))
+          if (musteriFilter && job.musteri_id !== musteriFilter) return false
+
+          if (durumFilter === '__overdue') return isOverdue(job)
+          if (durumFilter) return job.durum === durumFilter
+          return true
+        })
+        .sort((a, b) => (DURUM_ORDER[a.durum] ?? 99) - (DURUM_ORDER[b.durum] ?? 99))
+
+  const displayJobs = isCompletedMode ? completedJobs : filtered
+  const displayLoading = isCompletedMode ? completedLoading : loading
 
   const stats = {
-    total: jobs.filter((j) => j.durum !== 'tamamlandi').length,
+    total: jobs.length,
     baskiOncesi: jobs.filter((j) => j.durum === 'baski_oncesi').length,
     baskida: jobs.filter((j) => j.durum === 'baskida').length,
     mucellit: jobs.filter((j) => j.durum === 'mucellit').length,
     lojistik: jobs.filter((j) => j.durum === 'lojistik').length,
-    tamamlandi: jobs.filter((j) => j.durum === 'tamamlandi').length,
+    tamamlandi: completedCount,
     overdue: jobs.filter((j) => isOverdue(j)).length,
   }
 
@@ -144,7 +214,7 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* Stats — clickable filters */}
+        {/* Stats */}
         <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-7">
           {statItems.map((stat) => {
             const isActive = durumFilter === stat.filter
@@ -197,18 +267,19 @@ export default function AdminDashboard() {
         </div>
 
         {/* Job table */}
-        {loading ? (
+        {displayLoading ? (
           <div className="flex justify-center py-20">
             <div className="h-8 w-8 animate-spin rounded-full border-4 border-slate-300 border-t-slate-900" />
           </div>
         ) : (
           <JobsTable
-            jobs={filtered}
+            jobs={displayJobs}
             page={page}
             onPageChange={setPage}
             showCustomer
             showPrice
             onJobClick={(id) => navigate(`/panel/is/${id}`)}
+            totalCount={isCompletedMode ? completedTotal : undefined}
           />
         )}
       </div>

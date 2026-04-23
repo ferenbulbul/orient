@@ -26,6 +26,8 @@ import JobDetail from "./pages/dashboard/JobDetail";
 import JobCreate from "./pages/dashboard/JobCreate";
 import UserManagement from "./pages/dashboard/UserManagement";
 import ReportsPage from "./pages/dashboard/ReportsPage";
+import PaperPage from "./pages/dashboard/PaperPage";
+import PaperSettings from "./pages/dashboard/PaperSettings";
 import "./App.css";
 
 
@@ -188,6 +190,22 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={["admin"]}>
                 <UserManagement />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/panel/kagit"
+            element={
+              <ProtectedRoute>
+                <PaperPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/panel/kagit-ayarlari"
+            element={
+              <ProtectedRoute allowedRoles={["admin"]}>
+                <PaperSettings />
               </ProtectedRoute>
             }
           />

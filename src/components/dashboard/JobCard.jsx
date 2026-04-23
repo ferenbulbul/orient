@@ -6,7 +6,7 @@ export default function JobCard({ job, showCustomer = false, showPrice = false, 
   const { isEN } = useLanguage()
   const steps = job.job_steps || []
   const completedSteps = steps.filter((s) => s.durum === 'tamamlandi').length
-  const totalSteps = steps.length || 7
+  const totalSteps = steps.length || 9
   const progress = Math.round((completedSteps / totalSteps) * 100)
 
   const teslimTarihi = job.teslim_tarihi

@@ -9,6 +9,7 @@ const STEP_DEFS = [
   { name: 'Bandrol', abbr: 'BA' },
   { name: 'Kapak Baskı', abbr: 'KB' },
   { name: 'İç Baskı', abbr: 'İB' },
+  { name: 'Fason', abbr: 'FA' },
   { name: 'Kırım', abbr: 'KR' },
   { name: 'Cilt', abbr: 'Cİ' },
   { name: 'Sevkiyat', abbr: 'SE' },
@@ -77,13 +78,14 @@ function isOverdue(job) {
   return new Date(job.teslim_tarihi) < today
 }
 
-export default function JobsTable({ jobs, page, onPageChange, showCustomer = true, showPrice = true, onJobClick }) {
+export default function JobsTable({ jobs, page, onPageChange, showCustomer = true, showPrice = true, onJobClick, totalCount }) {
   const { isEN } = useLanguage()
   const [columnWidths, setColumnWidths] = useState(DEFAULT_COLUMN_WIDTHS)
   const dragStateRef = useRef({ key: null, startX: 0, startWidth: 0 })
 
-  const totalPages = Math.ceil(jobs.length / PER_PAGE)
-  const paginated = jobs.slice((page - 1) * PER_PAGE, page * PER_PAGE)
+  const totalItems = totalCount ?? jobs.length
+  const totalPages = Math.ceil(totalItems / PER_PAGE)
+  const paginated = totalCount != null ? jobs : jobs.slice((page - 1) * PER_PAGE, page * PER_PAGE)
   const visibleColumns = useMemo(() => {
     const cols = ['jobNo', 'jobName']
     if (showCustomer) cols.push('customer')
@@ -272,7 +274,7 @@ export default function JobsTable({ jobs, page, onPageChange, showCustomer = tru
       {totalPages > 1 && (
         <div className="flex items-center justify-between border-t border-slate-100 px-4 py-3">
           <span className="text-xs text-slate-500">
-            {(page - 1) * PER_PAGE + 1}–{Math.min(page * PER_PAGE, jobs.length)} / {jobs.length}
+            {(page - 1) * PER_PAGE + 1}–{Math.min(page * PER_PAGE, totalItems)} / {totalItems}
           </span>
           <div className="flex items-center gap-1">
             <button
