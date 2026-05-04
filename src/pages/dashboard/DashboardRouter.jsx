@@ -10,5 +10,6 @@ export default function DashboardRouter() {
   if (role === 'admin') return <AdminDashboard />
   if (role === 'personel') return <StaffDashboard />
   if (role === 'moderator') return <ModeratorDashboard />
+  if (role === 'depocu') return <StaffDashboard />
   return <CustomerDashboard />
 }

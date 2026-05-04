@@ -8,24 +8,32 @@ import logo from '../../assets/logo.svg'
 const NAV_ITEMS = {
   musteri: [
     { id: 'jobs', path: '/panel', label: { tr: 'İşlerim', en: 'My Jobs' }, icon: 'clipboard' },
-    { id: 'paper', path: '/panel/kagit', label: { tr: 'Kağıtlarım', en: 'My Papers' }, icon: 'paper' },
   ],
   personel: [
     { id: 'jobs', path: '/panel', label: { tr: 'Tüm İşler', en: 'All Jobs' }, icon: 'clipboard' },
     { id: 'new-job', path: '/panel/yeni-is', label: { tr: 'Yeni İş', en: 'New Job' }, icon: 'plus' },
     { id: 'paper', path: '/panel/kagit', label: { tr: 'Kağıt', en: 'Paper' }, icon: 'paper' },
+    { id: 'depo-stok', path: '/panel/depo-stok', label: { tr: 'Depo Stok', en: 'Warehouse Stock' }, icon: 'warehouse' },
   ],
   admin: [
     { id: 'jobs', path: '/panel', label: { tr: 'Tüm İşler', en: 'All Jobs' }, icon: 'clipboard' },
     { id: 'reports', path: '/panel/raporlar', label: { tr: 'Raporlar', en: 'Reports' }, icon: 'chart' },
     { id: 'new-job', path: '/panel/yeni-is', label: { tr: 'Yeni İş', en: 'New Job' }, icon: 'plus' },
     { id: 'paper', path: '/panel/kagit', label: { tr: 'Kağıt', en: 'Paper' }, icon: 'paper' },
+    { id: 'depo-stok', path: '/panel/depo-stok', label: { tr: 'Depo Stok', en: 'Warehouse Stock' }, icon: 'warehouse' },
     { id: 'users', path: '/panel/kullanicilar', label: { tr: 'Kullanıcılar', en: 'Users' }, icon: 'users' },
   ],
   moderator: [
     { id: 'jobs', path: '/panel', label: { tr: 'Tüm İşler', en: 'All Jobs' }, icon: 'clipboard' },
     { id: 'reports', path: '/panel/raporlar', label: { tr: 'Raporlar', en: 'Reports' }, icon: 'chart' },
     { id: 'paper', path: '/panel/kagit', label: { tr: 'Kağıt', en: 'Paper' }, icon: 'paper' },
+    { id: 'depo-stok', path: '/panel/depo-stok', label: { tr: 'Depo Stok', en: 'Warehouse Stock' }, icon: 'warehouse' },
+  ],
+  depocu: [
+    { id: 'jobs', path: '/panel', label: { tr: 'Tüm İşler', en: 'All Jobs' }, icon: 'clipboard' },
+    { id: 'new-job', path: '/panel/yeni-is', label: { tr: 'Yeni İş', en: 'New Job' }, icon: 'plus' },
+    { id: 'paper', path: '/panel/kagit', label: { tr: 'Kağıt', en: 'Paper' }, icon: 'paper' },
+    { id: 'depo-stok', path: '/panel/depo-stok', label: { tr: 'Depo Stok', en: 'Warehouse Stock' }, icon: 'warehouse' },
   ],
 }
 
@@ -53,6 +61,11 @@ const ICONS = {
   paper: (
     <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+    </svg>
+  ),
+  warehouse: (
+    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 4.5H21m-3.75 4.5H21" />
     </svg>
   ),
   logout: (
@@ -97,6 +110,7 @@ export default function DashboardSidebar({ isOpen, onClose }) {
     personel: isEN ? 'Staff' : 'Personel',
     admin: 'Admin',
     moderator: isEN ? 'Moderator' : 'Moderatör',
+    depocu: isEN ? 'Warehouse' : 'Depocu',
   }
 
   return (

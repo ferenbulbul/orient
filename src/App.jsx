@@ -28,6 +28,8 @@ import UserManagement from "./pages/dashboard/UserManagement";
 import ReportsPage from "./pages/dashboard/ReportsPage";
 import PaperPage from "./pages/dashboard/PaperPage";
 import PaperSettings from "./pages/dashboard/PaperSettings";
+import DepoStokPage from "./pages/dashboard/DepoStokPage";
+import DepoHareketPage from "./pages/dashboard/DepoHareketPage";
 import "./App.css";
 
 
@@ -172,7 +174,7 @@ function App() {
           <Route
             path="/panel/yeni-is"
             element={
-              <ProtectedRoute allowedRoles={["personel", "admin"]}>
+              <ProtectedRoute allowedRoles={["personel", "admin", "depocu"]}>
                 <JobCreate />
               </ProtectedRoute>
             }
@@ -196,7 +198,7 @@ function App() {
           <Route
             path="/panel/kagit"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={["personel", "admin", "moderator", "depocu"]}>
                 <PaperPage />
               </ProtectedRoute>
             }
@@ -206,6 +208,22 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={["admin"]}>
                 <PaperSettings />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/panel/depo-stok"
+            element={
+              <ProtectedRoute allowedRoles={["personel", "admin", "moderator", "depocu"]}>
+                <DepoStokPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/panel/depo-stok/hareket"
+            element={
+              <ProtectedRoute allowedRoles={["personel", "admin", "moderator", "depocu"]}>
+                <DepoHareketPage />
               </ProtectedRoute>
             }
           />

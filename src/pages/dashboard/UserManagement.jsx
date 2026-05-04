@@ -12,6 +12,7 @@ const ROLE_COLORS = {
   personel: 'bg-amber-100 text-amber-700',
   admin: 'bg-purple-100 text-purple-700',
   moderator: 'bg-teal-100 text-teal-700',
+  depocu: 'bg-orange-100 text-orange-700',
 }
 
 export default function UserManagement() {
@@ -57,7 +58,7 @@ export default function UserManagement() {
     setForm((prev) => {
       const next = { ...prev, [field]: value }
       // Personel/admin/moderator seçilince firma otomatik EuromatPrint
-      if (field === 'role' && (value === 'personel' || value === 'admin' || value === 'moderator')) {
+      if (field === 'role' && (value === 'personel' || value === 'admin' || value === 'moderator' || value === 'depocu')) {
         next.company_name = 'EuromatPrint'
       }
       if (field === 'role' && value === 'musteri' && prev.company_name === 'EuromatPrint') {
@@ -199,7 +200,7 @@ export default function UserManagement() {
     setDeletingId(null)
   }
 
-  const ROLE_TR = { musteri: 'Müşteri', personel: 'Personel', admin: 'Admin', moderator: 'Moderatör' }
+  const ROLE_TR = { musteri: 'Müşteri', personel: 'Personel', admin: 'Admin', moderator: 'Moderatör', depocu: 'Depocu' }
 
   return (
     <DashboardLayout>
@@ -318,6 +319,7 @@ export default function UserManagement() {
                 >
                   <option value="musteri">{isEN ? 'Customer' : 'Müşteri'}</option>
                   <option value="personel">{isEN ? 'Staff' : 'Personel'}</option>
+                  <option value="depocu">{isEN ? 'Warehouse' : 'Depocu'}</option>
                   <option value="moderator">{isEN ? 'Moderator' : 'Moderatör'}</option>
                   <option value="admin">Admin</option>
                 </select>
@@ -444,6 +446,7 @@ export default function UserManagement() {
                         >
                           <option value="musteri">{isEN ? 'Customer' : 'Müşteri'}</option>
                           <option value="personel">{isEN ? 'Staff' : 'Personel'}</option>
+                          <option value="depocu">{isEN ? 'Warehouse' : 'Depocu'}</option>
                           <option value="moderator">{isEN ? 'Moderator' : 'Moderatör'}</option>
                           <option value="admin">Admin</option>
                         </select>

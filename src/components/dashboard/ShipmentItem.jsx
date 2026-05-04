@@ -9,12 +9,15 @@ export default function ShipmentItem({ shipment, index, canDelete = false, onDel
 
   const handleDownload = async () => {
     setDownloading(true)
+    const w = window.open('', '_blank')
     const { data, error } = await supabase.storage
       .from('irsaliyeler')
       .createSignedUrl(shipment.irsaliye_path, 3600)
 
     if (!error && data?.signedUrl) {
-      window.open(data.signedUrl, '_blank')
+      w.location = data.signedUrl
+    } else {
+      w.close()
     }
     setDownloading(false)
   }

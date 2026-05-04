@@ -56,7 +56,7 @@ export default function ShipmentForm({ jobId, jobNo, musteriName, jobAdet, shipp
 
     // 1. Dosyayı Storage'a yükle
     const fileExt = file.name.split('.').pop()
-    const safeName = `${jobNo}-${musteriName}-${numAdet}adet`.replace(/[^a-zA-Z0-9ğüşıöçĞÜŞİÖÇ_-]/g, '_')
+    const safeName = `${jobNo}-${musteriName}-${numAdet}adet`.replace(/[^a-zA-Z0-9_-]/g, '_')
     const filePath = `${jobId}/${safeName}_${Date.now()}.${fileExt}`
 
     const { error: uploadError } = await supabase.storage
@@ -65,7 +65,7 @@ export default function ShipmentForm({ jobId, jobNo, musteriName, jobAdet, shipp
 
     if (uploadError) {
       console.error('Upload error:', uploadError)
-      setError(isEN ? 'File upload failed.' : 'Dosya yükleme başarısız oldu.')
+      setError(isEN ? `File upload failed: ${uploadError.message}` : `Dosya yükleme başarısız: ${uploadError.message}`)
       setUploading(false)
       return
     }

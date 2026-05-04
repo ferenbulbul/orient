@@ -109,9 +109,11 @@ export function AuthProvider({ children }) {
       isStaff: role === 'personel',
       isAdmin: role === 'admin',
       isModerator: role === 'moderator',
-      isStaffOrAdmin: role === 'personel' || role === 'admin',
-      canViewAllJobs: role === 'personel' || role === 'admin' || role === 'moderator',
-      canEditJobs: role === 'personel' || role === 'admin',
+      isDepocu: role === 'depocu',
+      isStaffOrAdmin: role === 'personel' || role === 'admin' || role === 'depocu',
+      canViewAllJobs: role === 'personel' || role === 'admin' || role === 'moderator' || role === 'depocu',
+      canEditJobs: role === 'personel' || role === 'admin' || role === 'depocu',
+      canManagePaper: role === 'admin' || role === 'depocu',
       canViewPrice: role === 'admin' || role === 'moderator',
     }
   }, [session, profile, loading])

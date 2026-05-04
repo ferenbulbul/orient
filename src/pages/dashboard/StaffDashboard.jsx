@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { useLanguage } from '../../context/LanguageContext'
 import { formatNumber } from '../../lib/formatters'
@@ -30,11 +30,26 @@ export default function StaffDashboard() {
   const [jobs, setJobs] = useState([])
   const [completedCount, setCompletedCount] = useState(0)
   const [loading, setLoading] = useState(true)
-  const [search, setSearch] = useState('')
-  const [debouncedSearch, setDebouncedSearch] = useState('')
-  const [durumFilter, setDurumFilter] = useState('')
-  const [musteriFilter, setMusteriFilter] = useState('')
-  const [page, setPage] = useState(1)
+
+  // URL'den state oku — filtreler URL'de saklanır
+  const [searchParams, setSearchParams] = useSearchParams()
+  const search = searchParams.get('q') || ''
+  const durumFilter = searchParams.get('durum') || ''
+  const musteriFilter = searchParams.get('musteri') || ''
+  const page = parseInt(searchParams.get('sayfa'), 10) || 1
+
+  const updateParams = useCallback((updates) => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev)
+      Object.entries(updates).forEach(([key, value]) => {
+        if (value) next.set(key, value)
+        else next.delete(key)
+      })
+      return next
+    })
+  }, [setSearchParams])
+
+  const [debouncedSearch, setDebouncedSearch] = useState(search)
 
   const [completedJobs, setCompletedJobs] = useState([])
   const [completedTotal, setCompletedTotal] = useState(0)
@@ -45,9 +60,6 @@ export default function StaffDashboard() {
     const t = setTimeout(() => setDebouncedSearch(search), 300)
     return () => clearTimeout(t)
   }, [search])
-
-  // Reset page on filter change
-  useEffect(() => { setPage(1) }, [durumFilter, musteriFilter, search])
 
   // Fetch active jobs + completed count
   useEffect(() => {
@@ -164,7 +176,8 @@ export default function StaffDashboard() {
   }
 
   const handleStatClick = (filterValue) => {
-    setDurumFilter((prev) => (prev === filterValue ? '' : filterValue))
+    const newValue = durumFilter === filterValue ? '' : filterValue
+    updateParams({ durum: newValue, sayfa: '' })
   }
 
   const statItems = [
@@ -225,12 +238,12 @@ export default function StaffDashboard() {
             type="text"
             placeholder={isEN ? 'Search job number or name...' : 'İş emri no veya adı ara...'}
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => updateParams({ q: e.target.value, sayfa: '' })}
             className="flex-1 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-slate-400 focus:ring-2 focus:ring-slate-200"
           />
           <select
             value={musteriFilter}
-            onChange={(e) => setMusteriFilter(e.target.value)}
+            onChange={(e) => updateParams({ musteri: e.target.value, sayfa: '' })}
             className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-slate-400 focus:ring-2 focus:ring-slate-200"
           >
             <option value="">{isEN ? 'All Customers' : 'Tüm Müşteriler'}</option>
@@ -240,7 +253,7 @@ export default function StaffDashboard() {
           </select>
           <select
             value={durumFilter}
-            onChange={(e) => setDurumFilter(e.target.value)}
+            onChange={(e) => updateParams({ durum: e.target.value, sayfa: '' })}
             className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-slate-400 focus:ring-2 focus:ring-slate-200"
           >
             {DURUM_OPTIONS.map((opt) => (
@@ -259,7 +272,7 @@ export default function StaffDashboard() {
           <JobsTable
             jobs={displayJobs}
             page={page}
-            onPageChange={setPage}
+            onPageChange={(p) => updateParams({ sayfa: p > 1 ? String(p) : '' })}
             showCustomer
             showPrice={false}
             onJobClick={(id) => navigate(`/panel/is/${id}`)}

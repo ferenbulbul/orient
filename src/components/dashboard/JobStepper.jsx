@@ -42,7 +42,7 @@ export default function JobStepper({
     const total = phaseSteps.length
     const isComplete = total > 0 && completed === total
     return { phase, steps: phaseSteps, completed, total, isComplete }
-  }).filter((p) => p.total > 0) // Sadece adımı olan fazları göster
+  }).filter((p) => p.total > 0 || (p.phase === 4 && shipments.length > 0))
 
   // Phase is locked if previous phase is not complete
   const isPhaseUnlocked = (phaseNum) => {
