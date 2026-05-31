@@ -124,7 +124,7 @@ export default function ModeratorDashboard() {
     jobs.forEach((j) => {
       const id = j.musteri_id
       if (!id || map[id]) return
-      map[id] = { id, name: j.musteri?.company_name || j.musteri?.full_name || '-' }
+      map[id] = { id, name: j.musteri?.company_name || '-' }
     })
     return Object.values(map).sort((a, b) => a.name.localeCompare(b.name, 'tr'))
   }, [jobs])

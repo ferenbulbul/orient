@@ -3,20 +3,20 @@ import StepItem from './StepItem'
 import ShipmentList from './ShipmentList'
 
 const PHASE_LABELS = {
-  1: { tr: 'Baskı Öncesi', en: 'Prepress' },
-  2: { tr: 'Baskı', en: 'Printing' },
-  3: { tr: 'Mücellit', en: 'Bindery' },
-  4: { tr: 'Lojistik', en: 'Logistics' },
+  'Baskı Öncesi': { tr: 'Baskı Öncesi', en: 'Prepress' },
+  'Baskı': { tr: 'Baskı', en: 'Printing' },
+  'Mücellit': { tr: 'Mücellit', en: 'Bindery' },
+  'Lojistik': { tr: 'Lojistik', en: 'Logistics' },
 }
 
-const PHASE_COLORS = {
-  1: { bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-700', dot: 'bg-blue-500' },
-  2: { bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-700', dot: 'bg-amber-500' },
-  3: { bg: 'bg-purple-50', border: 'border-purple-200', text: 'text-purple-700', dot: 'bg-purple-500' },
-  4: { bg: 'bg-orange-50', border: 'border-orange-200', text: 'text-orange-700', dot: 'bg-orange-500' },
+const PHASE_COLORS_BY_NAME = {
+  'Baskı Öncesi': { bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-700', dot: 'bg-blue-500' },
+  'Baskı': { bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-700', dot: 'bg-amber-500' },
+  'Mücellit': { bg: 'bg-purple-50', border: 'border-purple-200', text: 'text-purple-700', dot: 'bg-purple-500' },
+  'Lojistik': { bg: 'bg-orange-50', border: 'border-orange-200', text: 'text-orange-700', dot: 'bg-orange-500' },
 }
 
-const ALL_PHASES = [1, 2, 3, 4]
+const DEFAULT_COLORS = { bg: 'bg-slate-50', border: 'border-slate-200', text: 'text-slate-700', dot: 'bg-slate-500' }
 
 export default function JobStepper({
   steps = [],
@@ -33,16 +33,24 @@ export default function JobStepper({
 
   const totalShipped = shipments.reduce((sum, s) => sum + s.adet, 0)
 
-  // Group steps by phase
-  const phases = ALL_PHASES.map((phase) => {
-    const phaseSteps = steps
-      .filter((s) => s.phase === phase)
-      .sort((a, b) => a.step_order - b.step_order)
-    const completed = phaseSteps.filter((s) => s.durum === 'tamamlandi').length
-    const total = phaseSteps.length
-    const isComplete = total > 0 && completed === total
-    return { phase, steps: phaseSteps, completed, total, isComplete }
-  }).filter((p) => p.total > 0 || (p.phase === 4 && shipments.length > 0))
+  // Group steps by phase (derive from actual step data)
+  const phaseMap = new Map()
+  steps.forEach((step) => {
+    if (!phaseMap.has(step.phase)) {
+      phaseMap.set(step.phase, { phase: step.phase, phaseName: step.phase_name, steps: [] })
+    }
+    phaseMap.get(step.phase).steps.push(step)
+  })
+
+  const phases = Array.from(phaseMap.values())
+    .sort((a, b) => a.phase - b.phase)
+    .map((p) => {
+      const sorted = p.steps.sort((a, b) => a.step_order - b.step_order)
+      const completed = sorted.filter((s) => s.durum === 'tamamlandi').length
+      const total = sorted.length
+      const isComplete = total > 0 && completed === total
+      return { ...p, steps: sorted, completed, total, isComplete }
+    })
 
   // Phase is locked if previous phase is not complete
   const isPhaseUnlocked = (phaseNum) => {
@@ -53,10 +61,10 @@ export default function JobStepper({
 
   return (
     <div className="flex flex-col gap-6">
-      {phases.map(({ phase, steps: phaseSteps, completed, total, isComplete }) => {
+      {phases.map(({ phase, phaseName, steps: phaseSteps, completed, total, isComplete }) => {
         const unlocked = isPhaseUnlocked(phase)
-        const colors = PHASE_COLORS[phase] || PHASE_COLORS[1]
-        const label = isEN ? PHASE_LABELS[phase]?.en : PHASE_LABELS[phase]?.tr
+        const colors = PHASE_COLORS_BY_NAME[phaseName] || DEFAULT_COLORS
+        const label = isEN ? (PHASE_LABELS[phaseName]?.en || phaseName) : (PHASE_LABELS[phaseName]?.tr || phaseName)
 
         return (
           <div
@@ -111,7 +119,7 @@ export default function JobStepper({
             {/* Steps */}
             <div className="flex flex-col gap-1 px-3 pb-3">
               {phaseSteps.map((step) => {
-                const isShipmentStep = step.phase === 4 && step.step_name === 'Sevkiyat'
+                const isShipmentStep = step.step_name === 'Sevkiyat'
 
                 return (
                   <StepItem
@@ -130,8 +138,8 @@ export default function JobStepper({
               })}
             </div>
 
-            {/* Shipment list for Phase 4 */}
-            {phase === 4 && shipments.length > 0 && (
+            {/* Shipment list for Lojistik phase */}
+            {phaseName === 'Lojistik' && shipments.length > 0 && (
               <ShipmentList
                 shipments={shipments}
                 jobAdet={job?.adet || 0}

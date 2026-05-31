@@ -24,6 +24,10 @@ export default function ReportsPage() {
   const [jobs, setJobs] = useState([])
   const [loading, setLoading] = useState(true)
 
+  // Modal state: { label, filterFn } veya null
+  const [jobsModal, setJobsModal] = useState(null)
+  const [modalPage, setModalPage] = useState(1)
+
   // Derive drill state from URL
   const activeTab = searchParams.get('tab') || 'monthly'
   const selectedMonth = searchParams.has('m') ? Number(searchParams.get('m')) : null
@@ -67,6 +71,7 @@ export default function ReportsPage() {
       completed,
       ongoing: yearJobs.length - completed,
       revenue: yearJobs.reduce((sum, j) => sum + (j.fiyat || 0), 0),
+      kalipAdedi: yearJobs.reduce((sum, j) => sum + (j.kalip_adedi || 0), 0),
       customerCount: customerIds.size,
       completionRate: yearJobs.length > 0 ? Math.round((completed / yearJobs.length) * 100) : 0,
     }
@@ -87,6 +92,7 @@ export default function ReportsPage() {
         completed,
         ongoing: monthJobs.length - completed,
         revenue: monthJobs.reduce((sum, j) => sum + (j.fiyat || 0), 0),
+        kalipAdedi: monthJobs.reduce((sum, j) => sum + (j.kalip_adedi || 0), 0),
         customerCount: customerIds.size,
         completionRate: monthJobs.length > 0 ? Math.round((completed / monthJobs.length) * 100) : 0,
         isCurrent: selectedYear === currentYear && monthIdx === currentMonth,
@@ -231,6 +237,11 @@ export default function ReportsPage() {
 
   const monthNames = isEN ? MONTHS_EN : MONTHS_TR
 
+  const openJobsModal = (label, filterFn) => {
+    setJobsModal({ label, filterFn })
+    setModalPage(1)
+  }
+
   // --- Top 10 table renderer ---
   const renderTop10 = (title, data) => (
     <div>
@@ -245,7 +256,6 @@ export default function ReportsPage() {
             <thead>
               <tr className="border-b border-slate-200 bg-slate-50">
                 <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 w-10">#</th>
-                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">{isEN ? 'Customer' : 'Müşteri'}</th>
                 <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">{isEN ? 'Company' : 'Firma'}</th>
                 <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">{isEN ? 'Jobs' : 'İş'}</th>
                 <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">{isEN ? 'Revenue' : 'Kazanç'}</th>
@@ -255,8 +265,7 @@ export default function ReportsPage() {
               {data.map((c, i) => (
                 <tr key={c.id} className="transition hover:bg-slate-50">
                   <td className="px-4 py-2.5 text-xs font-bold text-slate-400">{i + 1}</td>
-                  <td className="px-4 py-2.5 font-medium text-slate-900">{c.full_name}</td>
-                  <td className="px-4 py-2.5 text-slate-600">{c.company_name || '-'}</td>
+                  <td className="px-4 py-2.5 font-medium text-slate-900">{c.company_name || '-'}</td>
                   <td className="px-4 py-2.5 text-right tabular-nums text-slate-700">{formatNumber(c.jobCount)}</td>
                   <td className="px-4 py-2.5 text-right tabular-nums font-medium text-slate-900">{formatPrice(c.revenue)}</td>
                 </tr>
@@ -287,7 +296,7 @@ export default function ReportsPage() {
         {selectedCustomer && drillLevel === 3 && (
           <>
             <span className="text-slate-300">/</span>
-            <span className="font-semibold text-slate-900">{selectedCustomer.full_name}</span>
+            <span className="font-semibold text-slate-900">{selectedCustomer.company_name || '-'}</span>
           </>
         )}
       </nav>
@@ -316,10 +325,32 @@ export default function ReportsPage() {
   // --- Yearly summary ---
   const renderYearlySummary = () => {
     const s = yearlySummary
+    const y = selectedYear
     const items = [
-      { label: isEN ? 'Total Jobs' : 'Toplam İş', value: formatNumber(s.total), color: 'text-slate-900' },
-      { label: isEN ? 'Completed' : 'Tamamlanan', value: formatNumber(s.completed), color: 'text-green-600' },
-      { label: isEN ? 'Ongoing' : 'Devam Eden', value: formatNumber(s.ongoing), color: 'text-amber-600' },
+      {
+        label: isEN ? 'Total Jobs' : 'Toplam İş', value: formatNumber(s.total), color: 'text-slate-900',
+        clickable: s.total > 0,
+        onClick: () => openJobsModal(
+          `${y} — ${isEN ? 'All Jobs' : 'Tüm İşler'}`,
+          (j) => new Date(j.created_at).getFullYear() === y
+        ),
+      },
+      {
+        label: isEN ? 'Completed' : 'Tamamlanan', value: formatNumber(s.completed), color: 'text-green-600',
+        clickable: s.completed > 0,
+        onClick: () => openJobsModal(
+          `${y} — ${isEN ? 'Completed' : 'Tamamlanan'}`,
+          (j) => new Date(j.created_at).getFullYear() === y && j.durum === 'tamamlandi'
+        ),
+      },
+      {
+        label: isEN ? 'Ongoing' : 'Devam Eden', value: formatNumber(s.ongoing), color: 'text-amber-600',
+        clickable: s.ongoing > 0,
+        onClick: () => openJobsModal(
+          `${y} — ${isEN ? 'Ongoing' : 'Devam Eden'}`,
+          (j) => new Date(j.created_at).getFullYear() === y && j.durum !== 'tamamlandi'
+        ),
+      },
       { label: isEN ? 'Customers' : 'Müşteri', value: formatNumber(s.customerCount), color: 'text-blue-600' },
       { label: isEN ? 'Completion' : 'Tamamlanma', value: `%${s.completionRate}`, color: 'text-purple-600' },
       { label: isEN ? 'Revenue' : 'Toplam Kazanç', value: formatPrice(s.revenue), color: 'text-slate-900' },
@@ -327,10 +358,18 @@ export default function ReportsPage() {
     return (
       <div className="mb-5 grid grid-cols-3 gap-3 sm:grid-cols-6">
         {items.map((item) => (
-          <div key={item.label} className="rounded-2xl border border-slate-100 bg-white px-3 py-3 text-center shadow-sm">
+          <button
+            key={item.label}
+            type="button"
+            disabled={!item.clickable}
+            onClick={item.onClick}
+            className={`rounded-2xl border border-slate-100 bg-white px-3 py-3 text-center shadow-sm transition ${
+              item.clickable ? 'cursor-pointer hover:border-slate-300 hover:shadow-md active:scale-[0.97]' : ''
+            }`}
+          >
             <p className={`text-lg font-bold tabular-nums ${item.color}`}>{item.value}</p>
             <p className="text-[10px] font-medium uppercase tracking-wider text-slate-400">{item.label}</p>
-          </div>
+          </button>
         ))}
       </div>
     )
@@ -353,6 +392,7 @@ export default function ReportsPage() {
               <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">{isEN ? 'Ongoing' : 'Devam'}</th>
               <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">{isEN ? 'Clients' : 'Müşteri'}</th>
               <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">%</th>
+              <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">{isEN ? 'Mold' : 'Kalıp'}</th>
               <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">{isEN ? 'Revenue' : 'Kazanç'}</th>
             </tr>
           </thead>
@@ -369,11 +409,24 @@ export default function ReportsPage() {
                     {monthNames[stat.month]}
                     {stat.isCurrent && <span className="ml-2 inline-block h-1.5 w-1.5 rounded-full bg-blue-500" />}
                   </td>
-                  <td className="px-4 py-3 text-right tabular-nums text-slate-900">{formatNumber(stat.total)}</td>
-                  <td className="px-4 py-3 text-right tabular-nums text-green-600">{formatNumber(stat.completed)}</td>
-                  <td className="px-4 py-3 text-right tabular-nums text-amber-600">{formatNumber(stat.ongoing)}</td>
+                  <td className="px-4 py-3 text-right tabular-nums text-slate-900">
+                    {stat.total > 0 ? (
+                      <button type="button" onClick={(ev) => { ev.stopPropagation(); openJobsModal(`${monthNames[stat.month]} ${selectedYear} — ${isEN ? 'All Jobs' : 'Tüm İşler'}`, (j) => { const d = new Date(j.created_at); return d.getFullYear() === selectedYear && d.getMonth() === stat.month }) }} className="rounded-lg px-1.5 py-0.5 transition hover:bg-slate-100 hover:underline">{formatNumber(stat.total)}</button>
+                    ) : formatNumber(stat.total)}
+                  </td>
+                  <td className="px-4 py-3 text-right tabular-nums text-green-600">
+                    {stat.completed > 0 ? (
+                      <button type="button" onClick={(ev) => { ev.stopPropagation(); openJobsModal(`${monthNames[stat.month]} ${selectedYear} — ${isEN ? 'Completed' : 'Tamamlanan'}`, (j) => { const d = new Date(j.created_at); return d.getFullYear() === selectedYear && d.getMonth() === stat.month && j.durum === 'tamamlandi' }) }} className="rounded-lg px-1.5 py-0.5 transition hover:bg-green-50 hover:underline">{formatNumber(stat.completed)}</button>
+                    ) : formatNumber(stat.completed)}
+                  </td>
+                  <td className="px-4 py-3 text-right tabular-nums text-amber-600">
+                    {stat.ongoing > 0 ? (
+                      <button type="button" onClick={(ev) => { ev.stopPropagation(); openJobsModal(`${monthNames[stat.month]} ${selectedYear} — ${isEN ? 'Ongoing' : 'Devam Eden'}`, (j) => { const d = new Date(j.created_at); return d.getFullYear() === selectedYear && d.getMonth() === stat.month && j.durum !== 'tamamlandi' }) }} className="rounded-lg px-1.5 py-0.5 transition hover:bg-amber-50 hover:underline">{formatNumber(stat.ongoing)}</button>
+                    ) : formatNumber(stat.ongoing)}
+                  </td>
                   <td className="px-4 py-3 text-right tabular-nums text-blue-600">{formatNumber(stat.customerCount)}</td>
                   <td className="px-4 py-3 text-right tabular-nums text-purple-600">{stat.completionRate}%</td>
+                  <td className="px-4 py-3 text-right tabular-nums text-slate-700">{formatNumber(stat.kalipAdedi)}</td>
                   <td className="px-4 py-3 text-right tabular-nums font-medium text-slate-900">{formatPrice(stat.revenue)}</td>
                 </tr>
               )
@@ -382,11 +435,24 @@ export default function ReportsPage() {
           <tfoot>
             <tr className="border-t-2 border-slate-200 bg-slate-50">
               <td className="px-4 py-3 text-xs font-bold uppercase tracking-wider text-slate-700">{isEN ? 'Total' : 'Toplam'}</td>
-              <td className="px-4 py-3 text-right tabular-nums font-bold text-slate-900">{formatNumber(yearlySummary.total)}</td>
-              <td className="px-4 py-3 text-right tabular-nums font-bold text-green-600">{formatNumber(yearlySummary.completed)}</td>
-              <td className="px-4 py-3 text-right tabular-nums font-bold text-amber-600">{formatNumber(yearlySummary.ongoing)}</td>
+              <td className="px-4 py-3 text-right tabular-nums font-bold text-slate-900">
+                {yearlySummary.total > 0 ? (
+                  <button type="button" onClick={() => openJobsModal(`${selectedYear} — ${isEN ? 'All Jobs' : 'Tüm İşler'}`, (j) => new Date(j.created_at).getFullYear() === selectedYear)} className="rounded-lg px-1.5 py-0.5 transition hover:bg-slate-200 hover:underline">{formatNumber(yearlySummary.total)}</button>
+                ) : formatNumber(yearlySummary.total)}
+              </td>
+              <td className="px-4 py-3 text-right tabular-nums font-bold text-green-600">
+                {yearlySummary.completed > 0 ? (
+                  <button type="button" onClick={() => openJobsModal(`${selectedYear} — ${isEN ? 'Completed' : 'Tamamlanan'}`, (j) => new Date(j.created_at).getFullYear() === selectedYear && j.durum === 'tamamlandi')} className="rounded-lg px-1.5 py-0.5 transition hover:bg-green-100 hover:underline">{formatNumber(yearlySummary.completed)}</button>
+                ) : formatNumber(yearlySummary.completed)}
+              </td>
+              <td className="px-4 py-3 text-right tabular-nums font-bold text-amber-600">
+                {yearlySummary.ongoing > 0 ? (
+                  <button type="button" onClick={() => openJobsModal(`${selectedYear} — ${isEN ? 'Ongoing' : 'Devam Eden'}`, (j) => new Date(j.created_at).getFullYear() === selectedYear && j.durum !== 'tamamlandi')} className="rounded-lg px-1.5 py-0.5 transition hover:bg-amber-100 hover:underline">{formatNumber(yearlySummary.ongoing)}</button>
+                ) : formatNumber(yearlySummary.ongoing)}
+              </td>
               <td className="px-4 py-3 text-right tabular-nums font-bold text-blue-600">{formatNumber(yearlySummary.customerCount)}</td>
               <td className="px-4 py-3 text-right tabular-nums font-bold text-purple-600">{yearlySummary.completionRate}%</td>
+              <td className="px-4 py-3 text-right tabular-nums font-bold text-slate-700">{formatNumber(yearlySummary.kalipAdedi)}</td>
               <td className="px-4 py-3 text-right tabular-nums font-bold text-slate-900">{formatPrice(yearlySummary.revenue)}</td>
             </tr>
           </tfoot>
@@ -409,11 +475,11 @@ export default function ReportsPage() {
       {/* Top 10 tables */}
       <div className="grid gap-8 lg:grid-cols-2">
         {renderTop10(
-          isEN ? `${top10Year} — Top 10 Customers` : `${top10Year} — En Çok Kazandıran 10 Müşteri`,
+          isEN ? `${top10Year} — Top 10 Companies` : `${top10Year} — En Çok Kazandıran 10 Firma`,
           yearlyTop10
         )}
         {renderTop10(
-          isEN ? `${monthNames[top10Month]} ${top10Year} — Top 10 Customers` : `${monthNames[top10Month]} ${top10Year} — En Çok Kazandıran 10 Müşteri`,
+          isEN ? `${monthNames[top10Month]} ${top10Year} — Top 10 Companies` : `${monthNames[top10Month]} ${top10Year} — En Çok Kazandıran 10 Firma`,
           monthlyTop10
         )}
       </div>
@@ -436,7 +502,6 @@ export default function ReportsPage() {
           <table className="w-full text-left text-sm" style={{ minWidth: 650 }}>
             <thead>
               <tr className="border-b border-slate-200 bg-slate-50">
-                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">{isEN ? 'Customer' : 'Müşteri Adı'}</th>
                 <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">{isEN ? 'Company' : 'Firma'}</th>
                 <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">{isEN ? 'Jobs' : 'İş Sayısı'}</th>
                 <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">{isEN ? 'Done' : 'Tamamlanan'}</th>
@@ -449,11 +514,10 @@ export default function ReportsPage() {
                 <tr key={c.id} onClick={() => goToCustomer(c)} className="cursor-pointer transition hover:bg-slate-50">
                   <td className="px-4 py-3 font-medium text-slate-900">
                     <span className="flex items-center gap-1.5">
-                      {c.full_name}
+                      {c.company_name || '-'}
                       {c.hasOngoingFromOtherMonths && <span className="inline-block h-2 w-2 shrink-0 rounded-full bg-amber-400" title={isEN ? 'Has ongoing jobs from other months' : 'Başka aylarda devam eden işi var'} />}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-slate-600">{c.company_name || '-'}</td>
                   <td className="px-4 py-3 text-right tabular-nums text-slate-700">{formatNumber(c.jobCount)}</td>
                   <td className="px-4 py-3 text-right tabular-nums text-green-600">{formatNumber(c.completed)}</td>
                   <td className="px-4 py-3 text-right tabular-nums text-amber-600">{formatNumber(c.ongoing)}</td>
@@ -463,7 +527,7 @@ export default function ReportsPage() {
             </tbody>
             <tfoot>
               <tr className="border-t-2 border-slate-200 bg-slate-50">
-                <td className="px-4 py-3 text-xs font-bold uppercase tracking-wider text-slate-700" colSpan={2}>{isEN ? 'Total' : 'Toplam'}</td>
+                <td className="px-4 py-3 text-xs font-bold uppercase tracking-wider text-slate-700">{isEN ? 'Total' : 'Toplam'}</td>
                 <td className="px-4 py-3 text-right tabular-nums font-bold text-slate-900">{formatNumber(totals.jobCount)}</td>
                 <td className="px-4 py-3 text-right tabular-nums font-bold text-green-600">{formatNumber(totals.completed)}</td>
                 <td className="px-4 py-3 text-right tabular-nums font-bold text-amber-600">{formatNumber(totals.ongoing)}</td>
@@ -518,7 +582,7 @@ export default function ReportsPage() {
           <nav className="mb-4 flex items-center gap-1.5 text-sm">
             <button type="button" onClick={() => { setSearchParams({ tab: 'search' }); setSearchPage(1) }} className="font-medium text-slate-500 transition hover:text-slate-900">{isEN ? 'Search' : 'Arama'}</button>
             <span className="text-slate-300">/</span>
-            <span className="font-semibold text-slate-900">{searchCustomer.full_name}</span>
+            <span className="font-semibold text-slate-900">{searchCustomer.company_name || '-'}</span>
           </nav>
           <JobsTable
             jobs={searchCustomerJobs}
@@ -547,8 +611,7 @@ export default function ReportsPage() {
               <button key={c.id} type="button" onClick={() => { setSearchParams({ tab: 'search', cid: c.id }); setSearchPage(1) }}
                 className="flex w-full items-center justify-between rounded-xl border border-slate-100 bg-white px-4 py-3 text-left shadow-sm transition hover:border-slate-200 hover:shadow-md">
                 <div>
-                  <p className="text-sm font-semibold text-slate-900">{c.full_name}</p>
-                  {c.company_name && <p className="text-xs text-slate-500">{c.company_name}</p>}
+                  <p className="text-sm font-semibold text-slate-900">{c.company_name || '-'}</p>
                 </div>
                 <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-600">{c.jobCount} {isEN ? 'jobs' : 'iş'}</span>
               </button>
@@ -593,6 +656,37 @@ export default function ReportsPage() {
           renderSearchTab()
         )}
       </div>
+
+      {/* İş Listesi Modalı */}
+      {jobsModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={() => setJobsModal(null)}>
+          <div className="flex max-h-[85vh] w-full max-w-5xl flex-col rounded-2xl bg-white shadow-xl" onClick={(ev) => ev.stopPropagation()}>
+            {/* Header */}
+            <div className="flex items-center justify-between border-b border-slate-100 px-6 py-4">
+              <div>
+                <h2 className="text-base font-bold text-slate-900">{jobsModal.label}</h2>
+                <p className="mt-0.5 text-xs text-slate-500">
+                  {formatNumber(jobs.filter(jobsModal.filterFn).length)} {isEN ? 'jobs' : 'iş'}
+                </p>
+              </div>
+              <button type="button" onClick={() => setJobsModal(null)} className="rounded-lg p-1.5 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600">
+                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+              </button>
+            </div>
+            {/* Tablo */}
+            <div className="flex-1 overflow-auto px-6 py-4">
+              <JobsTable
+                jobs={jobs.filter(jobsModal.filterFn)}
+                page={modalPage}
+                onPageChange={setModalPage}
+                showCustomer
+                showPrice
+                onJobClick={(id) => { setJobsModal(null); navigate(`/panel/is/${id}`) }}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </DashboardLayout>
   )
 }

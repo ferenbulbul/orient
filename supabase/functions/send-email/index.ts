@@ -60,28 +60,15 @@ serve(async (req) => {
         break;
       }
 
-      case "step_update": {
-        to = data.email;
-        subject = `${data.job_no} - ${data.step_name} adımı tamamlandı`;
+      case "binding_completed": {
+        // Çoklu alıcı desteği: data.emails array veya data.email tekil
+        to = data.emails || data.email;
+        subject = `${data.job_no} nolu işiniz tamamlanmıştır`;
         html = buildHTML(
           data.name,
-          `<strong>${data.job_no}</strong> nolu <strong>"${data.job_name}"</strong> işinizde bir adım tamamlandı:`,
-          `✓ ${data.phase_name} > ${data.step_name}`,
-          `Genel ilerleme: ${data.progress}`,
-          "Detayları Görüntüle",
-          loginUrl
-        );
-        break;
-      }
-
-      case "job_completed": {
-        to = data.email;
-        subject = `${data.job_no} - İşiniz tamamlandı!`;
-        html = buildHTML(
-          data.name,
-          `<strong>${data.job_no}</strong> nolu <strong>"${data.job_name}"</strong> işiniz tamamlanmıştır.`,
-          "🎉 İşiniz Tamamlandı!",
-          "Teslimata hazır durumda",
+          `<strong>${data.job_no}</strong> nolu işiniz tamamlanmıştır, sevkiyat beklemektedir.`,
+          `${data.job_no} nolu işiniz tamamlanmıştır`,
+          "Sevkiyat beklemektedir",
           "Detayları Görüntüle",
           loginUrl
         );
@@ -142,7 +129,7 @@ serve(async (req) => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${RESEND_API_KEY}`,
       },
-      body: JSON.stringify({ from: FROM_EMAIL, to: [to], subject, html }),
+      body: JSON.stringify({ from: FROM_EMAIL, to: Array.isArray(to) ? to : [to], subject, html }),
     });
 
     const result = await res.json();

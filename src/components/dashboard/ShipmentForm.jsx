@@ -3,6 +3,7 @@ import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../context/AuthContext'
 import { useLanguage } from '../../context/LanguageContext'
 import { formatNumber } from '../../lib/formatters'
+import { compressImageFile } from '../../lib/imageCompression'
 
 const ALLOWED_TYPES = ['application/pdf', 'image/png', 'image/jpeg']
 const MAX_SIZE = 10 * 1024 * 1024 // 10MB
@@ -18,7 +19,7 @@ export default function ShipmentForm({ jobId, jobNo, musteriName, jobAdet, shipp
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState('')
 
-  const handleFileChange = (e) => {
+  const handleFileChange = async (e) => {
     const selected = e.target.files?.[0]
     if (!selected) return
 
@@ -31,7 +32,8 @@ export default function ShipmentForm({ jobId, jobNo, musteriName, jobAdet, shipp
       return
     }
     setError('')
-    setFile(selected)
+    const compressed = await compressImageFile(selected)
+    setFile(compressed)
   }
 
   const handleSubmit = async (e) => {
@@ -56,7 +58,7 @@ export default function ShipmentForm({ jobId, jobNo, musteriName, jobAdet, shipp
 
     // 1. Dosyayı Storage'a yükle
     const fileExt = file.name.split('.').pop()
-    const safeName = `${jobNo}-${musteriName}-${numAdet}adet`.replace(/[^a-zA-Z0-9_-]/g, '_')
+    const safeName = `sevkiyat_${jobNo}_${musteriName}_${numAdet}adet`.replace(/[^a-zA-Z0-9_-]/g, '_')
     const filePath = `${jobId}/${safeName}_${Date.now()}.${fileExt}`
 
     const { error: uploadError } = await supabase.storage
@@ -77,7 +79,7 @@ export default function ShipmentForm({ jobId, jobNo, musteriName, jobAdet, shipp
         job_id: jobId,
         adet: numAdet,
         irsaliye_path: filePath,
-        irsaliye_original_name: `${jobNo}-${musteriName}-${numAdet}adet.${fileExt}`,
+        irsaliye_original_name: `sevkiyat_${jobNo}_${musteriName}_${numAdet}adet.${fileExt}`,
         notes: notes.trim() || null,
         created_by: profile.id,
       })

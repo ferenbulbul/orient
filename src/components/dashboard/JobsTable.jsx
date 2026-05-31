@@ -15,11 +15,19 @@ const STEP_DEFS = [
   { name: 'Sevkiyat', abbr: 'SE' },
 ]
 
+const JOB_TYPE_LABELS = {
+  baski: { tr: 'Baskı', en: 'Print' },
+  baski_cilt: { tr: 'Baskı Cilt', en: 'Print+Bind' },
+  mucellit: { tr: 'Mücellit', en: 'Bindery' },
+}
+
 const COLUMN_WIDTHS = {
   jobNo: 120,
   jobName: 220,
   customer: 170,
+  jobType: 110,
   qty: 120,
+  kalipAdedi: 100,
   due: 140,
   price: 130,
   step: 46,
@@ -30,7 +38,9 @@ const MIN_COLUMN_WIDTHS = {
   jobNo: 90,
   jobName: 140,
   customer: 120,
+  jobType: 80,
   qty: 90,
+  kalipAdedi: 80,
   due: 100,
   price: 100,
   status: 110,
@@ -41,32 +51,36 @@ const ALL_COLUMN_WIDTHS = {
   jobNo: COLUMN_WIDTHS.jobNo,
   jobName: COLUMN_WIDTHS.jobName,
   customer: COLUMN_WIDTHS.customer,
+  jobType: COLUMN_WIDTHS.jobType,
   qty: COLUMN_WIDTHS.qty,
+  kalipAdedi: COLUMN_WIDTHS.kalipAdedi,
   due: COLUMN_WIDTHS.due,
   price: COLUMN_WIDTHS.price,
   status: COLUMN_WIDTHS.status,
 }
 
-const STEP_COLUMN_KEYS = STEP_DEFS.map((s) => `step-${s.abbr}`)
-const DEFAULT_STEP_WIDTHS = Object.fromEntries(STEP_COLUMN_KEYS.map((k) => [k, COLUMN_WIDTHS.step]))
+const ALL_STEP_COLUMN_KEYS = STEP_DEFS.map((s) => `step-${s.abbr}`)
+const ALL_STEP_WIDTHS = Object.fromEntries(ALL_STEP_COLUMN_KEYS.map((k) => [k, COLUMN_WIDTHS.step]))
 const DEFAULT_COLUMN_WIDTHS = {
   ...ALL_COLUMN_WIDTHS,
-  ...DEFAULT_STEP_WIDTHS,
+  ...ALL_STEP_WIDTHS,
 }
 
 const ALL_MIN_WIDTHS = {
   jobNo: MIN_COLUMN_WIDTHS.jobNo,
   jobName: MIN_COLUMN_WIDTHS.jobName,
   customer: MIN_COLUMN_WIDTHS.customer,
+  jobType: MIN_COLUMN_WIDTHS.jobType,
   qty: MIN_COLUMN_WIDTHS.qty,
+  kalipAdedi: MIN_COLUMN_WIDTHS.kalipAdedi,
   due: MIN_COLUMN_WIDTHS.due,
   price: MIN_COLUMN_WIDTHS.price,
   status: MIN_COLUMN_WIDTHS.status,
 }
-const MIN_STEP_WIDTHS = Object.fromEntries(STEP_COLUMN_KEYS.map((k) => [k, MIN_COLUMN_WIDTHS.step]))
+const ALL_STEP_MIN_WIDTHS = Object.fromEntries(ALL_STEP_COLUMN_KEYS.map((k) => [k, MIN_COLUMN_WIDTHS.step]))
 const MIN_WIDTHS = {
   ...ALL_MIN_WIDTHS,
-  ...MIN_STEP_WIDTHS,
+  ...ALL_STEP_MIN_WIDTHS,
 }
 
 const PER_PAGE = 50
@@ -86,14 +100,26 @@ export default function JobsTable({ jobs, page, onPageChange, showCustomer = tru
   const totalItems = totalCount ?? jobs.length
   const totalPages = Math.ceil(totalItems / PER_PAGE)
   const paginated = totalCount != null ? jobs : jobs.slice((page - 1) * PER_PAGE, page * PER_PAGE)
+
+  // Tablodaki işlerin sahip olduğu adımlara göre sütunları filtrele
+  const visibleStepDefs = useMemo(() => {
+    const stepNames = new Set()
+    jobs.forEach((job) => {
+      (job.job_steps || []).forEach((s) => stepNames.add(s.step_name))
+    })
+    return STEP_DEFS.filter((def) => stepNames.has(def.name))
+  }, [jobs])
+
+  const visibleStepKeys = useMemo(() => visibleStepDefs.map((s) => `step-${s.abbr}`), [visibleStepDefs])
+
   const visibleColumns = useMemo(() => {
     const cols = ['jobNo', 'jobName']
     if (showCustomer) cols.push('customer')
-    cols.push('qty', 'due')
+    cols.push('jobType', 'qty', 'kalipAdedi', 'due')
     if (showPrice) cols.push('price')
-    cols.push(...STEP_COLUMN_KEYS, 'status')
+    cols.push(...visibleStepKeys, 'status')
     return cols
-  }, [showCustomer, showPrice])
+  }, [showCustomer, showPrice, visibleStepKeys])
 
   const baseWidth = visibleColumns.reduce((sum, key) => sum + (columnWidths[key] || 0), 0)
 
@@ -175,9 +201,17 @@ export default function JobsTable({ jobs, page, onPageChange, showCustomer = tru
                   {renderResizeHandle('customer')}
                 </th>
               )}
+              <th className="relative whitespace-nowrap px-3 py-3 text-center text-xs font-semibold uppercase tracking-wider text-slate-500" style={{ width: columnWidths.jobType }}>
+                <span>{isEN ? 'Type' : 'Tip'}</span>
+                {renderResizeHandle('jobType')}
+              </th>
               <th className="relative whitespace-nowrap px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-slate-500" style={{ width: columnWidths.qty }}>
                 <span>{isEN ? 'Qty' : 'Adet'}</span>
                 {renderResizeHandle('qty')}
+              </th>
+              <th className="relative whitespace-nowrap px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-slate-500" style={{ width: columnWidths.kalipAdedi }}>
+                <span>{isEN ? 'Mold' : 'Kalıp'}</span>
+                {renderResizeHandle('kalipAdedi')}
               </th>
               <th className="relative whitespace-nowrap px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider text-slate-500" style={{ width: columnWidths.due }}>
                 <span>{isEN ? 'Due' : 'Teslim'}</span>
@@ -189,7 +223,7 @@ export default function JobsTable({ jobs, page, onPageChange, showCustomer = tru
                   {renderResizeHandle('price')}
                 </th>
               )}
-              {STEP_DEFS.map((s) => (
+              {visibleStepDefs.map((s) => (
                 <th
                   key={s.abbr}
                   className="relative px-1 py-3 text-center text-[10px] font-bold uppercase tracking-wider text-slate-400"
@@ -208,7 +242,7 @@ export default function JobsTable({ jobs, page, onPageChange, showCustomer = tru
           </thead>
           <tbody className="divide-y divide-slate-100">
             {paginated.map((job) => {
-              const customerName = job.musteri?.company_name || job.musteri?.full_name || '-'
+              const customerName = job.musteri?.company_name || '-'
               const overdue = isOverdue(job)
               const teslim = job.teslim_tarihi
                 ? new Date(job.teslim_tarihi).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' })
@@ -232,8 +266,16 @@ export default function JobsTable({ jobs, page, onPageChange, showCustomer = tru
                   {showCustomer && (
                     <td className="max-w-[170px] truncate px-3 py-2.5 text-slate-600">{customerName}</td>
                   )}
+                  <td className="whitespace-nowrap px-3 py-2.5 text-center">
+                    <span className="rounded-md bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600">
+                      {(isEN ? JOB_TYPE_LABELS[job.is_tipi || 'baski_cilt']?.en : JOB_TYPE_LABELS[job.is_tipi || 'baski_cilt']?.tr) || '-'}
+                    </span>
+                  </td>
                   <td className="whitespace-nowrap px-4 py-2.5 text-center tabular-nums text-slate-700">
                     {formatNumber(job.adet)}
+                  </td>
+                  <td className="whitespace-nowrap px-4 py-2.5 text-center tabular-nums text-slate-700">
+                    {job.kalip_adedi != null ? formatNumber(job.kalip_adedi) : '-'}
                   </td>
                   <td className={`whitespace-nowrap px-4 py-2.5 text-center ${overdue ? 'font-semibold text-red-600' : 'text-slate-600'}`}>
                     {teslim}
@@ -243,7 +285,7 @@ export default function JobsTable({ jobs, page, onPageChange, showCustomer = tru
                       {job.fiyat != null ? formatPrice(job.fiyat) : '-'}
                     </td>
                   )}
-                  {STEP_DEFS.map((def) => {
+                  {visibleStepDefs.map((def) => {
                     const step = steps.find((s) => s.step_name === def.name)
                     const done = step?.durum === 'tamamlandi'
                     return (

@@ -6,6 +6,9 @@ import { useLanguage } from '../../context/LanguageContext'
 import { formatNumber } from '../../lib/formatters'
 import DashboardLayout from '../../components/dashboard/DashboardLayout'
 
+const ALLOWED_TYPES = ['application/pdf', 'image/png', 'image/jpeg']
+const MAX_SIZE = 10 * 1024 * 1024 // 10MB
+
 export default function DepoHareketPage() {
   const { isAdmin } = useAuth()
   const { isEN } = useLanguage()
@@ -28,6 +31,15 @@ export default function DepoHareketPage() {
   const [movements, setMovements] = useState([])
   const [cariName, setCariName] = useState('')
   const [loading, setLoading] = useState(true)
+
+  // Edit modal state
+  const [editingMove, setEditingMove] = useState(null) // { ...movement, direction }
+  const [editForm, setEditForm] = useState({})
+  const [editSaving, setEditSaving] = useState(false)
+  const [editIrsaliyeFile, setEditIrsaliyeFile] = useState(null)
+  const [editFileError, setEditFileError] = useState('')
+  const [paperTypes, setPaperTypes] = useState([])
+  const [paperGrammages, setPaperGrammages] = useState([])
 
   const updateParams = useCallback((key, value) => {
     setSearchParams((prev) => {
@@ -53,10 +65,12 @@ export default function DepoHareketPage() {
         exitsQuery = exitsQuery.eq('paper_type_name', cins).eq('grammage', grammage).eq('en', en).eq('boy', boy)
       }
 
-      const [entriesRes, exitsRes, profileRes] = await Promise.all([
+      const [entriesRes, exitsRes, profileRes, typesRes, gramRes] = await Promise.all([
         entriesQuery.order('created_at', { ascending: false }),
         exitsQuery.order('created_at', { ascending: false }),
         supabase.from('profiles').select('full_name, company_name').eq('id', musteriId).single(),
+        supabase.from('paper_types').select('*').order('name'),
+        supabase.from('paper_grammages').select('*').order('value'),
       ])
 
       const entryList = (entriesRes.data || []).map((e) => ({ ...e, direction: 'entry' }))
@@ -64,7 +78,9 @@ export default function DepoHareketPage() {
       const all = [...entryList, ...exitList].sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
 
       setMovements(all)
-      setCariName(profileRes.data?.company_name || profileRes.data?.full_name || '-')
+      setCariName(profileRes.data?.company_name || '-')
+      setPaperTypes(typesRes.data || [])
+      setPaperGrammages(gramRes.data || [])
       setLoading(false)
     }
 
@@ -72,9 +88,125 @@ export default function DepoHareketPage() {
   }, [musteriId, cins, grammage, en, boy, navigate])
 
   const handleDelete = async (id, direction) => {
+    if (!window.confirm(isEN ? 'Are you sure you want to delete this movement?' : 'Bu hareketi silmek istediğinize emin misiniz?')) return
     const table = direction === 'exit' ? 'paper_exits' : 'paper_entries'
     await supabase.from(table).delete().eq('id', id)
     setMovements((prev) => prev.filter((m) => !(m.id === id && m.direction === direction)))
+  }
+
+  // --- Düzenleme fonksiyonları ---
+  const handleStartEdit = (m) => {
+    setEditingMove(m)
+    setEditForm({
+      paper_type_id: m.paper_type_id || '',
+      paper_type_name: m.paper_type_name || '',
+      grammage: String(m.grammage || ''),
+      en: String(m.en || ''),
+      boy: String(m.boy || ''),
+      tabaka: String(m.tabaka || ''),
+      notes: m.notes || '',
+      is_emri_no: m.is_emri_no || '',
+    })
+    setEditIrsaliyeFile(null)
+    setEditFileError('')
+  }
+
+  const handleEditFileChange = (e) => {
+    const selected = e.target.files?.[0]
+    if (!selected) return
+    if (!ALLOWED_TYPES.includes(selected.type)) {
+      setEditFileError(isEN ? 'Only PDF, PNG, JPG allowed.' : 'Sadece PDF, PNG, JPG yüklenebilir.')
+      return
+    }
+    if (selected.size > MAX_SIZE) {
+      setEditFileError(isEN ? 'Max 10MB.' : 'Maksimum 10MB.')
+      return
+    }
+    setEditFileError('')
+    setEditIrsaliyeFile(selected)
+  }
+
+  const editCalculatedKg = (() => {
+    const w = parseInt(editForm.en, 10) || 0
+    const h = parseInt(editForm.boy, 10) || 0
+    const gr = parseInt(editForm.grammage, 10) || 0
+    const tb = parseInt(editForm.tabaka, 10) || 0
+    if (w && h && gr && tb) return (w * h * gr * tb) / 10000
+    return 0
+  })()
+
+  const handleUpdateMove = async (e) => {
+    e.preventDefault()
+    if (!editingMove || !editForm.grammage || !editForm.en || !editForm.boy || !editForm.tabaka) return
+
+    setEditSaving(true)
+    const isEntry = editingMove.direction === 'entry'
+    const table = isEntry ? 'paper_entries' : 'paper_exits'
+    const selectedType = paperTypes.find((t) => t.id === editForm.paper_type_id)
+
+    let irsaliyePath = editingMove.irsaliye_path || null
+    let irsaliyeOriginalName = editingMove.irsaliye_original_name || null
+
+    // Yeni irsaliye yüklendiyse (sadece giriş)
+    if (isEntry && editIrsaliyeFile) {
+      const fileExt = editIrsaliyeFile.name.split('.').pop()
+      const safeName = `${selectedType?.name || 'paper'}-${editForm.grammage}gr`.replace(/[^a-zA-Z0-9_-]/g, '_')
+      const newPath = `paper-entries/${musteriId}/${safeName}_${Date.now()}.${fileExt}`
+
+      const { error: uploadError } = await supabase.storage
+        .from('irsaliyeler')
+        .upload(newPath, editIrsaliyeFile)
+
+      if (uploadError) {
+        setEditFileError(isEN ? `Upload failed: ${uploadError.message}` : `Yükleme başarısız: ${uploadError.message}`)
+        setEditSaving(false)
+        return
+      }
+
+      if (editingMove.irsaliye_path) {
+        await supabase.storage.from('irsaliyeler').remove([editingMove.irsaliye_path])
+      }
+
+      irsaliyePath = newPath
+      irsaliyeOriginalName = editIrsaliyeFile.name
+    }
+
+    const updateData = {
+      paper_type_id: editForm.paper_type_id || null,
+      paper_type_name: selectedType?.name || editForm.paper_type_name || '',
+      grammage: parseInt(editForm.grammage, 10),
+      en: parseInt(editForm.en, 10),
+      boy: parseInt(editForm.boy, 10),
+      tabaka: parseInt(editForm.tabaka, 10),
+      kg: editCalculatedKg,
+      notes: editForm.notes.trim() || null,
+    }
+
+    if (isEntry) {
+      updateData.irsaliye_path = irsaliyePath
+      updateData.irsaliye_original_name = irsaliyeOriginalName
+    } else {
+      updateData.is_emri_no = editForm.is_emri_no.trim() || null
+    }
+
+    const { error } = await supabase.from(table).update(updateData).eq('id', editingMove.id)
+
+    if (error) {
+      console.error('Update error:', error)
+      setEditSaving(false)
+      return
+    }
+
+    // State güncelle
+    setMovements((prev) =>
+      prev.map((m) =>
+        m.id === editingMove.id && m.direction === editingMove.direction
+          ? { ...m, ...updateData, direction: m.direction }
+          : m
+      )
+    )
+    setEditingMove(null)
+    setEditSaving(false)
   }
 
   // Unique filter values (customer mode)
@@ -120,7 +252,7 @@ export default function DepoHareketPage() {
     return result.reverse()
   })()
 
-  const colCount = (isPaperMode ? 8 : 10) + (isAdmin ? 1 : 0)
+  const colCount = (isPaperMode ? 9 : 11) + (isAdmin ? 1 : 0)
 
   if (loading) {
     return (
@@ -260,7 +392,8 @@ export default function DepoHareketPage() {
                     <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">{isEN ? 'Balance' : 'Bakiye'}</th>
                   )}
                   <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">{isEN ? 'Notes' : 'Not'}</th>
-                  {isAdmin && <th className="px-4 py-3 w-10" />}
+                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500">{isEN ? 'Waybill' : 'İrsaliye'}</th>
+                  {isAdmin && <th className="px-4 py-3 w-20" />}
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -305,11 +438,35 @@ export default function DepoHareketPage() {
                             </td>
                           )}
                           <td className="px-4 py-3 text-xs text-slate-500 max-w-[160px] truncate">{m.notes || '\u2014'}</td>
+                          <td className="px-4 py-3">
+                            {m.direction === 'entry' && m.irsaliye_path ? (
+                              <button
+                                type="button"
+                                onClick={async () => {
+                                  const w = window.open('', '_blank')
+                                  const { data } = await supabase.storage.from('irsaliyeler').createSignedUrl(m.irsaliye_path, 3600)
+                                  if (data?.signedUrl) w.location = data.signedUrl
+                                  else w.close()
+                                }}
+                                className="inline-flex items-center gap-1 rounded-lg bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700 transition hover:bg-blue-100"
+                              >
+                                <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                                {isEN ? 'View' : 'Gör'}
+                              </button>
+                            ) : (
+                              <span className="text-xs text-slate-300">{'\u2014'}</span>
+                            )}
+                          </td>
                           {isAdmin && (
                             <td className="px-4 py-3">
-                              <button type="button" onClick={() => handleDelete(m.id, m.direction)} className="rounded-lg p-1 text-slate-400 transition hover:bg-red-50 hover:text-red-500">
-                                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
-                              </button>
+                              <div className="flex items-center gap-1">
+                                <button type="button" onClick={() => handleStartEdit(m)} className="rounded-lg p-1 text-slate-400 transition hover:bg-blue-50 hover:text-blue-500" title={isEN ? 'Edit' : 'Düzenle'}>
+                                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" /></svg>
+                                </button>
+                                <button type="button" onClick={() => handleDelete(m.id, m.direction)} className="rounded-lg p-1 text-slate-400 transition hover:bg-red-50 hover:text-red-500" title={isEN ? 'Delete' : 'Sil'}>
+                                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                                </button>
+                              </div>
                             </td>
                           )}
                         </tr>
@@ -321,7 +478,7 @@ export default function DepoHareketPage() {
                       <td className={`px-4 py-3 text-right tabular-nums ${netTabaka < 0 ? 'text-red-600' : 'text-slate-900'}`}>{formatNumber(netTabaka)}</td>
                       <td className={`px-4 py-3 text-right tabular-nums ${netKg < 0 ? 'text-red-600' : 'text-slate-900'}`}>{formatNumber(Math.round(netKg * 100) / 100)}</td>
                       {isPaperMode && <td className={`px-4 py-3 text-right tabular-nums ${netTabaka < 0 ? 'text-red-600' : 'text-slate-900'}`}>{formatNumber(netTabaka)}</td>}
-                      <td />
+                      <td /><td />
                       {isAdmin && <td />}
                     </tr>
                   </>
@@ -331,6 +488,101 @@ export default function DepoHareketPage() {
           </div>
         </div>
       </div>
+
+      {/* Düzenleme Modalı */}
+      {editingMove && isAdmin && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={() => setEditingMove(null)}>
+          <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl" onClick={(ev) => ev.stopPropagation()}>
+            <div className="mb-5 flex items-center justify-between">
+              <h2 className="text-base font-bold text-slate-900">
+                {editingMove.direction === 'entry'
+                  ? (isEN ? 'Edit Paper Entry' : 'Kağıt Girişi Düzenle')
+                  : (isEN ? 'Edit Paper Exit' : 'Kağıt Çıkışı Düzenle')
+                }
+              </h2>
+              <button type="button" onClick={() => setEditingMove(null)} className="rounded-lg p-1 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600">
+                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+              </button>
+            </div>
+            <form onSubmit={handleUpdateMove}>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-slate-500">{isEN ? 'Paper Type' : 'Kağıt Cinsi'}</label>
+                  <select value={editForm.paper_type_id} onChange={(e) => setEditForm({ ...editForm, paper_type_id: e.target.value })} required className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm outline-none focus:border-slate-400">
+                    <option value="">{isEN ? 'Select...' : 'Seçin...'}</option>
+                    {paperTypes.map((t) => (<option key={t.id} value={t.id}>{t.name}</option>))}
+                  </select>
+                </div>
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-slate-500">{isEN ? 'Grammage' : 'Gramaj'}</label>
+                  <select value={editForm.grammage} onChange={(e) => setEditForm({ ...editForm, grammage: e.target.value })} required className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm outline-none focus:border-slate-400">
+                    <option value="">{isEN ? 'Select...' : 'Seçin...'}</option>
+                    {paperGrammages.map((g) => (<option key={g.id} value={g.value}>{g.value}</option>))}
+                  </select>
+                </div>
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-slate-500">{isEN ? 'Size (cm)' : 'Ebat (cm)'}</label>
+                  <div className="flex items-center gap-2">
+                    <input type="number" value={editForm.en} onChange={(e) => setEditForm({ ...editForm, en: e.target.value })} placeholder={isEN ? 'W' : 'En'} min="1" required className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-slate-400" />
+                    <span className="text-sm font-bold text-slate-400">x</span>
+                    <input type="number" value={editForm.boy} onChange={(e) => setEditForm({ ...editForm, boy: e.target.value })} placeholder={isEN ? 'H' : 'Boy'} min="1" required className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-slate-400" />
+                  </div>
+                </div>
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-slate-500">{isEN ? 'Sheets' : 'Tabaka'}</label>
+                  <input type="number" value={editForm.tabaka} onChange={(e) => setEditForm({ ...editForm, tabaka: e.target.value })} min="1" required className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm outline-none focus:border-slate-400" />
+                </div>
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-slate-500">{isEN ? 'Weight (KG)' : 'Kağıt KG'}</label>
+                  <div className="flex items-center rounded-xl border border-slate-100 bg-slate-50 px-4 py-2.5">
+                    <span className={`text-sm font-bold ${editCalculatedKg > 0 ? 'text-slate-900' : 'text-slate-300'}`}>{editCalculatedKg > 0 ? formatNumber(Math.round(editCalculatedKg * 100) / 100) : '\u2014'}</span>
+                    <span className="ml-1 text-xs text-slate-400">kg</span>
+                  </div>
+                </div>
+                {editingMove.direction === 'exit' && (
+                  <div>
+                    <label className="mb-1 block text-xs font-medium text-slate-500">{isEN ? 'Job Order No' : 'İş Emri No'}</label>
+                    <input type="text" value={editForm.is_emri_no} onChange={(e) => setEditForm({ ...editForm, is_emri_no: e.target.value })} className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm outline-none focus:border-slate-400" />
+                  </div>
+                )}
+                <div className="sm:col-span-2">
+                  <label className="mb-1 block text-xs font-medium text-slate-500">{isEN ? 'Notes' : 'Notlar'}</label>
+                  <input type="text" value={editForm.notes} onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })} placeholder={isEN ? 'Optional...' : 'İsteğe bağlı...'} className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm outline-none focus:border-slate-400" />
+                </div>
+                {editingMove.direction === 'entry' && (
+                  <div className="sm:col-span-2">
+                    <label className="mb-1 block text-xs font-medium text-slate-500">{isEN ? 'Waybill' : 'İrsaliye'}</label>
+                    {editingMove.irsaliye_path && !editIrsaliyeFile && (
+                      <div className="mb-2 flex items-center gap-2 rounded-xl bg-blue-50 px-3 py-2 text-xs text-blue-700">
+                        <svg className="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                        <span className="truncate font-medium">{editingMove.irsaliye_original_name || (isEN ? 'Uploaded file' : 'Yüklü dosya')}</span>
+                      </div>
+                    )}
+                    <label className="flex cursor-pointer items-center gap-3 rounded-xl border-2 border-dashed border-slate-200 px-4 py-3 transition hover:border-slate-400">
+                      <svg className="h-5 w-5 flex-shrink-0 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                      </svg>
+                      <span className="truncate text-sm text-slate-600">
+                        {editIrsaliyeFile ? editIrsaliyeFile.name : (isEN ? 'Choose new file (optional)...' : 'Yeni dosya seçin (isteğe bağlı)...')}
+                      </span>
+                      <input type="file" accept=".pdf,.png,.jpg,.jpeg" onChange={handleEditFileChange} className="hidden" />
+                    </label>
+                    {editFileError && <p className="mt-1 text-xs font-medium text-red-500">{editFileError}</p>}
+                  </div>
+                )}
+              </div>
+              <div className="mt-5 flex gap-3">
+                <button type="submit" disabled={editSaving || editCalculatedKg <= 0} className="flex-1 rounded-xl bg-slate-900 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:opacity-50 sm:flex-none sm:px-8">
+                  {editSaving ? '...' : isEN ? 'Save Changes' : 'Değişiklikleri Kaydet'}
+                </button>
+                <button type="button" onClick={() => setEditingMove(null)} className="rounded-xl border border-slate-200 px-6 py-3 text-sm font-medium text-slate-600 transition hover:bg-slate-50">
+                  {isEN ? 'Cancel' : 'İptal'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </DashboardLayout>
   )
 }

@@ -67,6 +67,14 @@ export function AuthProvider({ children }) {
           fetchProfile(s.user.id).then((p) => {
             if (mounted) setProfile(p)
           })
+          // Giriş yapıldığında last_login güncelle
+          if (event === 'SIGNED_IN') {
+            supabase
+              .from('profiles')
+              .update({ last_login: new Date().toISOString() })
+              .eq('id', s.user.id)
+              .then(() => {})
+          }
         } else {
           setProfile(null)
         }

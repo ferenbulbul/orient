@@ -18,6 +18,7 @@ const NAV_ITEMS = {
   admin: [
     { id: 'jobs', path: '/panel', label: { tr: 'Tüm İşler', en: 'All Jobs' }, icon: 'clipboard' },
     { id: 'reports', path: '/panel/raporlar', label: { tr: 'Raporlar', en: 'Reports' }, icon: 'chart' },
+    { id: 'paper-reports', path: '/panel/kagit-rapor', label: { tr: 'Kağıt Çıkışı Raporu', en: 'Paper Exit Report' }, icon: 'chart' },
     { id: 'new-job', path: '/panel/yeni-is', label: { tr: 'Yeni İş', en: 'New Job' }, icon: 'plus' },
     { id: 'paper', path: '/panel/kagit', label: { tr: 'Kağıt', en: 'Paper' }, icon: 'paper' },
     { id: 'depo-stok', path: '/panel/depo-stok', label: { tr: 'Depo Stok', en: 'Warehouse Stock' }, icon: 'warehouse' },
@@ -26,6 +27,7 @@ const NAV_ITEMS = {
   moderator: [
     { id: 'jobs', path: '/panel', label: { tr: 'Tüm İşler', en: 'All Jobs' }, icon: 'clipboard' },
     { id: 'reports', path: '/panel/raporlar', label: { tr: 'Raporlar', en: 'Reports' }, icon: 'chart' },
+    { id: 'paper-reports', path: '/panel/kagit-rapor', label: { tr: 'Kağıt Çıkışı Raporu', en: 'Paper Exit Report' }, icon: 'chart' },
     { id: 'paper', path: '/panel/kagit', label: { tr: 'Kağıt', en: 'Paper' }, icon: 'paper' },
     { id: 'depo-stok', path: '/panel/depo-stok', label: { tr: 'Depo Stok', en: 'Warehouse Stock' }, icon: 'warehouse' },
   ],

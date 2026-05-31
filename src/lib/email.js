@@ -44,23 +44,12 @@ export const sendWelcomeEmail = ({ email, name, password }) => {
   return sendEmail('welcome', { email, name, password })
 }
 
-export const sendStepEmail = ({ email, name, jobNo, jobName, stepName, phaseName, progress }) => {
-  return sendEmail('step_update', {
-    email,
+export const sendBindingCompletedEmail = ({ emails, name, jobNo, jobName }) => {
+  return sendEmail('binding_completed', {
+    emails,
     name,
     job_no: jobNo,
     job_name: jobName,
-    step_name: stepName,
-    phase_name: phaseName,
-    progress,
   })
 }
 
-export const sendJobCompletedEmail = ({ email, name, jobNo, jobName }) => {
-  return sendEmail('job_completed', {
-    email,
-    name,
-    job_no: jobNo,
-    job_name: jobName,
-  })
-}

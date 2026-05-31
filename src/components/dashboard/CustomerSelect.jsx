@@ -157,7 +157,7 @@ export default function CustomerSelect({ value, onChange }) {
         <div className="relative flex-1" ref={wrapperRef}>
           <input
             type="text"
-            value={isOpen ? search : (selectedCustomer ? `${selectedCustomer.full_name}${selectedCustomer.company_name ? ` (${selectedCustomer.company_name})` : ''}` : '')}
+            value={isOpen ? search : (selectedCustomer ? (selectedCustomer.company_name || '') : '')}
             onChange={(e) => {
               setSearch(e.target.value)
               if (!isOpen) setIsOpen(true)
@@ -201,10 +201,7 @@ export default function CustomerSelect({ value, onChange }) {
                     }`}
                   >
                     <span>
-                      {c.full_name}
-                      {c.company_name ? (
-                        <span className="ml-1.5 text-xs text-slate-400">({c.company_name})</span>
-                      ) : null}
+                      {c.company_name || '-'}
                     </span>
                     {c.id === value && (
                       <svg className="h-4 w-4 text-slate-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

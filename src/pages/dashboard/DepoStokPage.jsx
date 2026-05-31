@@ -101,7 +101,7 @@ export default function DepoStokPage() {
         groups[key] = {
           key,
           musteri_id: e.musteri_id,
-          cari: e.musteri?.company_name || e.musteri?.full_name || '-',
+          cari: e.musteri?.company_name || '-',
           type: e.paper_type_name,
           grammage: e.grammage,
           en: e.en,
@@ -124,7 +124,7 @@ export default function DepoStokPage() {
         groups[key] = {
           key,
           musteri_id: e.musteri_id,
-          cari: e.musteri?.company_name || e.musteri?.full_name || '-',
+          cari: e.musteri?.company_name || '-',
           type: e.paper_type_name,
           grammage: e.grammage,
           en: e.en,
@@ -168,7 +168,7 @@ export default function DepoStokPage() {
     entries.forEach((e) => {
       const id = e.musteri_id
       if (!groups[id]) {
-        groups[id] = { id, name: e.musteri?.company_name || e.musteri?.full_name || '-', totalTabaka: 0, totalKg: 0, entryCount: 0, lastActivity: e.created_at }
+        groups[id] = { id, name: e.musteri?.company_name || '-', totalTabaka: 0, totalKg: 0, entryCount: 0, lastActivity: e.created_at }
       }
       groups[id].totalTabaka += e.tabaka
       groups[id].totalKg += Number(e.kg)
@@ -178,7 +178,7 @@ export default function DepoStokPage() {
     exits.forEach((e) => {
       const id = e.musteri_id
       if (!groups[id]) {
-        groups[id] = { id, name: e.musteri?.company_name || e.musteri?.full_name || '-', totalTabaka: 0, totalKg: 0, entryCount: 0, lastActivity: e.created_at }
+        groups[id] = { id, name: e.musteri?.company_name || '-', totalTabaka: 0, totalKg: 0, entryCount: 0, lastActivity: e.created_at }
       }
       groups[id].totalTabaka -= e.tabaka
       groups[id].totalKg -= Number(e.kg)

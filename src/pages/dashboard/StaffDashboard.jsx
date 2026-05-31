@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { useLanguage } from '../../context/LanguageContext'
@@ -61,11 +61,13 @@ export default function StaffDashboard() {
     return () => clearTimeout(t)
   }, [search])
 
-  // Fetch active jobs + completed count
+  const [allCustomers, setAllCustomers] = useState([])
+
+  // Fetch active jobs + completed count + all customers
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [jobsRes, countRes] = await Promise.all([
+        const [jobsRes, countRes, custRes] = await Promise.all([
           supabase
             .from('jobs')
             .select('*, job_steps(*), musteri:profiles!jobs_musteri_id_fkey(full_name, company_name)')
@@ -75,9 +77,15 @@ export default function StaffDashboard() {
             .from('jobs')
             .select('*', { count: 'exact', head: true })
             .eq('durum', 'tamamlandi'),
+          supabase
+            .from('profiles')
+            .select('id, full_name, company_name')
+            .eq('role', 'musteri')
+            .order('full_name'),
         ])
         if (!jobsRes.error) setJobs(jobsRes.data || [])
         setCompletedCount(countRes.count || 0)
+        setAllCustomers(custRes.data || [])
       } catch (err) {
         console.error('Jobs fetch error:', err)
       } finally {
@@ -128,19 +136,57 @@ export default function StaffDashboard() {
     fetchCompleted()
   }, [durumFilter, debouncedSearch, musteriFilter, page])
 
-  const customers = useMemo(() => {
-    const map = {}
-    jobs.forEach((j) => {
-      const id = j.musteri_id
-      if (!id || map[id]) return
-      map[id] = { id, name: j.musteri?.company_name || j.musteri?.full_name || '-' }
-    })
-    return Object.values(map).sort((a, b) => a.name.localeCompare(b.name, 'tr'))
-  }, [jobs])
+  // Fetch ALL jobs for a customer (server-side with pagination)
+  const [customerJobs, setCustomerJobs] = useState([])
+  const [customerTotal, setCustomerTotal] = useState(0)
+  const [customerLoading, setCustomerLoading] = useState(false)
 
-  const isCompletedMode = durumFilter === 'tamamlandi'
+  useEffect(() => {
+    if (!musteriFilter) {
+      setCustomerJobs([])
+      setCustomerTotal(0)
+      return
+    }
 
-  const filtered = isCompletedMode
+    const fetchCustomerJobs = async () => {
+      setCustomerLoading(true)
+      try {
+        let query = supabase
+          .from('jobs')
+          .select('*, job_steps(*), musteri:profiles!jobs_musteri_id_fkey(full_name, company_name)', { count: 'exact' })
+          .eq('musteri_id', musteriFilter)
+          .order('created_at', { ascending: false })
+
+        if (debouncedSearch) {
+          query = query.or(`is_emri_no.ilike.%${debouncedSearch}%,is_adi.ilike.%${debouncedSearch}%`)
+        }
+
+        const from = (page - 1) * 50
+        query = query.range(from, from + 49)
+
+        const { data, count, error } = await query
+        if (!error) {
+          setCustomerJobs(data || [])
+          setCustomerTotal(count || 0)
+        }
+      } catch (err) {
+        console.error('Customer jobs fetch error:', err)
+      } finally {
+        setCustomerLoading(false)
+      }
+    }
+    fetchCustomerJobs()
+  }, [musteriFilter, debouncedSearch, page])
+
+  const customers = allCustomers.map((c) => ({
+    id: c.id,
+    name: c.company_name || '-',
+  }))
+
+  const isCustomerMode = !!musteriFilter
+  const isCompletedMode = !isCustomerMode && durumFilter === 'tamamlandi'
+
+  const filtered = (isCompletedMode || isCustomerMode)
     ? []
     : jobs
         .filter((job) => {
@@ -154,16 +200,14 @@ export default function StaffDashboard() {
             if (!match) return false
           }
 
-          if (musteriFilter && job.musteri_id !== musteriFilter) return false
-
           if (durumFilter === '__overdue') return isOverdue(job)
           if (durumFilter) return job.durum === durumFilter
           return true
         })
         .sort((a, b) => (DURUM_ORDER[a.durum] ?? 99) - (DURUM_ORDER[b.durum] ?? 99))
 
-  const displayJobs = isCompletedMode ? completedJobs : filtered
-  const displayLoading = isCompletedMode ? completedLoading : loading
+  const displayJobs = isCustomerMode ? customerJobs : isCompletedMode ? completedJobs : filtered
+  const displayLoading = isCustomerMode ? customerLoading : isCompletedMode ? completedLoading : loading
 
   const stats = {
     total: jobs.length,
@@ -214,55 +258,98 @@ export default function StaffDashboard() {
           </button>
         </div>
 
-        <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-7">
-          {statItems.map((stat) => {
-            const isActive = durumFilter === stat.filter
-            return (
+        {isCustomerMode ? (
+          /* Customer banner */
+          <div className="mb-6 rounded-2xl border border-indigo-100 bg-gradient-to-r from-indigo-50 to-blue-50 p-5">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-600 text-lg font-bold text-white shadow-lg shadow-indigo-200">
+                  {customers.find((c) => c.id === musteriFilter)?.name?.charAt(0)?.toUpperCase() || '?'}
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-slate-900">
+                    {customers.find((c) => c.id === musteriFilter)?.name || '-'}
+                  </h2>
+                  <p className="text-sm text-slate-500">
+                    {customerTotal} {isEN ? 'total jobs' : 'toplam iş'}
+                  </p>
+                </div>
+              </div>
               <button
-                key={stat.label}
                 type="button"
-                onClick={() => handleStatClick(stat.filter)}
-                className={`rounded-2xl px-4 py-3 text-center transition ${stat.color} ${
-                  isActive ? `ring-2 ${stat.activeRing} scale-[1.03]` : 'hover:scale-[1.02]'
-                }`}
+                onClick={() => updateParams({ musteri: '', q: '', sayfa: '' })}
+                className="inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm ring-1 ring-slate-200 transition hover:bg-slate-50"
               >
-                <p className="text-2xl font-bold">{formatNumber(stat.value)}</p>
-                <p className="text-xs font-medium opacity-80">{stat.label}</p>
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+                {isEN ? 'Clear' : 'Temizle'}
               </button>
-            )
-          })}
-        </div>
+            </div>
+            {/* Search within customer */}
+            <div className="mt-4">
+              <input
+                type="text"
+                placeholder={isEN ? 'Search within customer jobs...' : 'Müşteri işlerinde ara...'}
+                value={search}
+                onChange={(e) => updateParams({ q: e.target.value, sayfa: '' })}
+                className="w-full rounded-xl border border-indigo-100 bg-white px-4 py-2.5 text-sm outline-none transition focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100"
+              />
+            </div>
+          </div>
+        ) : (
+          <>
+            <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-7">
+              {statItems.map((stat) => {
+                const isActive = durumFilter === stat.filter
+                return (
+                  <button
+                    key={stat.label}
+                    type="button"
+                    onClick={() => handleStatClick(stat.filter)}
+                    className={`rounded-2xl px-4 py-3 text-center transition ${stat.color} ${
+                      isActive ? `ring-2 ${stat.activeRing} scale-[1.03]` : 'hover:scale-[1.02]'
+                    }`}
+                  >
+                    <p className="text-2xl font-bold">{formatNumber(stat.value)}</p>
+                    <p className="text-xs font-medium opacity-80">{stat.label}</p>
+                  </button>
+                )
+              })}
+            </div>
 
-        <div className="mb-6 flex flex-col gap-3 sm:flex-row">
-          <input
-            type="text"
-            placeholder={isEN ? 'Search job number or name...' : 'İş emri no veya adı ara...'}
-            value={search}
-            onChange={(e) => updateParams({ q: e.target.value, sayfa: '' })}
-            className="flex-1 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-slate-400 focus:ring-2 focus:ring-slate-200"
-          />
-          <select
-            value={musteriFilter}
-            onChange={(e) => updateParams({ musteri: e.target.value, sayfa: '' })}
-            className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-slate-400 focus:ring-2 focus:ring-slate-200"
-          >
-            <option value="">{isEN ? 'All Customers' : 'Tüm Müşteriler'}</option>
-            {customers.map((c) => (
-              <option key={c.id} value={c.id}>{c.name}</option>
-            ))}
-          </select>
-          <select
-            value={durumFilter}
-            onChange={(e) => updateParams({ durum: e.target.value, sayfa: '' })}
-            className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-slate-400 focus:ring-2 focus:ring-slate-200"
-          >
-            {DURUM_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {isEN ? opt.label.en : opt.label.tr}
-              </option>
-            ))}
-          </select>
-        </div>
+            <div className="mb-6 flex flex-col gap-3 sm:flex-row">
+              <input
+                type="text"
+                placeholder={isEN ? 'Search job number or name...' : 'İş emri no veya adı ara...'}
+                value={search}
+                onChange={(e) => updateParams({ q: e.target.value, sayfa: '' })}
+                className="flex-1 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-slate-400 focus:ring-2 focus:ring-slate-200"
+              />
+              <select
+                value={musteriFilter}
+                onChange={(e) => updateParams({ musteri: e.target.value, durum: '', sayfa: '' })}
+                className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-slate-400 focus:ring-2 focus:ring-slate-200"
+              >
+                <option value="">{isEN ? 'All Customers' : 'Tüm Müşteriler'}</option>
+                {customers.map((c) => (
+                  <option key={c.id} value={c.id}>{c.name}</option>
+                ))}
+              </select>
+              <select
+                value={durumFilter}
+                onChange={(e) => updateParams({ durum: e.target.value, sayfa: '' })}
+                className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-slate-400 focus:ring-2 focus:ring-slate-200"
+              >
+                {DURUM_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {isEN ? opt.label.en : opt.label.tr}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </>
+        )}
 
         {displayLoading ? (
           <div className="flex justify-center py-20">
@@ -276,7 +363,7 @@ export default function StaffDashboard() {
             showCustomer
             showPrice={false}
             onJobClick={(id) => navigate(`/panel/is/${id}`)}
-            totalCount={isCompletedMode ? completedTotal : undefined}
+            totalCount={isCustomerMode ? customerTotal : isCompletedMode ? completedTotal : undefined}
           />
         )}
       </div>

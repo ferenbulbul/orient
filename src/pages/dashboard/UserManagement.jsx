@@ -124,6 +124,12 @@ export default function UserManagement() {
 
   // Düzenleme başlat
   const startEdit = (user) => {
+    let notifEmails = []
+    try {
+      const parsed = user.notification_emails ? JSON.parse(user.notification_emails) : []
+      if (Array.isArray(parsed) && parsed.length > 0) notifEmails = parsed
+    } catch { /* ignore */ }
+
     setEditingId(user.id)
     setEditForm({
       full_name: user.full_name || '',
@@ -131,6 +137,7 @@ export default function UserManagement() {
       company_name: user.company_name || '',
       phone: rawToDisplay(user.phone),
       role: user.role,
+      notification_emails: notifEmails,
     })
   }
 
@@ -157,6 +164,14 @@ export default function UserManagement() {
       }
     }
 
+    // Bildirim e-postaları: boş olanları filtrele
+    const filteredNotifEmails = (editForm.notification_emails || [])
+      .map((e) => e.trim())
+      .filter(Boolean)
+    const notifEmailsValue = filteredNotifEmails.length > 0
+      ? JSON.stringify(filteredNotifEmails)
+      : null
+
     const { error } = await supabase
       .from('profiles')
       .update({
@@ -164,6 +179,7 @@ export default function UserManagement() {
         company_name: editForm.company_name.trim() || null,
         phone: rawPhone || null,
         role: editForm.role,
+        notification_emails: notifEmailsValue,
       })
       .eq('id', userId)
 
@@ -178,6 +194,7 @@ export default function UserManagement() {
                 company_name: editForm.company_name.trim(),
                 phone: rawPhone,
                 role: editForm.role,
+                notification_emails: notifEmailsValue,
               }
             : u
         )
@@ -451,6 +468,79 @@ export default function UserManagement() {
                           <option value="admin">Admin</option>
                         </select>
                       </div>
+                      {/* Bildirim E-postaları — sadece müşteri rolü */}
+                      {editForm.role === 'musteri' && (
+                        <div className="sm:col-span-2">
+                          <label className="mb-1 block text-xs font-medium text-slate-500">
+                            {isEN ? 'Notification Emails (max 5)' : 'Bildirim E-postaları (maks 5)'}
+                          </label>
+                          <div className="flex flex-col gap-2">
+                            {/* 1. sıra: kayıt e-postası — sabit, değiştirilemez */}
+                            <div className="flex items-center gap-2">
+                              <input
+                                type="email"
+                                value={editForm.email}
+                                disabled
+                                className="flex-1 rounded-lg border border-slate-200 bg-slate-100 px-3 py-2 text-sm text-slate-500 cursor-not-allowed"
+                              />
+                              <span className="rounded-md bg-slate-200 px-2 py-1 text-xs text-slate-500">
+                                {isEN ? 'Login' : 'Giriş'}
+                              </span>
+                            </div>
+                            {/* Ek bildirim e-postaları (max 4) */}
+                            {(editForm.notification_emails || []).map((ne, idx) => (
+                              <div key={idx} className="flex items-center gap-2">
+                                <input
+                                  type="email"
+                                  value={ne}
+                                  onChange={(e) => {
+                                    const arr = [...(editForm.notification_emails || [])]
+                                    arr[idx] = e.target.value
+                                    setEditForm((p) => ({ ...p, notification_emails: arr }))
+                                  }}
+                                  placeholder={`${isEN ? 'Email' : 'E-posta'} ${idx + 2}`}
+                                  className="flex-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-slate-400"
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const arr = [...(editForm.notification_emails || [])]
+                                    arr.splice(idx, 1)
+                                    setEditForm((p) => ({ ...p, notification_emails: arr }))
+                                  }}
+                                  className="rounded-lg p-1.5 text-slate-400 transition hover:bg-red-50 hover:text-red-500"
+                                >
+                                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                  </svg>
+                                </button>
+                              </div>
+                            ))}
+                            {(editForm.notification_emails || []).length < 4 && (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const arr = [...(editForm.notification_emails || [])]
+                                  arr.push('')
+                                  setEditForm((p) => ({ ...p, notification_emails: arr }))
+                                }}
+                                className="flex items-center gap-1 self-start rounded-lg px-3 py-1.5 text-xs font-medium text-slate-500 transition hover:bg-slate-100 hover:text-slate-700"
+                              >
+                                <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                                </svg>
+                                {isEN ? 'Add Email' : 'E-posta Ekle'}
+                              </button>
+                            )}
+                          </div>
+                          <p className="mt-1 text-xs text-slate-400">
+                            {isEN
+                              ? 'Login email always receives notifications. Add up to 4 more.'
+                              : 'Giriş e-postasına bildirim her zaman gider. 4 tane daha ekleyebilirsiniz.'}
+                          </p>
+                        </div>
+                      )}
+
                       <div className="flex items-end gap-2 sm:col-span-2">
                         <button
                           type="button"
@@ -485,6 +575,24 @@ export default function UserManagement() {
                           {user.email && <span>{user.email}</span>}
                           {user.company_name && <span>{user.company_name}</span>}
                           {user.phone && <span>+90 {rawToDisplay(user.phone)}</span>}
+                          {user.notification_emails && (() => {
+                            try {
+                              const arr = JSON.parse(user.notification_emails)
+                              if (Array.isArray(arr) && arr.length > 0) {
+                                return (
+                                  <span className="text-blue-500" title={arr.join(', ')}>
+                                    {arr.length} {isEN ? 'notification email(s)' : 'bildirim e-postası'}
+                                  </span>
+                                )
+                              }
+                            } catch { /* ignore */ }
+                            return null
+                          })()}
+                          <span className={user.last_login ? 'text-slate-400' : 'text-slate-300'}>
+                            {user.last_login
+                              ? `${isEN ? 'Last login' : 'Son giriş'}: ${new Date(user.last_login).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}`
+                              : isEN ? 'Never logged in' : 'Hiç giriş yapmadı'}
+                          </span>
                         </div>
                       </div>
 

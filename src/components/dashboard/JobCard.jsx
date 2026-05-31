@@ -18,7 +18,7 @@ export default function JobCard({ job, showCustomer = false, showPrice = false, 
     : null
 
   const customerName =
-    job.musteri?.company_name || job.musteri?.full_name || ''
+    job.musteri?.company_name || ''
 
   return (
     <button
