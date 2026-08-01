@@ -3,15 +3,28 @@ import DashboardSidebar from './DashboardSidebar'
 
 export default function DashboardLayout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  // Masaüstünde menü amblem moduna daraltılabilir (geniş tablolar için)
+  const [collapsed, setCollapsed] = useState(
+    () => localStorage.getItem('sidebarCollapsed') === '1'
+  )
+
+  const toggleCollapsed = () => {
+    setCollapsed((c) => {
+      localStorage.setItem('sidebarCollapsed', c ? '0' : '1')
+      return !c
+    })
+  }
 
   return (
     <div className="flex min-h-screen bg-slate-50">
       <DashboardSidebar
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
+        collapsed={collapsed}
+        onToggleCollapse={toggleCollapsed}
       />
 
-      <div className="flex flex-1 flex-col">
+      <div className="flex min-w-0 flex-1 flex-col">
         {/* Mobile header */}
         <header className="flex items-center justify-between border-b border-slate-100 bg-white px-4 py-3 lg:hidden">
           <button

@@ -97,9 +97,22 @@ export default function JobsTable({ jobs, page, onPageChange, showCustomer = tru
   const [columnWidths, setColumnWidths] = useState(DEFAULT_COLUMN_WIDTHS)
   const dragStateRef = useRef({ key: null, startX: 0, startWidth: 0 })
 
-  const totalItems = totalCount ?? jobs.length
+  // En son (en yüksek) iş emri numarası üstte — numara sayısal karşılaştırılır
+  const sortedJobs = useMemo(() => {
+    const numOf = (j) => {
+      const m = String(j.is_emri_no || '').match(/\d+/)
+      return m ? parseInt(m[0], 10) : -1
+    }
+    return [...jobs].sort((a, b) => {
+      const diff = numOf(b) - numOf(a)
+      if (diff !== 0) return diff
+      return String(b.is_emri_no || '').localeCompare(String(a.is_emri_no || ''), 'tr')
+    })
+  }, [jobs])
+
+  const totalItems = totalCount ?? sortedJobs.length
   const totalPages = Math.ceil(totalItems / PER_PAGE)
-  const paginated = totalCount != null ? jobs : jobs.slice((page - 1) * PER_PAGE, page * PER_PAGE)
+  const paginated = totalCount != null ? sortedJobs : sortedJobs.slice((page - 1) * PER_PAGE, page * PER_PAGE)
 
   // Tablodaki işlerin sahip olduğu adımlara göre sütunları filtrele
   const visibleStepDefs = useMemo(() => {
@@ -113,11 +126,11 @@ export default function JobsTable({ jobs, page, onPageChange, showCustomer = tru
   const visibleStepKeys = useMemo(() => visibleStepDefs.map((s) => `step-${s.abbr}`), [visibleStepDefs])
 
   const visibleColumns = useMemo(() => {
-    const cols = ['jobNo', 'jobName']
+    const cols = ['jobNo', 'status', 'jobName']
     if (showCustomer) cols.push('customer')
     cols.push('jobType', 'qty', 'kalipAdedi', 'due')
     if (showPrice) cols.push('price')
-    cols.push(...visibleStepKeys, 'status')
+    cols.push(...visibleStepKeys)
     return cols
   }, [showCustomer, showPrice, visibleStepKeys])
 
@@ -191,6 +204,10 @@ export default function JobsTable({ jobs, page, onPageChange, showCustomer = tru
                 <span>{isEN ? 'Job No' : 'İş Emri No'}</span>
                 {renderResizeHandle('jobNo')}
               </th>
+              <th className="relative whitespace-nowrap px-3 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500" style={{ width: columnWidths.status }}>
+                <span>{isEN ? 'Status' : 'Durum'}</span>
+                {renderResizeHandle('status')}
+              </th>
               <th className="relative px-3 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500" style={{ width: columnWidths.jobName }}>
                 <span>{isEN ? 'Job Name' : 'İş Adı'}</span>
                 {renderResizeHandle('jobName')}
@@ -234,10 +251,6 @@ export default function JobsTable({ jobs, page, onPageChange, showCustomer = tru
                   {renderResizeHandle(`step-${s.abbr}`)}
                 </th>
               ))}
-              <th className="relative whitespace-nowrap px-3 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500" style={{ width: columnWidths.status }}>
-                <span>{isEN ? 'Status' : 'Durum'}</span>
-                {renderResizeHandle('status')}
-              </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
@@ -259,6 +272,9 @@ export default function JobsTable({ jobs, page, onPageChange, showCustomer = tru
                     <span className="rounded-md bg-slate-100 px-2 py-0.5 text-xs font-bold text-slate-600">
                       {job.is_emri_no}
                     </span>
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-2.5">
+                    <StatusBadge durum={job.durum} isEN={isEN} />
                   </td>
                   <td className="max-w-[220px] truncate px-3 py-2.5 font-medium text-slate-900">
                     {job.is_adi}
@@ -302,9 +318,6 @@ export default function JobsTable({ jobs, page, onPageChange, showCustomer = tru
                       </td>
                     )
                   })}
-                  <td className="px-3 py-2.5">
-                    <StatusBadge durum={job.durum} isEN={isEN} />
-                  </td>
                 </tr>
               )
             })}

@@ -22,6 +22,8 @@ const NAV_ITEMS = {
     { id: 'new-job', path: '/panel/yeni-is', label: { tr: 'Yeni İş', en: 'New Job' }, icon: 'plus' },
     { id: 'paper', path: '/panel/kagit', label: { tr: 'Kağıt', en: 'Paper' }, icon: 'paper' },
     { id: 'depo-stok', path: '/panel/depo-stok', label: { tr: 'Depo Stok', en: 'Warehouse Stock' }, icon: 'warehouse' },
+    { id: 'teklifler', path: '/panel/teklifler', label: { tr: 'Teklifler', en: 'Quotes' }, icon: 'pricetag' },
+    { id: 'katalog', path: '/panel/katalog', label: { tr: 'Teklif Kataloğu', en: 'Quote Catalog' }, icon: 'pricetag' },
     { id: 'users', path: '/panel/kullanicilar', label: { tr: 'Kullanıcılar', en: 'Users' }, icon: 'users' },
   ],
   moderator: [
@@ -30,6 +32,8 @@ const NAV_ITEMS = {
     { id: 'paper-reports', path: '/panel/kagit-rapor', label: { tr: 'Kağıt Çıkışı Raporu', en: 'Paper Exit Report' }, icon: 'chart' },
     { id: 'paper', path: '/panel/kagit', label: { tr: 'Kağıt', en: 'Paper' }, icon: 'paper' },
     { id: 'depo-stok', path: '/panel/depo-stok', label: { tr: 'Depo Stok', en: 'Warehouse Stock' }, icon: 'warehouse' },
+    { id: 'teklifler', path: '/panel/teklifler', label: { tr: 'Teklifler', en: 'Quotes' }, icon: 'pricetag' },
+    { id: 'katalog', path: '/panel/katalog', label: { tr: 'Teklif Kataloğu', en: 'Quote Catalog' }, icon: 'pricetag' },
   ],
   depocu: [
     { id: 'jobs', path: '/panel', label: { tr: 'Tüm İşler', en: 'All Jobs' }, icon: 'clipboard' },
@@ -70,6 +74,12 @@ const ICONS = {
       <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 4.5H21m-3.75 4.5H21" />
     </svg>
   ),
+  pricetag: (
+    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M6 6h.008v.008H6V6z" />
+    </svg>
+  ),
   logout: (
     <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
@@ -77,7 +87,7 @@ const ICONS = {
   ),
 }
 
-export default function DashboardSidebar({ isOpen, onClose }) {
+export default function DashboardSidebar({ isOpen, onClose, collapsed = false, onToggleCollapse }) {
   const { profile, role, signOut } = useAuth()
   const { isEN } = useLanguage()
   const location = useLocation()
@@ -126,13 +136,15 @@ export default function DashboardSidebar({ isOpen, onClose }) {
       )}
 
       <aside
-        className={`fixed left-0 top-0 z-50 flex h-full w-72 flex-col border-r border-slate-100 bg-white transition-transform duration-300 lg:static lg:translate-x-0 ${
+        className={`fixed left-0 top-0 z-50 flex h-full w-72 flex-col border-r border-slate-100 bg-white transition-all duration-300 lg:static lg:translate-x-0 ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
+        } ${collapsed ? 'lg:w-[76px]' : 'lg:w-72'}`}
       >
-        {/* Logo */}
-        <div className="flex items-center justify-between border-b border-slate-100 px-6 py-5">
-          <img src={logo} alt="Euromat Print" className="h-8 w-auto" />
+        {/* Logo + daralt/genişlet */}
+        <div className={`flex items-center justify-between border-b border-slate-100 px-6 py-5 ${collapsed ? 'lg:flex-col lg:gap-3 lg:px-0 lg:py-4' : ''}`}>
+          <div className={collapsed ? 'lg:w-9 lg:overflow-hidden' : ''}>
+            <img src={logo} alt="Euromat Print" className="h-8 w-auto max-w-none" />
+          </div>
           <button
             type="button"
             onClick={onClose}
@@ -142,10 +154,22 @@ export default function DashboardSidebar({ isOpen, onClose }) {
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
+          {onToggleCollapse && (
+            <button
+              type="button"
+              onClick={onToggleCollapse}
+              title={collapsed ? (isEN ? 'Expand menu' : 'Menüyü genişlet') : (isEN ? 'Collapse menu' : 'Menüyü daralt')}
+              className="hidden rounded-lg p-1.5 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600 lg:block"
+            >
+              <svg className={`h-4 w-4 transition-transform ${collapsed ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M18.75 19.5l-7.5-7.5 7.5-7.5m-6 15L5.25 12l7.5-7.5" />
+              </svg>
+            </button>
+          )}
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 overflow-y-auto px-4 py-4">
+        <nav className={`flex-1 overflow-y-auto py-4 ${collapsed ? 'px-4 lg:px-3' : 'px-4'}`}>
           <div className="flex flex-col gap-1">
             {items.map((item) => {
               const isActive = location.pathname === item.path
@@ -153,18 +177,23 @@ export default function DashboardSidebar({ isOpen, onClose }) {
                 <button
                   key={item.id}
                   type="button"
+                  title={isEN ? item.label.en : item.label.tr}
                   onClick={() => {
                     navigate(item.path)
                     onClose()
                   }}
                   className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition ${
+                    collapsed ? 'lg:justify-center lg:px-0' : ''
+                  } ${
                     isActive
                       ? 'bg-slate-900 text-white shadow-lg shadow-slate-900/10'
                       : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
                   }`}
                 >
                   {ICONS[item.icon]}
-                  {isEN ? item.label.en : item.label.tr}
+                  <span className={collapsed ? 'lg:hidden' : ''}>
+                    {isEN ? item.label.en : item.label.tr}
+                  </span>
                 </button>
               )
             })}
@@ -172,8 +201,8 @@ export default function DashboardSidebar({ isOpen, onClose }) {
         </nav>
 
         {/* User info + sign out */}
-        <div className="border-t border-slate-100 px-4 py-4">
-          <div className="mb-3 rounded-xl bg-slate-50 px-4 py-3">
+        <div className={`border-t border-slate-100 py-4 ${collapsed ? 'px-4 lg:px-3' : 'px-4'}`}>
+          <div className={`mb-3 rounded-xl bg-slate-50 px-4 py-3 ${collapsed ? 'lg:hidden' : ''}`}>
             <p className="text-sm font-semibold text-slate-900">
               {profile?.full_name || (isEN ? 'User' : 'Kullanıcı')}
             </p>
@@ -187,7 +216,7 @@ export default function DashboardSidebar({ isOpen, onClose }) {
               type="button"
               onClick={toggleEmail}
               disabled={emailLoading}
-              className={`mb-2 flex w-full items-center justify-between rounded-xl px-4 py-3 text-sm font-medium transition ${
+              className={`mb-2 flex w-full items-center justify-between rounded-xl px-4 py-3 text-sm font-medium transition ${collapsed ? 'lg:hidden ' : ''}${
                 emailOn
                   ? 'bg-green-50 text-green-700'
                   : 'bg-slate-100 text-slate-500'
@@ -207,10 +236,11 @@ export default function DashboardSidebar({ isOpen, onClose }) {
           <button
             type="button"
             onClick={handleSignOut}
-            className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-600 transition hover:bg-red-50 hover:text-red-600"
+            title={isEN ? 'Sign Out' : 'Çıkış Yap'}
+            className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-slate-600 transition hover:bg-red-50 hover:text-red-600 ${collapsed ? 'lg:justify-center lg:px-0' : ''}`}
           >
             {ICONS.logout}
-            {isEN ? 'Sign Out' : 'Çıkış Yap'}
+            <span className={collapsed ? 'lg:hidden' : ''}>{isEN ? 'Sign Out' : 'Çıkış Yap'}</span>
           </button>
         </div>
       </aside>

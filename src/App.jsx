@@ -31,6 +31,9 @@ import PaperPage from "./pages/dashboard/PaperPage";
 import PaperSettings from "./pages/dashboard/PaperSettings";
 import DepoStokPage from "./pages/dashboard/DepoStokPage";
 import DepoHareketPage from "./pages/dashboard/DepoHareketPage";
+import KatalogPage from "./pages/dashboard/KatalogPage";
+import TeklifCreatePage from "./pages/dashboard/TeklifCreatePage";
+import TekliflerPage from "./pages/dashboard/TekliflerPage";
 import "./App.css";
 
 
@@ -225,6 +228,30 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={["personel", "admin", "moderator", "depocu"]}>
                 <DepoStokPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/panel/teklifler"
+            element={
+              <ProtectedRoute allowedRoles={["admin", "moderator"]}>
+                <TekliflerPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/panel/teklif/yeni"
+            element={
+              <ProtectedRoute allowedRoles={["admin"]}>
+                <TeklifCreatePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/panel/katalog"
+            element={
+              <ProtectedRoute allowedRoles={["admin", "moderator"]}>
+                <KatalogPage />
               </ProtectedRoute>
             }
           />

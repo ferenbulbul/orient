@@ -61,7 +61,15 @@ export default function PaperPage() {
     is_emri_id: '',
   })
   const [exitSaving, setExitSaving] = useState(false)
+  const [exitMessage, setExitMessage] = useState(null) // { type: 'success' | 'error', text }
   const [exitJobs, setExitJobs] = useState([])
+  const [exitMode, setExitMode] = useState('job') // 'job' | 'iade' | 'transfer' (devir sadece matbaa firması için)
+  const [transferTargetId, setTransferTargetId] = useState('')
+
+  // Son hareket listeleri: sayfalama (veri sorgudan en yeni → en eski gelir)
+  const PAGE_SIZE = 10
+  const [entryPage, setEntryPage] = useState(1)
+  const [exitPage, setExitPage] = useState(1)
 
   const fetchData = async () => {
     const promises = [
@@ -92,9 +100,32 @@ export default function PaperPage() {
 
   useEffect(() => { fetchData() }, [])
 
+  // Matbaanın kendi firması (Euromatprint) — diğer firmalara stok devri yapabilir
+  const isHouseCompany = (c) => (c?.company_name || '').toLocaleLowerCase('tr-TR').includes('euromat')
+  const selectedExitCustomer = customers.find((c) => c.id === exitForm.musteri_id) || null
+  const isHouseExit = isHouseCompany(selectedExitCustomer)
+  const isTransfer = isHouseExit && exitMode === 'transfer'
+  // İade: müşteri kendi gönderdiği kağıdın bir kısmını geri çekiyor —
+  // iş emri gerekmez, stoktan düşer (ör. Eksen Yayıncılık kağıdını geri aldı)
+  const isIade = exitMode === 'iade'
+  const transferTarget = customers.find((c) => c.id === transferTargetId) || null
+
+  // Sayfalama dilimleri (listeler sorgudan en yeni → en eski sıralı gelir)
+  const entryTotalPages = Math.max(1, Math.ceil(entries.length / PAGE_SIZE))
+  const entryPageSafe = Math.min(entryPage, entryTotalPages)
+  const pagedEntries = entries.slice((entryPageSafe - 1) * PAGE_SIZE, entryPageSafe * PAGE_SIZE)
+  const exitTotalPages = Math.max(1, Math.ceil(exits.length / PAGE_SIZE))
+  const exitPageSafe = Math.min(exitPage, exitTotalPages)
+  const pagedExits = exits.slice((exitPageSafe - 1) * PAGE_SIZE, exitPageSafe * PAGE_SIZE)
+
+  const paginationBtnCls = 'rounded-lg px-3 py-1.5 text-xs font-medium text-slate-600 transition hover:bg-slate-100 disabled:cursor-default disabled:opacity-30'
+
   // Müşteri değişince çıkış formunu sıfırla + iş emirlerini çek
   const handleExitCustomerChange = async (musteriId) => {
     setExitForm({ musteri_id: musteriId, stock_key: '', tabaka: '', notes: '', is_emri_id: '' })
+    setExitMode('job')
+    setTransferTargetId('')
+    setExitMessage(null)
     if (musteriId) {
       const { data } = await supabase
         .from('jobs')
@@ -356,17 +387,27 @@ export default function PaperPage() {
   // ---------- Çıkış ----------
   const handleExitSubmit = async (e) => {
     e.preventDefault()
-    if (!exitForm.musteri_id || !selectedStock || !exitForm.tabaka || !exitForm.is_emri_id) return
+    if (!exitForm.musteri_id || !selectedStock || !exitForm.tabaka) return
+    if (isTransfer && !transferTargetId) return
+    if (!isTransfer && !isIade && !exitForm.is_emri_id) return
 
     const tb = parseInt(exitForm.tabaka, 10)
     if (tb <= 0 || tb > selectedStock.totalTabaka) return
 
     setExitSaving(true)
+    setExitMessage(null)
 
+    const userNotes = exitForm.notes.trim()
     const selectedJob = exitJobs.find((j) => j.id === exitForm.is_emri_id)
-    const { error } = await supabase.from('paper_exits').insert({
+    const exitNotes = isTransfer
+      ? `Devir → ${transferTarget?.company_name || '-'}${userNotes ? ` | ${userNotes}` : ''}`
+      : isIade
+        ? `İade${userNotes ? ` | ${userNotes}` : ''}`
+        : userNotes || null
+
+    const { data: exitRow, error } = await supabase.from('paper_exits').insert({
       musteri_id: exitForm.musteri_id,
-      is_emri_no: selectedJob?.is_emri_no || null,
+      is_emri_no: isTransfer ? null : selectedJob?.is_emri_no || null,
       paper_type_id: selectedStock.paper_type_id,
       paper_type_name: selectedStock.paper_type_name,
       grammage: selectedStock.grammage,
@@ -374,18 +415,68 @@ export default function PaperPage() {
       boy: selectedStock.boy,
       tabaka: tb,
       kg: exitCalculatedKg,
-      notes: exitForm.notes.trim() || null,
+      notes: exitNotes,
       created_by: profile.id,
-    })
+    }).select('id').single()
 
     if (error) {
       console.error('Paper exit error:', error)
+      setExitMessage({
+        type: 'error',
+        text: isEN ? 'Exit could not be saved. Please try again.' : 'Çıkış kaydedilemedi. Lütfen tekrar deneyin.',
+      })
       setExitSaving(false)
       return
     }
 
+    // Devirde karşı firmaya aynı kağıttan giriş oluştur
+    if (isTransfer) {
+      const { error: entryError } = await supabase.from('paper_entries').insert({
+        musteri_id: transferTargetId,
+        paper_type_id: selectedStock.paper_type_id,
+        paper_type_name: selectedStock.paper_type_name,
+        grammage: selectedStock.grammage,
+        en: selectedStock.en,
+        boy: selectedStock.boy,
+        tabaka: tb,
+        kg: exitCalculatedKg,
+        notes: `Devir ← ${selectedExitCustomer?.company_name || '-'}${userNotes ? ` | ${userNotes}` : ''}`,
+        created_by: profile.id,
+      })
+
+      if (entryError) {
+        console.error('Paper transfer entry error:', entryError)
+        // Giriş oluşturulamadıysa çıkışı geri al — stok tutarlılığı bozulmasın
+        if (exitRow?.id) await supabase.from('paper_exits').delete().eq('id', exitRow.id)
+        setExitMessage({
+          type: 'error',
+          text: isEN
+            ? 'Transfer could not be completed, the exit was rolled back. Please try again.'
+            : 'Devir tamamlanamadı, çıkış geri alındı. Lütfen tekrar deneyin.',
+        })
+        setExitSaving(false)
+        return
+      }
+    }
+
+    setExitMessage({
+      type: 'success',
+      text: isTransfer
+        ? (isEN
+            ? `${formatNumber(tb)} sheets transferred: deducted from ${selectedExitCustomer?.company_name || '-'} stock, added to ${transferTarget?.company_name || '-'} stock.`
+            : `${formatNumber(tb)} tabaka devredildi: ${selectedExitCustomer?.company_name || '-'} stoğundan düşüldü, ${transferTarget?.company_name || '-'} stoğuna eklendi.`)
+        : isIade
+          ? (isEN
+              ? `${formatNumber(tb)} sheets returned to ${selectedExitCustomer?.company_name || '-'} and deducted from stock.`
+              : `${formatNumber(tb)} tabaka iade edildi: ${selectedExitCustomer?.company_name || '-'} firmasına geri gönderildi, stoktan düşüldü.`)
+          : (isEN
+              ? `${formatNumber(tb)} sheets exit recorded${selectedJob ? ` (Job order: ${selectedJob.is_emri_no})` : ''}.`
+              : `${formatNumber(tb)} tabaka çıkışı kaydedildi${selectedJob ? ` (İş emri: ${selectedJob.is_emri_no})` : ''}.`),
+    })
     setExitForm({ musteri_id: '', stock_key: '', tabaka: '', notes: '', is_emri_id: '' })
     setExitJobs([])
+    setExitMode('job')
+    setTransferTargetId('')
     setExitSaving(false)
     fetchData()
   }
@@ -548,10 +639,17 @@ export default function PaperPage() {
                     {entries.length === 0 ? (
                       <tr><td colSpan={isAdmin ? 9 : 8} className="px-4 py-8 text-center text-xs text-slate-400">{isEN ? 'No entries yet' : 'Henüz kayıt yok'}</td></tr>
                     ) : (
-                      entries.map((e) => (
+                      pagedEntries.map((e) => (
                         <tr key={e.id} className="hover:bg-slate-50">
                           <td className="whitespace-nowrap px-4 py-3 text-slate-600">{new Date(e.created_at).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short', year: 'numeric' })}</td>
-                          <td className="px-4 py-3 font-medium text-slate-900">{e.musteri?.company_name || '-'}</td>
+                          <td className="px-4 py-3 font-medium text-slate-900">
+                            {e.musteri?.company_name || '-'}
+                            {e.notes?.startsWith('Devir') && (
+                              <span className="ml-2 inline-flex rounded-md bg-amber-50 px-2 py-0.5 text-xs font-semibold text-amber-700" title={e.notes}>
+                                {e.notes.split(' | ')[0]}
+                              </span>
+                            )}
+                          </td>
                           <td className="px-4 py-3 text-slate-700">{e.paper_type_name}</td>
                           <td className="px-4 py-3 text-slate-600">{e.grammage}</td>
                           <td className="px-4 py-3 text-slate-600">{e.en}x{e.boy}</td>
@@ -594,6 +692,20 @@ export default function PaperPage() {
                   </tbody>
                 </table>
               </div>
+              {entries.length > PAGE_SIZE && (
+                <div className="flex items-center justify-between border-t border-slate-100 px-5 py-3">
+                  <span className="text-xs text-slate-400">{formatNumber(entries.length)} {isEN ? 'records' : 'kayıt'}</span>
+                  <div className="flex items-center gap-2">
+                    <button type="button" disabled={entryPageSafe <= 1} onClick={() => setEntryPage(entryPageSafe - 1)} className={paginationBtnCls}>
+                      ‹ {isEN ? 'Previous' : 'Önceki'}
+                    </button>
+                    <span className="text-xs tabular-nums text-slate-500">{entryPageSafe} / {entryTotalPages}</span>
+                    <button type="button" disabled={entryPageSafe >= entryTotalPages} onClick={() => setEntryPage(entryPageSafe + 1)} className={paginationBtnCls}>
+                      {isEN ? 'Next' : 'Sonraki'} ›
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* ==================== Düzenleme Modalı ==================== */}
@@ -692,6 +804,14 @@ export default function PaperPage() {
           <div>
             <form onSubmit={handleExitSubmit} className="mb-8 rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
               <h2 className="mb-5 text-sm font-semibold text-slate-700">{isEN ? 'New Paper Exit' : 'Yeni Kağıt Çıkışı'}</h2>
+              {exitMessage && (
+                <div className={`mb-5 flex items-start justify-between gap-3 rounded-xl border px-4 py-3 text-sm ${exitMessage.type === 'success' ? 'border-green-200 bg-green-50 text-green-800' : 'border-red-200 bg-red-50 text-red-700'}`}>
+                  <span className="font-medium">{exitMessage.text}</span>
+                  <button type="button" onClick={() => setExitMessage(null)} className="flex-shrink-0 opacity-50 transition hover:opacity-100">
+                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                  </button>
+                </div>
+              )}
               <div className="grid gap-4 sm:grid-cols-2">
                 {/* 1. Müşteri */}
                 <div className="sm:col-span-2">
@@ -702,8 +822,47 @@ export default function PaperPage() {
                   </select>
                 </div>
 
-                {/* 2. İş Emri Seçimi (Zorunlu) */}
+                {/* 1.5. Çıkış türü — iade herkese açık, devir sadece matbaa firmasına */}
                 {exitForm.musteri_id && (
+                  <div className="sm:col-span-2">
+                    <label className="mb-1 block text-xs font-medium text-slate-500">{isEN ? 'Exit Type' : 'Çıkış Türü'}</label>
+                    <div className="flex gap-1 rounded-xl bg-slate-100 p-1">
+                      <button
+                        type="button"
+                        onClick={() => { setExitMode('job'); setTransferTargetId('') }}
+                        className={`flex-1 rounded-lg px-4 py-2.5 text-sm font-medium transition ${exitMode === 'job' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                      >
+                        {isEN ? 'Exit to Job Order' : 'İş Emrine Çıkış'}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => { setExitMode('iade'); setTransferTargetId(''); setExitForm({ ...exitForm, is_emri_id: '' }) }}
+                        className={`flex-1 rounded-lg px-4 py-2.5 text-sm font-medium transition ${exitMode === 'iade' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                      >
+                        {isEN ? 'Return to Customer' : 'Müşteriye İade'}
+                      </button>
+                      {isHouseExit && (
+                        <button
+                          type="button"
+                          onClick={() => { setExitMode('transfer'); setExitForm({ ...exitForm, is_emri_id: '' }) }}
+                          className={`flex-1 rounded-lg px-4 py-2.5 text-sm font-medium transition ${exitMode === 'transfer' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                        >
+                          {isEN ? 'Transfer to Company' : 'Firmaya Devir'}
+                        </button>
+                      )}
+                    </div>
+                    {isIade && (
+                      <p className="mt-1 text-xs text-slate-400">
+                        {isEN
+                          ? 'Customer takes back (part of) the paper they sent; no job order needed, stock is reduced.'
+                          : 'Müşteri gönderdiği kağıdın bir kısmını/tamamını geri çekiyor; iş emri gerekmez, stoktan düşülür.'}
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {/* 2a. İş Emri Seçimi (normal çıkışta zorunlu; iadede yok) */}
+                {exitForm.musteri_id && !isTransfer && !isIade && (
                   <div className="sm:col-span-2">
                     <label className="mb-1 block text-xs font-medium text-slate-500">{isEN ? 'Job Order' : 'İş Emri'} <span className="text-red-500">*</span></label>
                     {exitJobs.length === 0 ? (
@@ -721,8 +880,26 @@ export default function PaperPage() {
                   </div>
                 )}
 
-                {/* 3. Stoktan kağıt seç (iş emri varsa göster) */}
-                {exitForm.musteri_id && exitJobs.length > 0 && (
+                {/* 2b. Devir yapılacak firma (devirde zorunlu) */}
+                {isTransfer && (
+                  <div className="sm:col-span-2">
+                    <label className="mb-1 block text-xs font-medium text-slate-500">{isEN ? 'Transfer to' : 'Devredilecek Firma'} <span className="text-red-500">*</span></label>
+                    <select value={transferTargetId} onChange={(e) => setTransferTargetId(e.target.value)} required className="w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm outline-none focus:border-slate-400">
+                      <option value="">{isEN ? 'Select company...' : 'Firma seçin...'}</option>
+                      {customers.filter((c) => c.id !== exitForm.musteri_id).map((c) => (
+                        <option key={c.id} value={c.id}>{c.company_name || '-'}</option>
+                      ))}
+                    </select>
+                    <p className="mt-1 text-xs text-slate-400">
+                      {isEN
+                        ? 'The paper will be deducted from your stock and added to the selected company\'s stock.'
+                        : 'Kağıt sizin stoğunuzdan düşülür, seçilen firmanın stoğuna giriş olarak eklenir.'}
+                    </p>
+                  </div>
+                )}
+
+                {/* 3. Stoktan kağıt seç */}
+                {exitForm.musteri_id && (isTransfer ? !!transferTargetId : isIade ? true : exitJobs.length > 0) && (
                   <div className="sm:col-span-2">
                     <label className="mb-1 block text-xs font-medium text-slate-500">{isEN ? 'Select Paper from Stock' : 'Stoktan Kağıt Seçin'}</label>
                     {customerStockGroups.length === 0 ? (
@@ -797,8 +974,8 @@ export default function PaperPage() {
               </div>
 
               {selectedStock && (
-                <button type="submit" disabled={exitSaving || !exitForm.is_emri_id || !exitForm.tabaka || parseInt(exitForm.tabaka, 10) <= 0 || parseInt(exitForm.tabaka, 10) > selectedStock.totalTabaka} className="mt-5 w-full rounded-xl bg-red-600 py-3 text-sm font-semibold text-white transition hover:bg-red-700 disabled:opacity-50 sm:w-auto sm:px-8">
-                  {exitSaving ? '...' : isEN ? 'Record Exit' : 'Çıkış Kaydet'}
+                <button type="submit" disabled={exitSaving || (isTransfer ? !transferTargetId : !exitForm.is_emri_id) || !exitForm.tabaka || parseInt(exitForm.tabaka, 10) <= 0 || parseInt(exitForm.tabaka, 10) > selectedStock.totalTabaka} className="mt-5 w-full rounded-xl bg-red-600 py-3 text-sm font-semibold text-white transition hover:bg-red-700 disabled:opacity-50 sm:w-auto sm:px-8">
+                  {exitSaving ? '...' : isTransfer ? (isEN ? 'Record Transfer' : 'Devri Kaydet') : (isEN ? 'Record Exit' : 'Çıkış Kaydet')}
                 </button>
               )}
             </form>
@@ -827,11 +1004,21 @@ export default function PaperPage() {
                     {exits.length === 0 ? (
                       <tr><td colSpan={isAdmin ? 9 : 8} className="px-4 py-8 text-center text-xs text-slate-400">{isEN ? 'No exits yet' : 'Henüz çıkış kaydı yok'}</td></tr>
                     ) : (
-                      exits.map((e) => (
+                      pagedExits.map((e) => (
                         <tr key={e.id} className="hover:bg-slate-50">
                           <td className="whitespace-nowrap px-4 py-3 text-slate-600">{new Date(e.created_at).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short', year: 'numeric' })}</td>
                           <td className="px-4 py-3 font-medium text-slate-900">{e.musteri?.company_name || '-'}</td>
-                          <td className="px-4 py-3 text-slate-600">{e.is_emri_no || '—'}</td>
+                          <td className="px-4 py-3 text-slate-600">
+                            {e.is_emri_no || (e.notes?.startsWith('Devir') ? (
+                              <span className="inline-flex rounded-md bg-amber-50 px-2 py-0.5 text-xs font-semibold text-amber-700" title={e.notes}>
+                                {e.notes.split(' | ')[0]}
+                              </span>
+                            ) : e.notes?.startsWith('İade') ? (
+                              <span className="inline-flex rounded-md bg-sky-50 px-2 py-0.5 text-xs font-semibold text-sky-700" title={e.notes}>
+                                {isEN ? 'Return' : 'İade'}
+                              </span>
+                            ) : '—')}
+                          </td>
                           <td className="px-4 py-3 text-slate-700">{e.paper_type_name}</td>
                           <td className="px-4 py-3 text-slate-600">{e.grammage}</td>
                           <td className="px-4 py-3 text-slate-600">{e.en}x{e.boy}</td>
@@ -850,6 +1037,20 @@ export default function PaperPage() {
                   </tbody>
                 </table>
               </div>
+              {exits.length > PAGE_SIZE && (
+                <div className="flex items-center justify-between border-t border-slate-100 px-5 py-3">
+                  <span className="text-xs text-slate-400">{formatNumber(exits.length)} {isEN ? 'records' : 'kayıt'}</span>
+                  <div className="flex items-center gap-2">
+                    <button type="button" disabled={exitPageSafe <= 1} onClick={() => setExitPage(exitPageSafe - 1)} className={paginationBtnCls}>
+                      ‹ {isEN ? 'Previous' : 'Önceki'}
+                    </button>
+                    <span className="text-xs tabular-nums text-slate-500">{exitPageSafe} / {exitTotalPages}</span>
+                    <button type="button" disabled={exitPageSafe >= exitTotalPages} onClick={() => setExitPage(exitPageSafe + 1)} className={paginationBtnCls}>
+                      {isEN ? 'Next' : 'Sonraki'} ›
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         )}
